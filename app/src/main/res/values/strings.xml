@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Dr_R_Android</string>
+    <string name="main_btn1">접     수</string>
+    <string name="main_btn2">일지 작성</string>
+    <string name="main_btn3">앱  Q &amp; A</string>
+    <string name="main_btn4">의사 전화</string>
+    <string name="doctor_phone_num">01096280924</string>
+</resources>
