@@ -15,10 +15,12 @@
 
         <ImageView
             android:id="@+id/doctor_img"
+            android:src="@drawable/doctor"
             android:layout_marginTop="50dp"
             android:layout_width="200dp"
             android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/drImgDescription" />
     </LinearLayout>
 
     <LinearLayout
@@ -34,7 +36,7 @@
             android:text="@string/doctor_phone_num"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold"
-            android:textSize="30dp"
+            android:textSize="30sp"
             android:textColor="#FFFFFFFF"/>
     </LinearLayout>
 

@@ -21,25 +21,19 @@ public class CallDrActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calldoctor);
 
-
         TextView tv = (TextView) findViewById(R.id.tv_doctor_phone_num);
         ImageView iv = (ImageView) findViewById(R.id.doctor_img);
+        View[] views = {tv,iv};
 
-        tv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(Intent.ACTION_DIAL,
-                        Uri.parse("tel:"+R.string.doctor_phone_num)));
-            }
-        });
-        iv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(Intent.ACTION_DIAL,
-                        Uri.parse("tel:114")));
-            }
-        });
-
+        for (View view : views) {
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(Intent.ACTION_DIAL,
+                            Uri.parse("tel:01096280924")));
+                }
+            });
+        }
     }
 
 
