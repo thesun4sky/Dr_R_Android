@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FF40bdb7"
+    android:background="#fff"
     tools:context=".activity.MainActivity">
 
     <!-- 식단 입력을 위한 폼 구성요소 : 시작 -->
