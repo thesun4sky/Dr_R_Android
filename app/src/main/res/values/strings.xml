@@ -6,4 +6,5 @@
     <string name="main_btn4">의사 전화</string>
     <string name="doctor_phone_num">010–9628–0924</string>
     <string name="drImgDescription">의사 사진입니다.</string>
+    <string name="Created">Created by CoAwesome</string>
 </resources>
