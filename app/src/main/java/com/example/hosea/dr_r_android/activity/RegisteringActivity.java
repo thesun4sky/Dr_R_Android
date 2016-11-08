@@ -12,6 +12,7 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.example.hosea.dr_r_android.R;
 import com.example.hosea.dr_r_android.dao.DiaryVO;
+import com.example.hosea.dr_r_android.service.DrService;
 import com.example.hosea.dr_r_android.service.ServiceImpl;
 
 import org.json.JSONObject;
@@ -22,7 +23,7 @@ public class RegisteringActivity extends AppCompatActivity {
 
     private AQuery aq = new AQuery(this);
     TextView textView;
-    ServiceImpl service = new ServiceImpl(this);
+    DrService service = new ServiceImpl(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

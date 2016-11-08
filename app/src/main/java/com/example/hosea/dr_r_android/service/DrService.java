@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Created by Hosea on 2016-11-09.
  */
-interface DrService {
+public interface DrService {
 
     ResultVO writeDiary(DiaryVO diary);
     ArrayList<DiaryVO> getDiaries (int num);
