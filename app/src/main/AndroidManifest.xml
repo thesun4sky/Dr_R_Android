@@ -24,6 +24,7 @@
         </activity>
 
         <activity android:name=".activity.ApplicationQnaActivity" />
+        <activity android:name=".activity.JoinActivity" />
         <activity android:name=".activity.CallDrActivity">
             <intent-filter>
                 <action android:name="android.intent.action.DIAL" />

@@ -34,7 +34,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
     public void readDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", 1);
-        aq.ajax("http://223.194.152.27:8080/getDiaries", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax("http://192.168.0.73:8080/getDiaries", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if( html != null) {
