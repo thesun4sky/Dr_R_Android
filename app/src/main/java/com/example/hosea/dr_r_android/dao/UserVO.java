@@ -8,10 +8,11 @@ public class UserVO {
     private int u_id;
     private String login_id;
     private String u_name;
-    private String phone;
-    private String password;
-    private String disease;
-    private String hospital_name;
+    private String u_phone;
+    private String u_password;
+    private String u_disease;
+    private String u_device;
+    private String u_hospital;
 
     public int getU_id() {
         return u_id;
@@ -37,35 +38,37 @@ public class UserVO {
         this.u_name = u_name;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getU_phone() {
+        return u_phone;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setU_phone(String u_phone) {
+        this.u_phone = u_phone;
     }
 
-    public String getPassword() {
-        return password;
+    public String geU_password() {
+        return u_password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setU_password(String u_password) {
+        this.u_password = u_password;
     }
 
-    public String getDisease() {
-        return disease;
+    public String getU_disease() {
+        return u_disease;
     }
 
-    public void setDisease(String disease) {
-        this.disease = disease;
+    public void setU_disease(String u_disease) {
+        this.u_disease = u_disease;
     }
 
-    public String getHospital_name() {
-        return hospital_name;
+    public String getU_hospital() {
+        return u_hospital;
     }
+    public void setU_hospital(String u_hospital) {
+        this.u_hospital = u_hospital;
+    }
+    public String getU_device(){return u_device;}
 
-    public void setHospital_name(String hospital_name) {
-        this.hospital_name = hospital_name;
-    }
+    public void setU_device(String u_device){this.u_device = u_device;}
 }

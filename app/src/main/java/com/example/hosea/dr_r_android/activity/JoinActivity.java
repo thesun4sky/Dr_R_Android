@@ -69,10 +69,10 @@ public class JoinActivity extends AppCompatActivity {
                     Map<String, Object> params = new HashMap<String, Object>();
                     params.put("login_id", login_id.getText().toString());
                     params.put("u_name", name.getText().toString());
-                    params.put("password", password1.getText().toString());
-                    params.put("phone", phone.getText().toString());
-                    params.put("disease", disease.getText().toString());
-                    params.put("hospital_name", hopitalName.getText().toString());
+                    params.put("u_password", password1.getText().toString());
+                    params.put("u_phone", phone.getText().toString());
+                    params.put("u_disease", disease.getText().toString());
+                    params.put("u_hospital", hopitalName.getText().toString());
                     aq.ajax("http://192.168.0.73:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                         @Override
                         public void callback(String url, JSONObject html, AjaxStatus status) {
