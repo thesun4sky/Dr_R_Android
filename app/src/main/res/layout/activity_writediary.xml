@@ -154,7 +154,7 @@
                 />
 
             <EditText
-                android:id="@+id/pressure"
+                android:id="@+id/bloodpressure"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
@@ -205,7 +205,7 @@
             android:layout_margin="10dp"
             android:gravity="top"
             android:layout_width="match_parent"
-            android:layout_height="282dp"
+            android:layout_height="82dp"
             android:inputType="textMultiLine"
             android:background="@drawable/textbox"/>
 

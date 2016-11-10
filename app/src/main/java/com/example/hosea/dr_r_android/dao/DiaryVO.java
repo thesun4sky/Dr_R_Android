@@ -5,14 +5,14 @@ package com.example.hosea.dr_r_android.dao;
  */
 public class DiaryVO {
     private int u_id;
-    private String[] breakfast;
-    private String[] lunch;
-    private String[] dinner;
+    private String breakfast;
+    private String lunch;
+    private String dinner;
     private int temperature;
     private int humid;
     private int sleepTime;
     private int bloodPressure;
-    private boolean Alcohol;
+    private String drinking;
 
     public int getU_id() {
         return u_id;
@@ -22,27 +22,27 @@ public class DiaryVO {
         this.u_id = u_id;
     }
 
-    public String[] getBreakfast() {
+    public String getBreakfast() {
         return breakfast;
     }
 
-    public void setBreakfast(String[] breakfast) {
+    public void setBreakfast(String breakfast) {
         this.breakfast = breakfast;
     }
 
-    public String[] getLunch() {
+    public String getLunch() {
         return lunch;
     }
 
-    public void setLunch(String[] lunch) {
+    public void setLunch(String lunch) {
         this.lunch = lunch;
     }
 
-    public String[] getDinner() {
+    public String getDinner() {
         return dinner;
     }
 
-    public void setDinner(String[] dinner) {
+    public void setDinner(String dinner) {
         this.dinner = dinner;
     }
 
@@ -78,11 +78,11 @@ public class DiaryVO {
         this.bloodPressure = bloodPressure;
     }
 
-    public boolean isAlcohol() {
-        return Alcohol;
+    public String getDrinking() {
+        return drinking;
     }
 
-    public void setAlcohol(boolean alcohol) {
-        Alcohol = alcohol;
+    public void setDrinking(String drinking) {
+        this.drinking = drinking;
     }
 }

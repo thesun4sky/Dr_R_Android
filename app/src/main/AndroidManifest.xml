@@ -31,7 +31,7 @@
                 <data android:scheme="tel" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.RegisteringActivity" />
+        <activity android:name=".activity.ReadDiaryActivity" />
         <activity android:name=".activity.WriteDiaryActivity" />
 
     </application>
