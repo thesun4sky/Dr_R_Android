@@ -1,7 +1,9 @@
 package com.example.hosea.dr_r_android.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +20,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class JoinActivity extends AppCompatActivity {
 
@@ -45,16 +48,10 @@ public class JoinActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("login_id", login_id.getText().toString());
-                aq.ajax("http://192.168.0.73/checkLoginId", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                aq.ajax("http://192.168.1.25/checkLoginId", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                     @Override
                     public void callback(String url, JSONObject html, AjaxStatus status) {
                         Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
-                        try {
-                            login_id.setText(html.getString("login_id"));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
                     }
                 });
             }
@@ -63,9 +60,18 @@ public class JoinActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (password1.getText().toString().equals(password2.getText().toString())) {
                     //비밀번호 일치
+
+                    final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+
+                    final String tmDevice, tmSerial, androidId;
+                    tmDevice = "" + tm.getDeviceId();
+                    tmSerial = "" + tm.getSimSerialNumber();
+                    androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+
+                    UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
+
                     Map<String, Object> params = new HashMap<String, Object>();
                     params.put("login_id", login_id.getText().toString());
                     params.put("u_name", name.getText().toString());
@@ -73,7 +79,8 @@ public class JoinActivity extends AppCompatActivity {
                     params.put("u_phone", phone.getText().toString());
                     params.put("u_disease", disease.getText().toString());
                     params.put("u_hospital", hopitalName.getText().toString());
-                    aq.ajax("http://192.168.0.73:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                    params.put("u_device", deviceUuid.toString());
+                    aq.ajax("http://192.168.1.25:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                         @Override
                         public void callback(String url, JSONObject html, AjaxStatus status) {
                             Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
@@ -82,7 +89,6 @@ public class JoinActivity extends AppCompatActivity {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-
                         }
                     });
 
