@@ -77,7 +77,7 @@ public class SplashActivity extends Activity {
                     Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
                     SplashActivity.this.startActivity(mainIntent);
                 }
-                else{
+                else if(result_last ==0){
                     Intent loginIntent = new Intent(SplashActivity.this, LoginActivity.class);
                     SplashActivity.this.startActivity(loginIntent);
                 }
