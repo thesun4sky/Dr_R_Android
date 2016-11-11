@@ -1,7 +1,6 @@
 package com.example.hosea.dr_r_android.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
@@ -24,7 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class JoinActivity extends AppCompatActivity {
-    public int result_last;
+
     private AQuery aq = new AQuery(this);
     EditText login_id, name, password1,password2, phone, disease, hopitalName;
     Button checkId, submit;
@@ -49,16 +48,10 @@ public class JoinActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("login_id", login_id.getText().toString());
-                aq.ajax("http://192.168.0.71:8080/checkLoginId", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                aq.ajax("http://223.194.155.18:8080/checkLoginId", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                     @Override
                     public void callback(String url, JSONObject html, AjaxStatus status) {
                         Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
-                        try {
-                            login_id.setText(html.getString("login_id"));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
                     }
                 });
             }
@@ -67,7 +60,6 @@ public class JoinActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (password1.getText().toString().equals(password2.getText().toString())) {
                     //비밀번호 일치
 
@@ -88,32 +80,20 @@ public class JoinActivity extends AppCompatActivity {
                     params.put("u_disease", disease.getText().toString());
                     params.put("u_hospital", hopitalName.getText().toString());
                     params.put("u_device", deviceUuid.toString());
-                    aq.ajax("http://192.168.0.71:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                    aq.ajax("http://223.194.155.18:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                         @Override
                         public void callback(String url, JSONObject html, AjaxStatus status) {
                             Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
-                            String result_json = html.toString();
                             try {
-                                JSONObject jsonRoot  = new JSONObject(result_json);
-                                int result = jsonRoot.getInt("num");
-                                result_last = result;
-
-                                if(result == 1){
-                                    Toast.makeText(getApplicationContext(),"회원가입 완료",Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                                }
-                                else
-                                    Toast.makeText(getApplicationContext(),"회원가입 실패",Toast.LENGTH_SHORT).show();
-
+                                login_id.setText(html.getString("login_id"));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
 
-
                         }
                     });
-                }
-                else {
+
+                } else {
                     Toast.makeText(getApplicationContext(),"비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
                     password1.setText("");
                     password2.setText("");
