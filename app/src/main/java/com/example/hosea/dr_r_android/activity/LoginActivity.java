@@ -52,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
                 params.put("login_id", id.getText().toString());
                 params.put("u_password",password.getText().toString());
 
-                aq.ajax("http://192.168.0.71:8080/login", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                aq.ajax("http://223.194.155.18:8080/login", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                     @Override
                     public void callback(String url, JSONObject html, AjaxStatus status) {
                         Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
