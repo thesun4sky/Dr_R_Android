@@ -195,6 +195,14 @@
         <item>140</item>
 
     </string-array>
-
+    <string-array name="menu1">
+        <item>잡곡밥</item>
+    </string-array>
+    <string-array name="menu2">
+        <item>된장찌개</item>
+    </string-array>
+    <string-array name="menu3">
+        <item>제육볶음</item>
+    </string-array>
 
 </resources>
