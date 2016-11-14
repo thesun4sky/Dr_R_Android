@@ -13,6 +13,7 @@ public class DiaryVO {
     private int sleepTime;
     private int bloodPressure;
     private String drinking;
+    private String memo;
 
     public int getU_id() {
         return u_id;
@@ -84,5 +85,13 @@ public class DiaryVO {
 
     public void setDrinking(String drinking) {
         this.drinking = drinking;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
     }
 }

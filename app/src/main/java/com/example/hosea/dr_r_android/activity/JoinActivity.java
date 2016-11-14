@@ -28,6 +28,8 @@ public class JoinActivity extends AppCompatActivity {
     EditText login_id, name, password1,password2, phone, disease, hopitalName;
     Button checkId, submit;
 
+    public int sum(int a, int b) {return a+b;}
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
