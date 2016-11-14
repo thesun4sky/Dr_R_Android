@@ -177,8 +177,6 @@ public class WriteDiaryActivity extends AppCompatActivity {
         });
 
 
-
-
         //온도 선택
         Spinner tempSpinner = (Spinner)findViewById(R.id.spinner_temperature);
         final ArrayAdapter tempAdapter = ArrayAdapter.createFromResource(this,

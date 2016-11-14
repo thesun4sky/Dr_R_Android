@@ -35,6 +35,7 @@ public class SplashActivity extends Activity {
     public static final int MY_READ_PHONE_STATE =0;
     public static String deviceId;
     public int result_last;
+    public String name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
@@ -53,19 +54,29 @@ public class SplashActivity extends Activity {
         aq.ajax("http://192.168.0.2:8080/checkUserDevice", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
-                Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
                 String result_json = html.toString();
                 try {
                     JSONObject jsonRoot  = new JSONObject(result_json);
                     int result = jsonRoot.getInt("num");
+                    String result_name = jsonRoot.getString("msg");
+                    name = result_name;
                     result_last = result;
+                    if(result==1){
+                        Toast toast = Toast.makeText(getApplicationContext(), name + "님 어서오세요.^^*",Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 50);
+                        toast.show();
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
+
             }
         });
+
+
 
         Handler hd = new Handler();
         hd.postDelayed(new Runnable() {
@@ -83,12 +94,9 @@ public class SplashActivity extends Activity {
                 }
                 SplashActivity.this.finish();
             }
+
         }, 2000);
 
-        Toast toast = Toast.makeText(this, deviceId+"님 어서오세요.^^*",
-                Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER, 0 , 50);
-        toast.show();
     }
 
 
