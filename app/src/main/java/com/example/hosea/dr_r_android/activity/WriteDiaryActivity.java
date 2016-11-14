@@ -248,8 +248,9 @@ public class WriteDiaryActivity extends AppCompatActivity {
     }
 
     public void writeDiary() {
+        MyApplication myapp = (MyApplication)getApplicationContext();
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id", 1);
+        params.put("u_id", myapp.getU_id());
         params.put("breakfast",b_menu1.toString() +","+ b_menu2.toString() +","+ b_menu3.toString());
         params.put("lunch",l_menu1.toString() +","+ l_menu2.toString() +","+ l_menu3.toString());
         params.put("dinner",d_menu1.toString() +","+ d_menu2.toString() +","+ d_menu3.toString());
@@ -258,9 +259,9 @@ public class WriteDiaryActivity extends AppCompatActivity {
         params.put("sleepTime", Integer.parseInt((sleepTime.toString())));
         params.put("bloodPressure", Integer.parseInt((bloodPressure.toString())));
         if (drinking.isChecked()) {
-            params.put("drinking", "true");
+            params.put("drinking", 1);
         } else {
-            params.put("drinking", "false");
+            params.put("drinking", 0);
         }
         aq.ajax("http://192.168.0.2:8080/writeDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
