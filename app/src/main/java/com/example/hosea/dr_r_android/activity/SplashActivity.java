@@ -51,7 +51,7 @@ public class SplashActivity extends Activity {
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_device", deviceId);
-        aq.ajax("http://192.168.0.2:8080/checkUserDevice", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax("http://52.41.218.18:8080/checkUserDevice", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 //Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();

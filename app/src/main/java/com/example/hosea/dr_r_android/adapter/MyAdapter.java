@@ -65,16 +65,15 @@ public class MyAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
 
-
         // Set Text 01
         DiaryVO diary = dItems.get(i);
         holder.breakfast.setText(diary.getBreakfast());
         holder.lunch.setText(diary.getLunch());
         holder.dinner.setText(diary.getDinner());
-        holder.temperature.setText(diary.getTemperature());
-        holder.humid.setText(diary.getHumid());
-        holder.sleeptime.setText(diary.getSleepTime());
-        holder.bloodPressure.setText(diary.getBloodPressure());
+        holder.temperature.setText("" + diary.getTemperature());
+        holder.humid.setText("" + diary.getHumid());
+        holder.sleeptime.setText("" + diary.getSleepTime());
+        holder.bloodPressure.setText("" + diary.getBloodPressure());
         holder.drinking.setText(diary.getDrinking());
 
         return view;

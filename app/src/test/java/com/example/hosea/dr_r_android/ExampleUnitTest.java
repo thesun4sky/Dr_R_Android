@@ -1,7 +1,7 @@
 package com.example.hosea.dr_r_android;
 
-import com.example.hosea.dr_r_android.activity.JoinActivity;
-
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -15,8 +15,4 @@ public class ExampleUnitTest {
         assertEquals(4, 2 + 2);
     }
 
-    @Test
-    public void isCorrect() throws Exception {
-
-    }
 }

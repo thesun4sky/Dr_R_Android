@@ -2,6 +2,7 @@ package com.example.hosea.dr_r_android.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,69 +26,91 @@ public class ReadDiaryActivity extends AppCompatActivity {
 
     private AQuery aq = new AQuery(this);
     ArrayList<DiaryVO> list;
-    MyAdapter myAdapter;
+    DiaryVO diaryVO;
     TextView tv;
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_readdiary);
+        setContentView(R.layout.listview);
 
         //이름 설정
-        tv = (TextView)findViewById(R.id.textView2);
+        tv = (TextView) findViewById(R.id.diary_tv_userName);
         tv.setText("이호세아");
-//        ArrayList<DiaryVO> data = readDiary();
-        ArrayList<DiaryVO> data = new ArrayList<>();
-        DiaryVO diaryVO = new DiaryVO();
-        diaryVO.setBloodPressure(1);
-        data.add(diaryVO);
+        list = new ArrayList<>();
 
-        //어댑터 생성
-        myAdapter = new MyAdapter(this, R.layout.itemsfordiarylist, data);
-        //어댑터 연결
-        ListView lv = (ListView) findViewById(R.id.listView);
-        lv.setAdapter(myAdapter);
-
-
+        readDiary();
     }
 
     public ArrayList<DiaryVO> readDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id", 1);
-        list = new ArrayList<>();
-        aq.ajax("http://192.168.0.2:8080/getDiaries", params, JSONArray.class, new AjaxCallback<JSONArray>() {
+        params.put("u_id", 39);
+        aq.ajax("http://52.41.218.18:8080/getDiaries", params, JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
             public void callback(String url, JSONArray html, AjaxStatus status) {
-                if( html != null) {
-                        for (int i=0; i < html.length(); i++) {
-                            try {
-                                list.add(jsonToDiaryVO(html.getJSONObject(i)));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                if (html != null) {
+//                    Log.d("readDiary", html.toString());
+//                    Toast.makeText(getApplicationContext(),html.toString(),Toast.LENGTH_SHORT).show();
+                    for (int i = 0; i < html.length(); i++) {
+                        try {
+                            JSONObject jsonObject = html.getJSONObject(i);
+                            diaryVO = new DiaryVO();
+                            diaryVO.setBreakfast(jsonObject.getString("c_breakfast"));
+                            diaryVO.setLunch(jsonObject.getString("c_lunch"));
+                            diaryVO.setDinner(jsonObject.getString("c_dinner"));
+                            diaryVO.setTemperature(jsonObject.getInt("c_temperature"));
+                            diaryVO.setHumid(jsonObject.getInt("c_humid"));
+                            diaryVO.setSleepTime(jsonObject.getInt("c_sleepTime"));
+                            diaryVO.setBloodPressure(jsonObject.getInt("c_bloodPressure"));
+                            diaryVO.setDrinking(jsonObject.getString("c_drinking"));
+                            diaryVO.setMemo(jsonObject.getString("c_memo"));
+//                            lunch = json.getString("c_lunch");
+//                            dinner = json.getString("c_dinner");
+//                            temperature = json.getInt("c_temperature");
+//                            humid = json.getInt("c_humid");
+//                            sleepTime = json.getInt("c_sleepTime");
+//                            bloodPressure = json.getInt("c_bloodPressure");
+//                            drinking = json.getString("c_drinking");
+//                            memo = json.getString("c_memo");
+                            list.add(diaryVO);
+                            Toast.makeText(getApplicationContext(), list.toString(), Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
+                    }
+
                 } else {
                     tv.setText("해당하는 데이터가 없습니다.");
                 }
             }
         });
+        //어댑터 생성
+        MyAdapter myAdapter = new MyAdapter(this, R.layout.itemsfordiarylist, list);
+        //어댑터 연결
+        ListView lv = (ListView) findViewById(R.id.listView);
+        lv.setAdapter(myAdapter);
         return list;
     }
 
-    public DiaryVO jsonToDiaryVO (JSONObject json) throws JSONException {
-        DiaryVO diary = new DiaryVO();
-        diary.setBreakfast((String) json.get("c_breakfast"));
-        diary.setLunch((String) json.get("c_lunch"));
-        diary.setDinner((String) json.get("c_dinner"));
-        diary.setTemperature((int) json.get("c_temperature"));
-        diary.setHumid((int) json.get("c_humid"));
-        diary.setSleepTime((int) json.get("c_sleepTime"));
-        diary.setBloodPressure((int) json.get("c_bloodPressure"));
-        diary.setDrinking((String) json.get("c_drinking"));
-        diary.setMemo((String) json.get("c_memo"));
-        return diary;
+    public DiaryVO jsonToDiaryVO(JSONObject json) {
+
+//        Toast.makeText(getApplicationContext(), json.toString(), Toast.LENGTH_SHORT).show();
+//
+
+//        diary.setBreakfast(json.getString("c_breakfast"));
+//        diary.setLunch(json.getString("c_lunch"));
+//        diary.setDinner(json.getString("c_dinner"));
+//        diary.setTemperature(json.getInt("c_temperature"));
+//        diary.setHumid(json.getInt("c_humid"));
+//        diary.setSleepTime(json.getInt("c_sleepTime"));
+//        diary.setBloodPressure(json.getInt("c_bloodPressure"));
+//        diary.setDrinking(json.getString("c_drinking"));
+//        diary.setMemo(json.getString("c_memo"));
+
+//        Toast.makeText(getApplicationContext(), diary.toString(), Toast.LENGTH_SHORT).show();
+
+        return new DiaryVO(json);
     }
 
 

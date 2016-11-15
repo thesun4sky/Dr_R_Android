@@ -1,5 +1,8 @@
 package com.example.hosea.dr_r_android.dao;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Hosea on 2016-11-09.
  */
@@ -14,6 +17,40 @@ public class DiaryVO {
     private int bloodPressure;
     private String drinking;
     private String memo;
+
+    public DiaryVO() {}
+
+    public DiaryVO (JSONObject json) {
+        try {
+//            this.breakfast = json.getString("c_breakfast");
+//            this.lunch = json.getString("c_lunch");
+//            this.dinner = json.getString("c_dinner");
+//            this.temperature = json.getInt("c_temperature");
+//            this.humid = json.getInt("c_humid");
+//            this.sleepTime = json.getInt("c_sleepTime");
+//            this.bloodPressure = json.getInt("c_bloodPressure");
+//            this.drinking = json.getString("c_drinking");
+//            this.memo = json.getString("c_memo");
+            breakfast = json.getString("c_breakfast");
+            lunch = json.getString("c_lunch");
+            dinner = json.getString("c_dinner");
+            temperature = json.getInt("c_temperature");
+            humid = json.getInt("c_humid");
+            sleepTime = json.getInt("c_sleepTime");
+            bloodPressure = json.getInt("c_bloodPressure");
+            drinking = json.getString("c_drinking");
+            memo = json.getString("c_memo");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "{" + "u_id:" + u_id + "breakfast:" + u_id + "lunch:" + u_id + "dinner:"
+                + u_id + "temperature:" + u_id + "humid:" + u_id + "sleepTime:" + u_id
+                + "bloodPressure:" + u_id + "drinking:" + u_id + "memo:" + u_id;
+    }
 
     public int getU_id() {
         return u_id;

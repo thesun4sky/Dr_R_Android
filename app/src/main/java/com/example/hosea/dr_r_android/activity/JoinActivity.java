@@ -50,7 +50,7 @@ public class JoinActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("login_id", login_id.getText().toString());
-                aq.ajax("http://192.168.0.2:8080/checkLoginId", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                aq.ajax("http://52.41.218.18:8080/checkLoginId", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                     @Override
                     public void callback(String url, JSONObject html, AjaxStatus status) {
                         Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
@@ -82,7 +82,7 @@ public class JoinActivity extends AppCompatActivity {
                     params.put("u_disease", disease.getText().toString());
                     params.put("u_hospital", hopitalName.getText().toString());
                     params.put("u_device", deviceUuid.toString());
-                    aq.ajax("http://192.168.0.2:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                    aq.ajax("http://52.41.218.18:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                         @Override
                         public void callback(String url, JSONObject html, AjaxStatus status) {
                             Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
