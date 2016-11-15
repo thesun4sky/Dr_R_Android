@@ -7,4 +7,13 @@
     <string name="doctor_phone_num">010–9628–0924</string>
     <string name="drImgDescription">의사 사진입니다.</string>
     <string name="Created">Created by CoAwesome</string>
+    <string name="breakfast">아침 : </string>
+    <string name="lunch">점심 : </string>
+    <string name="dinner">저녁 : </string>
+    <string name="sleepingTime">수면시간 : </string>
+    <string name="bloodPressure">혈압 : </string>
+    <string name="drinking">음주 : </string>
+    <string name="temperature">온도 : </string>
+    <string name="humid">습도 : </string>
+
 </resources>

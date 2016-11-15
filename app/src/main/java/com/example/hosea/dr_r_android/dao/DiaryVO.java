@@ -22,15 +22,6 @@ public class DiaryVO {
 
     public DiaryVO (JSONObject json) {
         try {
-//            this.breakfast = json.getString("c_breakfast");
-//            this.lunch = json.getString("c_lunch");
-//            this.dinner = json.getString("c_dinner");
-//            this.temperature = json.getInt("c_temperature");
-//            this.humid = json.getInt("c_humid");
-//            this.sleepTime = json.getInt("c_sleepTime");
-//            this.bloodPressure = json.getInt("c_bloodPressure");
-//            this.drinking = json.getString("c_drinking");
-//            this.memo = json.getString("c_memo");
             breakfast = json.getString("c_breakfast");
             lunch = json.getString("c_lunch");
             dinner = json.getString("c_dinner");

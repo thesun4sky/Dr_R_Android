@@ -1,12 +1,14 @@
 package com.example.hosea.dr_r_android.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.hosea.dr_r_android.R;
 import com.example.hosea.dr_r_android.dao.DiaryVO;
@@ -22,6 +24,8 @@ public class MyAdapter extends BaseAdapter {
     private int dResource;
     ViewHolder holder = new ViewHolder();
     private ArrayList<DiaryVO> dItems = new ArrayList<>();
+    public static final String RED = "#FF0000";
+    public static final String BLUE = "#0000FF";
 
     public MyAdapter(Context context, int resource, ArrayList<DiaryVO> items) {
         dContext = context;
@@ -56,7 +60,7 @@ public class MyAdapter extends BaseAdapter {
             holder.dinner = (TextView) view.findViewById(R.id.diary_tv_dinner);
             holder.temperature = (TextView) view.findViewById(R.id.diary_tv_temp);
             holder.humid = (TextView) view.findViewById(R.id.diary_tv_humid);
-            holder.sleeptime = (TextView) view.findViewById(R.id.diary_tv_sleeptime);
+            holder.sleeptime = (TextView) view.findViewById(R.id.diary_tv_sleepTime);
             holder.bloodPressure = (TextView) view.findViewById(R.id.diary_tv_bloodPressure);
             holder.drinking = (TextView) view.findViewById(R.id.diary_tv_drinking);
 
@@ -65,16 +69,43 @@ public class MyAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
 
-        // Set Text 01
         DiaryVO diary = dItems.get(i);
+
         holder.breakfast.setText(diary.getBreakfast());
         holder.lunch.setText(diary.getLunch());
         holder.dinner.setText(diary.getDinner());
+
         holder.temperature.setText("" + diary.getTemperature());
+        if (diary.getTemperature() > 30) {
+            holder.temperature.setTextColor(Color.parseColor(RED));
+        } else if (diary.getTemperature() < 10) {
+            holder.temperature.setTextColor(Color.parseColor(BLUE));
+        }
+
         holder.humid.setText("" + diary.getHumid());
+
         holder.sleeptime.setText("" + diary.getSleepTime());
+        if (diary.getSleepTime() > 6) {
+            holder.sleeptime.setTextColor(Color.parseColor(BLUE));
+        } else if (diary.getSleepTime() < 5) {
+            holder.sleeptime.setTextColor(Color.parseColor(RED));
+        }
+
         holder.bloodPressure.setText("" + diary.getBloodPressure());
-        holder.drinking.setText(diary.getDrinking());
+        if (diary.getBloodPressure() >= 140) {
+            holder.bloodPressure.setTextColor(Color.parseColor(RED));
+        } else if (diary.getBloodPressure() <= 100) {
+            holder.bloodPressure.setTextColor(Color.parseColor(BLUE));
+        }
+
+        if (Integer.parseInt(String.valueOf(diary.getBloodPressure())) != 0) {
+            holder.drinking.setTextColor(Color.parseColor(RED));
+            holder.drinking.setText("O");
+        } else {
+            holder.drinking.setTextColor(Color.parseColor(BLUE));
+            holder.drinking.setText("X");
+        }
+
 
         return view;
     }
