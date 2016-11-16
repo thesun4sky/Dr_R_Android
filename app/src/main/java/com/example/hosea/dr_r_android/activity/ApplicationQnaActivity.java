@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ApplicationQnaActivity extends AppCompatActivity {
     private AQuery aq = new AQuery(this);
@@ -57,15 +58,12 @@ public class ApplicationQnaActivity extends AppCompatActivity {
                     tv.setText("연결 상태가 좋지 않습니다.");
                     ArrayList<QnaVO> arrayList = new ArrayList<QnaVO>();
 
-                    arrayList.add(new QnaVO(1,"호세아","제3목","컨5텐츠"));
-                    arrayList.add(new QnaVO(1,"호아","제목2","컨텐41츠"));
-                    arrayList.add(new QnaVO(1,"호세","제1목","컨텐3츠"));
-                    arrayList.add(new QnaVO(1,"세아","제1목","컨텐2츠"));
-                    arrayList.add(new QnaVO(1,"세","제목","컨텐츠12"));
-                    arrayList.add(new QnaVO(1,"세아","3제목","컨32텐츠"));
-                    arrayList.add(new QnaVO(1,"호아","제2목","컨2텐츠"));
-                    arrayList.add(new QnaVO(1,"아","제2목","컨텐츠3"));
-                    arrayList.add(new QnaVO(1,"아ㅁ","제3목","컨2텐츠"));
+                    arrayList.add(new QnaVO(1,"호세아","제3목","컨5텐츠", "날짜", 1));
+                    arrayList.add(new QnaVO(1,"호아","제목2","컨텐41츠", "날짜", 1));
+                    arrayList.add(new QnaVO(1,"호세","제1목","컨텐3츠", "날짜", 1));
+                    arrayList.add(new QnaVO(1,"세아","제1목","컨텐2츠", "날짜", 1));
+                    arrayList.add(new QnaVO(1,"세","제목","컨텐츠12", "날짜", 1));
+                    arrayList.add(new QnaVO(1,"세아","3제목","컨32텐츠", "날짜", 1));
                     linkToAdapter(arrayList);
                 }
             }

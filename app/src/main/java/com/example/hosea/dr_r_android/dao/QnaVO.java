@@ -3,7 +3,10 @@ package com.example.hosea.dr_r_android.dao;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.util.Date;
+import java.util.zip.DataFormatException;
 
 /**
  * Created by Hosea on 2016-11-09.
@@ -13,29 +16,33 @@ public class QnaVO {
     private String u_name;
     private String qna_title;
     private String qna_content;
-    private Date date;
+    private String date;
     private int count;
 
-    public QnaVO (JSONObject jsonObject) {
+    public QnaVO(JSONObject jsonObject) {
         try {
-            u_id = jsonObject.getInt("c_breakfast");
-            u_name = jsonObject.getString("c_lunch");
-            qna_title = jsonObject.getString("c_dinner");
-            qna_content = jsonObject.getString("c_temperature");
-            date = (Date) jsonObject.get("c_humid");
+            u_id = jsonObject.getInt("u_id");
+            u_name = jsonObject.getString("u_name");
+            qna_title = jsonObject.getString("qna_title");
+            qna_content = jsonObject.getString("qna_content");
+            Timestamp timestamp = new Timestamp(jsonObject.getLong("date"));
+            DateFormat format = DateFormat.getDateInstance(DateFormat.SHORT);
+            date = format.format(new Date(timestamp.getTime()));
+            count = jsonObject.getInt("count");
         } catch (JSONException e) {
+
             e.printStackTrace();
         }
     }
 
     //테스트를 위한 생성자
-    public QnaVO (int id, String name, String title, String content) {
+    public QnaVO(int id, String name, String title, String content, String getdate, int getcount) {
         u_id = id;
         u_name = name;
         qna_title = title;
         qna_content = content;
-        date = new Date();
-        count = 0;
+        date = getdate;
+        count = getcount;
     }
 
     public int getU_id() {
@@ -70,19 +77,19 @@ public class QnaVO {
         this.qna_content = qna_content;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
     public int getCount() {
         return count;
     }
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

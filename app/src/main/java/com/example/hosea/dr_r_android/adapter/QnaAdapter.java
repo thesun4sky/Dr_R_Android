@@ -23,6 +23,7 @@ public class QnaAdapter extends BaseAdapter {
     private int dResource;
     private QnaHolder holder = new QnaHolder();
     private ArrayList<QnaVO> dItems = new ArrayList<>();
+    private QnaVO qnaVO;
 
     public QnaAdapter(Context context, int resource, ArrayList<QnaVO> items) {
         dContext = context;
@@ -62,11 +63,11 @@ public class QnaAdapter extends BaseAdapter {
             holder = (QnaHolder) view.getTag();
         }
 
-        QnaVO qnaVO = dItems.get(i);
+        qnaVO = dItems.get(i);
 
         holder.u_name.setText(qnaVO.getU_name());
         holder.qna_title.setText(qnaVO.getQna_title());
-        holder.date.setText(qnaVO.getDate().toString());
+        holder.date.setText(qnaVO.getDate());
         holder.count.setText("" + qnaVO.getCount());
 
         return view;

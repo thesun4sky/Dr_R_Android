@@ -15,6 +15,8 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.example.hosea.dr_r_android.R;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -266,7 +268,14 @@ public class WriteDiaryActivity extends AppCompatActivity {
         aq.ajax("http://52.41.218.18:8080/writeDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
-                Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
+                try {
+                    if (html.getString("msg").equals("정상 작동")) {
+                        Toast.makeText(getApplicationContext(), "작성 되었습니다.", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
