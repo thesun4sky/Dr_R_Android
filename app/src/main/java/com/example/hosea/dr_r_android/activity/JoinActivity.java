@@ -5,8 +5,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
@@ -15,9 +19,11 @@ import com.androidquery.callback.AjaxStatus;
 import com.example.hosea.dr_r_android.R;
 import com.example.hosea.dr_r_android.dao.UserVO;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -25,9 +31,12 @@ import java.util.UUID;
 public class JoinActivity extends AppCompatActivity {
 
     private AQuery aq = new AQuery(this);
-    EditText login_id, name, password1,password2, phone, disease, hopitalName;
+    EditText login_id, name, password1,password2, phone, disease;
     Button checkId, submit;
-
+    String array ;
+    Object hospitalName;
+    String[] string;
+    Spinner spinner;
     public int sum(int a, int b) {return a+b;}
 
     @Override
@@ -41,9 +50,26 @@ public class JoinActivity extends AppCompatActivity {
         password2 = (EditText) findViewById(R.id.password2);
         phone = (EditText) findViewById(R.id.user_phone);
         disease = (EditText) findViewById(R.id.disease);
-        hopitalName = (EditText) findViewById(R.id.hospitalName);
+        spinner = (Spinner) findViewById(R.id.spinner_hospital);
         checkId = (Button) findViewById(R.id.checkId);
         submit = (Button) findViewById(R.id.joinSubmit);
+        aq.ajax("http://52.41.218.18:8080/getHospital", JSONArray.class, new AjaxCallback<JSONArray>() {
+            @Override
+            public void callback(String url, JSONArray html, AjaxStatus status) {
+                string = new String[html.length()];
+                    for(int i=0;i<html.length();i++) {
+                        try {
+                            JSONObject jsonobject = html.getJSONObject(i);
+                            array = jsonobject.getString("a_hospital");
+                           string[i] = array;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                makeSpinner(spinner);
+            }
+        });
+
 
         checkId.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +106,7 @@ public class JoinActivity extends AppCompatActivity {
                     params.put("u_password", password1.getText().toString());
                     params.put("u_phone", phone.getText().toString());
                     params.put("u_disease", disease.getText().toString());
-                    params.put("u_hospital", hopitalName.getText().toString());
+                    params.put("u_hospital", hospitalName.toString());
                     params.put("u_device", deviceUuid.toString());
                     aq.ajax("http://52.41.218.18:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                         @Override
@@ -105,6 +131,22 @@ public class JoinActivity extends AppCompatActivity {
         });
     }
 
+
+    //병원리스트 받아와서 선택하는 스피너 생성
+    public void makeSpinner(Spinner spinner){
+        // Application of the Array to the Spinner
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, string);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinner.setAdapter(spinnerArrayAdapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                hospitalName = parent.getItemAtPosition(position);
+            }
+            public void onNothingSelected(AdapterView<?>  parent) {
+            }
+        });
+    }
 
 
 
