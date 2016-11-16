@@ -35,6 +35,7 @@
         </activity>
         <activity android:name=".activity.ReadDiaryActivity" />
         <activity android:name=".activity.WriteDiaryActivity" />
+        <activity android:name=".activity.MakeQuestionActivity" />
 
     </application>
 

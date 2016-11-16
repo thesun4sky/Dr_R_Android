@@ -15,5 +15,11 @@
     <string name="drinking">음주 : </string>
     <string name="temperature">온도 : </string>
     <string name="humid">습도 : </string>
+    <string name="write_date">작성일 : </string>
+    <string name="writer">작성자 : </string>
+    <string name="make_question">질문하기</string>
+    <string name="make_question_title">제목</string>
+    <string name="make_question_content">내용</string>
+    <string name="make_question_submit">작성 완료</string>
 
 </resources>

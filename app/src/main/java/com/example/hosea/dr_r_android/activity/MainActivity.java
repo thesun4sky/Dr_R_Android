@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(getApplicationContext(), WriteDiaryActivity.class));
                     break;
                 case R.id.btn_main_3:
-                    startActivity(new Intent(getApplicationContext(), JoinActivity.class));
+                    startActivity(new Intent(getApplicationContext(), ApplicationQnaActivity.class));
                     break;
                 case R.id.btn_main_4:
                     startActivity(new Intent(getApplicationContext(), CallDrActivity.class));

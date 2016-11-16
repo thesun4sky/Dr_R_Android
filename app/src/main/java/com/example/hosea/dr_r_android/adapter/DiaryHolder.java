@@ -5,7 +5,7 @@ import android.widget.TextView;
 /**
  * Created by Hosea on 2016-11-14.
  */
-public class ViewHolder {
+public class DiaryHolder {
     TextView breakfast;
     TextView lunch;
     TextView dinner;

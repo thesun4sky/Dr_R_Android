@@ -9,7 +9,7 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.example.hosea.dr_r_android.R;
-import com.example.hosea.dr_r_android.adapter.MyAdapter;
+import com.example.hosea.dr_r_android.adapter.DiaryAdapter;
 import com.example.hosea.dr_r_android.dao.DiaryVO;
 
 import org.json.JSONArray;
@@ -30,7 +30,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
         setContentView(R.layout.listview);
 
         //이름 설정
-        tv = (TextView) findViewById(R.id.diary_tv_userName);
+        tv = (TextView) findViewById(R.id.tv_listView_title);
         tv.setText("이호세아");
 
         readDiary();
@@ -66,9 +66,9 @@ public class ReadDiaryActivity extends AppCompatActivity {
 
     public void linktoAdapter(ArrayList<DiaryVO> list) {
         //어댑터 생성
-        MyAdapter myAdapter = new MyAdapter(this, R.layout.itemsfordiarylist, list);
+        DiaryAdapter diaryAdapter = new DiaryAdapter(this, R.layout.itemsfordiarylist, list);
         //어댑터 연결
         ListView lv = (ListView) findViewById(R.id.listView);
-        lv.setAdapter(myAdapter);
+        lv.setAdapter(diaryAdapter);
     }
 }

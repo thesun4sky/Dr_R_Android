@@ -1,14 +1,12 @@
 package com.example.hosea.dr_r_android.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.hosea.dr_r_android.R;
 import com.example.hosea.dr_r_android.dao.DiaryVO;
@@ -19,15 +17,15 @@ import java.util.ArrayList;
  * Created by Hosea on 2016-11-01.
  */
 
-public class MyAdapter extends BaseAdapter {
+public class DiaryAdapter extends BaseAdapter {
     private Context dContext;
     private int dResource;
-    ViewHolder holder = new ViewHolder();
+    private DiaryHolder holder = new DiaryHolder();
     private ArrayList<DiaryVO> dItems = new ArrayList<>();
-    public static final String RED = "#FF0000";
-    public static final String BLUE = "#0000FF";
+    private static final String RED = "#FF0000";
+    private static final String BLUE = "#0000FF";
 
-    public MyAdapter(Context context, int resource, ArrayList<DiaryVO> items) {
+    public DiaryAdapter(Context context, int resource, ArrayList<DiaryVO> items) {
         dContext = context;
         dResource = resource;
         dItems = items;
@@ -66,7 +64,7 @@ public class MyAdapter extends BaseAdapter {
 
             view.setTag(holder);
         } else {
-            holder = (ViewHolder) view.getTag();
+            holder = (DiaryHolder) view.getTag();
         }
 
         DiaryVO diary = dItems.get(i);

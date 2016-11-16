@@ -16,7 +16,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"
         android:fillViewport="true">
         <ListView
             android:id="@+id/listView"
@@ -25,8 +26,16 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"/>
-
     </ScrollView>
+
+    <Button
+        android:text="@string/make_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_gravity="center"
+        android:id="@+id/btn_qna_makeQuestion" />
 
 
 </LinearLayout>
