@@ -52,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
                 params.put("login_id", id.getText().toString());
                 params.put("u_password",password.getText().toString());
 
-                aq.ajax("http://192.168.0.2:8080/login", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                aq.ajax("http://52.41.218.18:8080/login", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                     @Override
                     public void callback(String url, JSONObject html, AjaxStatus status) {
                         Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
@@ -65,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
                             if(result == 1){
                                 Toast.makeText(getApplicationContext(),id  +"님 환영",Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                LoginActivity.this.finish();
                             }
                             else
                                 Toast.makeText(getApplicationContext(),"아이디,비밀번호 다시 확인하세요.",Toast.LENGTH_SHORT).show();
