@@ -141,14 +141,10 @@ public class SplashActivity extends Activity {
                         && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     Log.d("test", "It has permission of getUUID");
                     getUUID();
-
                     // permission was granted, yay! do the
                     // calendar task you need to do.
-
                 } else {
-
                     Log.d("test", "Permission always deny");
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }

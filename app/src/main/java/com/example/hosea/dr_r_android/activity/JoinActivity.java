@@ -1,7 +1,11 @@
 package com.example.hosea.dr_r_android.activity;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
@@ -33,6 +37,7 @@ public class JoinActivity extends AppCompatActivity {
 
     private AQuery aq = new AQuery(this);
     private EditText login_id, name, password1, password2, phone, disease;
+    private static final int MY_READ_PHONE_STATE = 0;
     private Button checkId, submit;
     private String array, deviceId;
     private Object hospitalName;
@@ -47,7 +52,9 @@ public class JoinActivity extends AppCompatActivity {
         try {
             getUUID();
         } catch (Exception e) {
+            checkPermission();
         }
+
         login_id = (EditText) findViewById(R.id.login_id);
         name = (EditText) findViewById(R.id.user_name);
         password1 = (EditText) findViewById(R.id.password1);
@@ -162,6 +169,31 @@ public class JoinActivity extends AppCompatActivity {
     }
 
 
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermission() {    //사용자에게 디바이스 정보 받아오는거 확인
+        if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE)) {
+                // Explain to the user why we need to write the permission.
+                Toast.makeText(this, "Read/Write external storage", Toast.LENGTH_SHORT).show();
+            }
+
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_READ_PHONE_STATE);
+
+            // MY_PERMISSION_REQUEST_STORAGE is an
+            // app-defined int constant
+
+        } else {
+            // 다음 부분은 항상 허용일 경우에 해당이 됩니다.
+            getUUID();
+        }
+
+    }
+
+
     //병원리스트 받아와서 선택하는 스피너 생성
     public void makeSpinner(Spinner spinner) {
         // Application of the Array to the Spinner
@@ -173,7 +205,6 @@ public class JoinActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 hospitalName = parent.getItemAtPosition(position);
             }
-
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });

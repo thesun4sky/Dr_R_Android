@@ -21,7 +21,6 @@ import java.util.ArrayList;
 public class QnaAdapter extends BaseAdapter {
     private Context dContext;
     private int dResource;
-    private QnaHolder holder = new QnaHolder();
     private ArrayList<QnaVO> dItems = new ArrayList<>();
     private QnaVO qnaVO;
 
@@ -51,24 +50,20 @@ public class QnaAdapter extends BaseAdapter {
         if (view == null) {
             LayoutInflater inflater =
                     (LayoutInflater) dContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(dResource, viewGroup,false);
-
-            holder.u_name = (TextView) view.findViewById(R.id.qna_tv_writer);
-            holder.qna_title = (TextView) view.findViewById(R.id.qna_tv_title);
-            holder.date = (TextView) view.findViewById(R.id.qna_tv_writeDate);
-            holder.count = (TextView) view.findViewById(R.id.qna_tv_count);
-
-            view.setTag(holder);
-        } else {
-            holder = (QnaHolder) view.getTag();
+            view = inflater.inflate(dResource, viewGroup, false);
         }
+
+        TextView u_name = (TextView) view.findViewById(R.id.qna_tv_writer);
+        TextView qna_title = (TextView) view.findViewById(R.id.qna_tv_title);
+        TextView date = (TextView) view.findViewById(R.id.qna_tv_writeDate);
+        TextView count = (TextView) view.findViewById(R.id.qna_tv_count);
 
         qnaVO = dItems.get(i);
 
-        holder.u_name.setText(qnaVO.getU_name());
-        holder.qna_title.setText(qnaVO.getQna_title());
-        holder.date.setText(qnaVO.getDate());
-        holder.count.setText("" + qnaVO.getCount());
+        u_name.setText(qnaVO.getU_name());
+        qna_title.setText(qnaVO.getQna_title());
+        date.setText(qnaVO.getDate());
+        count.setText("" + qnaVO.getCount());
 
         return view;
     }
