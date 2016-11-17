@@ -34,6 +34,7 @@ public class SplashActivity extends Activity {
     private AQuery aq = new AQuery(this);
     private static final int MY_READ_PHONE_STATE = 0;
     private String deviceId, u_name;
+    private Handler mHandler;
     private int u_id;
 
     @Override
@@ -51,6 +52,9 @@ public class SplashActivity extends Activity {
             checkPermission();
         }
 
+        mHandler = new Handler();
+
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_device", deviceId);
         aq.ajax("http://52.41.218.18:8080/checkUserDevice", params, JSONObject.class, new AjaxCallback<JSONObject>() {
@@ -60,11 +64,16 @@ public class SplashActivity extends Activity {
                     responseCheck(html);
                 } else {
                     Toast.makeText(getApplicationContext(), "연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
-                    u_id = -1;
-                    Intent loginIntent = new Intent(SplashActivity.this, LoginActivity.class);
-                    loginIntent.putExtra("u_device", deviceId);
-                    startActivity(loginIntent);
-                    SplashActivity.this.finish();
+
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                            intent.putExtra("u_device", deviceId);
+                            startActivity(intent);
+                            SplashActivity.this.finish();
+                        }
+                    }, 2500);
                 }
             }
         });
@@ -87,11 +96,15 @@ public class SplashActivity extends Activity {
             startActivity(mainIntent);
             SplashActivity.this.finish();
         } else {
-            Toast.makeText(getApplicationContext(), ""+u_id, Toast.LENGTH_SHORT).show();
-            Intent loginIntent = new Intent(SplashActivity.this, LoginActivity.class);
-            loginIntent.putExtra("u_device", deviceId);
-            startActivity(loginIntent);
-            SplashActivity.this.finish();
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                    intent.putExtra("u_device", deviceId);
+                    startActivity(intent);
+                    SplashActivity.this.finish();
+                }
+            }, 2000);
         }
     }
 
