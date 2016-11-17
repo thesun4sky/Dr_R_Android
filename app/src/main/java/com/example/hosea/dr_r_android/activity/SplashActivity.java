@@ -34,6 +34,7 @@ public class SplashActivity extends Activity {
     private AQuery aq = new AQuery(this);
     private static final int MY_READ_PHONE_STATE = 0;
     private String deviceId, u_name;
+    private Handler mHandler;
     private int u_id;
 
     @Override
@@ -51,7 +52,7 @@ public class SplashActivity extends Activity {
             checkPermission();
         }
 
-
+        mHandler = new Handler();
 
 
         Map<String, Object> params = new HashMap<String, Object>();
@@ -63,17 +64,16 @@ public class SplashActivity extends Activity {
                     responseCheck(html);
                 } else {
                     Toast.makeText(getApplicationContext(), "연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
-                    Handler mHandler = new Handler();
+
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            // TODO Auto-generated method stub
-                            Intent i = new Intent(SplashActivity.this, LoginActivity.class);
-                            //yyy가 이동할 activity
-                            startActivity(i);
+                            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                            intent.putExtra("u_device", deviceId);
+                            startActivity(intent);
                             SplashActivity.this.finish();
                         }
-                    }, 2500); // 1000ms
+                    }, 2500);
                 }
             }
         });
@@ -95,6 +95,16 @@ public class SplashActivity extends Activity {
             Toast.makeText(getApplicationContext(), u_name + "님 환영합니다.", Toast.LENGTH_SHORT).show();
             startActivity(mainIntent);
             SplashActivity.this.finish();
+        } else {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                    intent.putExtra("u_device", deviceId);
+                    startActivity(intent);
+                    SplashActivity.this.finish();
+                }
+            }, 2000);
         }
     }
 
