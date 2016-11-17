@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_main_4).setOnClickListener(mClick);
 
+        //로그아웃 버튼
         Button logout = (Button)findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener(){
             @Override
