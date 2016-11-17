@@ -20,7 +20,6 @@ import java.util.ArrayList;
 public class DiaryAdapter extends BaseAdapter {
     private Context dContext;
     private int dResource;
-    private DiaryHolder holder = new DiaryHolder();
     private ArrayList<DiaryVO> dItems = new ArrayList<>();
     private static final String RED = "#FF0000";
     private static final String BLUE = "#0000FF";
@@ -52,58 +51,53 @@ public class DiaryAdapter extends BaseAdapter {
             LayoutInflater inflater =
                     (LayoutInflater) dContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(dResource, viewGroup,false);
-
-            holder.breakfast = (TextView) view.findViewById(R.id.diary_tv_breakfast);
-            holder.lunch = (TextView) view.findViewById(R.id.diary_tv_lunch);
-            holder.dinner = (TextView) view.findViewById(R.id.diary_tv_dinner);
-            holder.temperature = (TextView) view.findViewById(R.id.diary_tv_temp);
-            holder.humid = (TextView) view.findViewById(R.id.diary_tv_humid);
-            holder.sleeptime = (TextView) view.findViewById(R.id.diary_tv_sleepTime);
-            holder.bloodPressure = (TextView) view.findViewById(R.id.diary_tv_bloodPressure);
-            holder.drinking = (TextView) view.findViewById(R.id.diary_tv_drinking);
-
-            view.setTag(holder);
-        } else {
-            holder = (DiaryHolder) view.getTag();
         }
+
+        TextView breakfast = (TextView) view.findViewById(R.id.diary_tv_breakfast);
+        TextView lunch = (TextView) view.findViewById(R.id.diary_tv_lunch);
+        TextView dinner = (TextView) view.findViewById(R.id.diary_tv_dinner);
+        TextView temperature = (TextView) view.findViewById(R.id.diary_tv_temp);
+        TextView humid = (TextView) view.findViewById(R.id.diary_tv_humid);
+        TextView sleeptime = (TextView) view.findViewById(R.id.diary_tv_sleepTime);
+        TextView bloodPressure = (TextView) view.findViewById(R.id.diary_tv_bloodPressure);
+        TextView drinking = (TextView) view.findViewById(R.id.diary_tv_drinking);
 
         DiaryVO diary = dItems.get(i);
 
-        holder.breakfast.setText(diary.getBreakfast());
-        holder.lunch.setText(diary.getLunch());
-        holder.dinner.setText(diary.getDinner());
+        breakfast.setText(diary.getBreakfast());
+        lunch.setText(diary.getLunch());
+        dinner.setText(diary.getDinner());
 
-        holder.temperature.setText("" + diary.getTemperature());
+        temperature.setText("" + diary.getTemperature());
         if (diary.getTemperature() > 30) {
-            holder.temperature.setTextColor(Color.parseColor(RED));
+           temperature.setTextColor(Color.parseColor(RED));
         } else if (diary.getTemperature() < 10) {
-            holder.temperature.setTextColor(Color.parseColor(BLUE));
+            temperature.setTextColor(Color.parseColor(BLUE));
         }
 
-        holder.humid.setText("" + diary.getHumid());
+        humid.setText("" + diary.getHumid());
 
-        holder.sleeptime.setText("" + diary.getSleepTime());
+        sleeptime.setText("" + diary.getSleepTime());
         if (diary.getSleepTime() > 6) {
-            holder.sleeptime.setTextColor(Color.parseColor(BLUE));
+            sleeptime.setTextColor(Color.parseColor(BLUE));
         } else if (diary.getSleepTime() < 5) {
-            holder.sleeptime.setTextColor(Color.parseColor(RED));
+            sleeptime.setTextColor(Color.parseColor(RED));
         }
 
-        holder.bloodPressure.setText("" + diary.getBloodPressure());
+        bloodPressure.setText("" + diary.getBloodPressure());
         if (diary.getBloodPressure() >= 140) {
-            holder.bloodPressure.setTextColor(Color.parseColor(RED));
+            bloodPressure.setTextColor(Color.parseColor(RED));
         } else if (diary.getBloodPressure() <= 100) {
-            holder.bloodPressure.setTextColor(Color.parseColor(BLUE));
+            bloodPressure.setTextColor(Color.parseColor(BLUE));
         }
 
         if (Integer.parseInt(String.valueOf(diary.getBloodPressure())) != 0) {
-            holder.drinking.setTextColor(Color.parseColor(RED));
-            holder.drinking.setText("O");
+            drinking.setTextColor(Color.parseColor(RED));
+            drinking.setText("O");
         } else {
-            holder.drinking.setTextColor(Color.parseColor(BLUE));
-            holder.drinking.setText("X");
+            drinking.setTextColor(Color.parseColor(BLUE));
+            drinking.setText("X");
         }
-
 
         return view;
     }
