@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
                                     mainIntent.putExtra("u_device", priviousIntent.getStringExtra("u_device"));
                                     startActivity(mainIntent);
                                     LoginActivity.this.finish();
-                                } else if (u_id < 0) {
+                                } else {
                                     Toast.makeText(getApplicationContext(), "아이디 또는 비밀번호를 확인하세요", Toast.LENGTH_SHORT).show();
                                     id.setText("");
                                     id.requestFocus();
