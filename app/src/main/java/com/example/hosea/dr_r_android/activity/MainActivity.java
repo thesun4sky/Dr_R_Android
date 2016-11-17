@@ -4,14 +4,17 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+
 import com.example.hosea.dr_r_android.R;
 
 public class MainActivity extends AppCompatActivity {
+    private Intent previousIntent, intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        previousIntent = getIntent();
 
         View button1 = findViewById(R.id.btn_main_1);
         button1.setOnClickListener(mClick);
@@ -31,16 +34,28 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.btn_main_1:
-                    startActivity(new Intent(getApplicationContext(), ReadDiaryActivity.class));
+                    intent = new Intent(getApplicationContext(), ReadDiaryActivity.class);
+                    intent.putExtra("u_id", previousIntent.getIntExtra("u_id", 0))
+                            .putExtra("u_name", previousIntent.getStringExtra("u_name"));
+                    startActivity(intent);
                     break;
                 case R.id.btn_main_2:
-                    startActivity(new Intent(getApplicationContext(), WriteDiaryActivity.class));
+                    intent = new Intent(getApplicationContext(), WriteDiaryActivity.class);
+                    intent.putExtra("u_id", previousIntent.getIntExtra("u_id", 0))
+                            .putExtra("u_name", previousIntent.getStringExtra("u_name"));
+                    startActivity(intent);
                     break;
                 case R.id.btn_main_3:
-                    startActivity(new Intent(getApplicationContext(), ApplicationQnaActivity.class));
+                    intent = new Intent(getApplicationContext(), ApplicationQnaActivity.class);
+                    intent.putExtra("u_id", previousIntent.getIntExtra("u_id", 0))
+                            .putExtra("u_name", previousIntent.getStringExtra("u_name"));
+                    startActivity(intent);
                     break;
                 case R.id.btn_main_4:
-                    startActivity(new Intent(getApplicationContext(), CallDrActivity.class));
+                    intent = new Intent(getApplicationContext(), CallDrActivity.class);
+                    intent.putExtra("u_id", previousIntent.getIntExtra("u_id", 0))
+                            .putExtra("u_name", previousIntent.getStringExtra("u_name"));
+                    startActivity(intent);
                     break;
                 //TODO shere버튼 생성 예정
 //                    case R.id.share:

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class ApplicationQnaActivity extends AppCompatActivity {
+    private Intent previousIntent;
     private AQuery aq = new AQuery(this);
     TextView tv;
     ListView lv;
@@ -33,6 +34,7 @@ public class ApplicationQnaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview_qna);
+        previousIntent = getIntent();
 
         //이름 설정
         tv = (TextView) findViewById(R.id.tv_listView_title);
@@ -41,7 +43,10 @@ public class ApplicationQnaActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), MakeQuestionActivity.class));
+                Intent intent = new Intent(getApplicationContext(), MakeQuestionActivity.class);
+                intent.putExtra("u_id", previousIntent.getIntExtra("u_id", 0))
+                        .putExtra("u_name", previousIntent.getStringExtra("u_name"));
+                startActivity(intent);
             }
         });
 

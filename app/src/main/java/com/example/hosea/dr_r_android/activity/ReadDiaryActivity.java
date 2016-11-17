@@ -1,5 +1,6 @@
 package com.example.hosea.dr_r_android.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
@@ -20,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ReadDiaryActivity extends AppCompatActivity {
-
+    private Intent previousIntent;
     private AQuery aq = new AQuery(this);
     TextView tv;
 
@@ -28,10 +29,11 @@ public class ReadDiaryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview);
+        previousIntent = getIntent();
 
         //이름 설정
         tv = (TextView) findViewById(R.id.tv_listView_title);
-        tv.setText("이호세아");
+        tv.setText(previousIntent.getStringExtra("u_name"));
 
         readDiary();
 
@@ -39,7 +41,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
 
     public void readDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id", 41);
+        params.put("u_id", previousIntent.getIntExtra("u_id", 0));
         aq.ajax("http://52.41.218.18:8080/getDiaries", params, JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
             public void callback(String url, JSONArray html, AjaxStatus status) {

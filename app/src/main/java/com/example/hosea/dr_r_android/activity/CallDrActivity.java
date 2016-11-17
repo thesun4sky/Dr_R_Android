@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CallDrActivity extends AppCompatActivity {
-
+    private Intent previousIntent;
     private AQuery aq = new AQuery(this);
     String uri, phoneNum;
     JSONObject jsonObject;
@@ -33,20 +33,21 @@ public class CallDrActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calldoctor);
+        previousIntent = getIntent();
 
         tv = (TextView) findViewById(R.id.tv_doctor_phone_num);
         iv = (ImageView) findViewById(R.id.doctor_img);
 
 
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id", 41);
+        params.put("u_id", previousIntent.getIntExtra("u_id", 0));
         aq.ajax("http://52.41.218.18:8080/getDocPhone", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
                     try {
                         phoneNum = html.getString("a_phone");
-                        uri = "tel:"+phoneNum;
+                        uri = "tel:" + phoneNum;
                         tv.setText(phoneNum);
                         tv.setOnClickListener(new View.OnClickListener() {
                             @Override

@@ -1,5 +1,6 @@
 package com.example.hosea.dr_r_android.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -24,8 +25,8 @@ import java.util.Map;
 import static com.example.hosea.dr_r_android.R.string.temperature;
 
 public class MakeQuestionActivity extends AppCompatActivity {
-
     private AQuery aq = new AQuery(this);
+    private Intent previousIntent;
     EditText title, content;
     Button submit;
 
@@ -33,6 +34,7 @@ public class MakeQuestionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_makequestion);
+        previousIntent = getIntent();
 
         title = (EditText) findViewById(R.id.et_makeQuestion_title);
         content = (EditText) findViewById(R.id.et_makeQuestion_content);
@@ -42,8 +44,8 @@ public class MakeQuestionActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (!title.getText().toString().equals("") && !content.getText().toString().equals("")) {
                     Map<String, Object> params = new HashMap<String, Object>();
-                    params.put("u_id", 41);
-                    params.put("u_name", "이호세아");
+                    params.put("u_id", previousIntent.getIntExtra("u_id", 0));
+                    params.put("u_name", previousIntent.getStringExtra("u_name"));
                     params.put("qna_title", title.getText());
                     params.put("qna_content", content.getText());
                     aq.ajax("http://52.41.218.18:8080/makeQuestion", params, JSONObject.class, new AjaxCallback<JSONObject>() {

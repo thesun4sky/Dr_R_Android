@@ -24,56 +24,65 @@ import java.util.Map;
  * Created by LeeMoonSeong on 2016-11-10.
  */
 public class LoginActivity extends AppCompatActivity {
-    public int result_last;
     private AQuery aq = new AQuery(this);
-    private EditText id;
-    private EditText password;
+    private Intent priviousIntent;
+    private EditText id, password;
+    private Button join, login;
+    private String u_name;
+    private int u_id;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        priviousIntent = getIntent();
 
-        id = (EditText)findViewById(R.id.login_id);
-        password = (EditText)findViewById(R.id.login_password);
-        Button login = (Button)findViewById(R.id.request_login);
-        Button join = (Button)findViewById(R.id.request_join);
+        id = (EditText) findViewById(R.id.login_id);
+        password = (EditText) findViewById(R.id.login_password);
+        login = (Button) findViewById(R.id.request_login);
+        join = (Button) findViewById(R.id.request_join);
 
-        join.setOnClickListener(new View.OnClickListener(){
+        join.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), JoinActivity.class));
             }
         });
 
-        login.setOnClickListener(new View.OnClickListener(){
+        login.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("login_id", id.getText().toString());
-                params.put("u_password",password.getText().toString());
+                params.put("u_password", password.getText().toString());
 
                 aq.ajax("http://52.41.218.18:8080/login", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                     @Override
-                    public void callback(String url, JSONObject html, AjaxStatus status) {
-                        Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
-                        String result_json = html.toString();
-                        try {
-                            JSONObject jsonRoot  = new JSONObject(result_json);
-                            int result = jsonRoot.getInt("num");
-                            result_last = result;
+                    public void callback(String url, JSONObject jsonObject, AjaxStatus status) {
+                        if (jsonObject != null) {
+                            try {
+                                u_id = jsonObject.getInt("u_id");
+                                u_name = jsonObject.getString("u_name");
 
-                            if(result == 1){
-                                Toast.makeText(getApplicationContext(),id  +"님 환영",Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                LoginActivity.this.finish();
+                                if (u_id > 0) {
+                                    Toast.makeText(getApplicationContext(), u_name + "님 환영합니다.", Toast.LENGTH_SHORT).show();
+                                    Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                    mainIntent.putExtra("u_id", u_id);
+                                    mainIntent.putExtra("u_name", u_name);
+                                    mainIntent.putExtra("u_device", priviousIntent.getStringExtra("u_device"));
+                                    startActivity(mainIntent);
+                                    LoginActivity.this.finish();
+                                } else if (u_id < 0) {
+                                    Toast.makeText(getApplicationContext(), "아이디 또는 비밀번호를 확인하세요", Toast.LENGTH_SHORT).show();
+                                    id.setText("");
+                                    id.requestFocus();
+                                    password.setText("");
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                            else
-                                Toast.makeText(getApplicationContext(),"아이디,비밀번호 다시 확인하세요.",Toast.LENGTH_SHORT).show();
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+
 
                     }
                 });

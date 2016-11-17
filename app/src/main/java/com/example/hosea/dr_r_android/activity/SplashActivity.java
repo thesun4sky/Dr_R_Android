@@ -32,17 +32,18 @@ import java.util.UUID;
  */
 public class SplashActivity extends Activity {
     private AQuery aq = new AQuery(this);
-    public static final int MY_READ_PHONE_STATE =0;
-    public static String deviceId;
-    public int u_id;
-    public int result_last;
-    public String name;
+    private static final int MY_READ_PHONE_STATE = 0;
+    private String deviceId, u_name;
+    private int u_id;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        u_id = 0;
 
         try {
             getUUID();
@@ -55,94 +56,67 @@ public class SplashActivity extends Activity {
         aq.ajax("http://52.41.218.18:8080/checkUserDevice", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
-                //Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
-                String result_json = html.toString();
-                try {
-                    JSONObject jsonRoot  = new JSONObject(result_json);
-                    int result = jsonRoot.getInt("num");
-                    String result_name = jsonRoot.getString("msg");
-                    name = result_name;
-                    result_last = result;
-                    if(result==1){
-//                        Toast toast = Toast.makeText(getApplicationContext(), name + "님 어서오세요.^^*",Toast.LENGTH_SHORT);
-//                        toast.setGravity(Gravity.CENTER, 0, 50);
-//                        toast.show();
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        //Id 받아오기
-
-        aq.ajax("http://52.41.218.18:8080/findUserId", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject html, AjaxStatus status) {
-                //Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
-                String result_json = html.toString();
-                try {
-                    JSONObject jsonRoot  = new JSONObject(result_json);
-                    int result = jsonRoot.getInt("num");
-                    u_id = result;
-                    MyApplication myapp = (MyApplication)getApplicationContext();
-                    myapp.setU_id(u_id);
-                    myapp.setDeviceId(deviceId);
-                    Toast.makeText(getApplicationContext(),"유저" + myapp.getU_id() + "기기"+myapp.getDeviceId(),Toast.LENGTH_SHORT).show();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-
-
-
-        Handler hd = new Handler();
-        hd.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                /* 메뉴액티비티를 실행하고 로딩화면을 죽인다.*/
-                if(result_last == 1) {
-                    Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
-                    SplashActivity.this.startActivity(mainIntent);
-                }
-                else if(result_last ==0){
+                if (html != null) {
+                    responseCheck(html);
+                } else {
+                    Toast.makeText(getApplicationContext(), "연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
+                    u_id = -1;
                     Intent loginIntent = new Intent(SplashActivity.this, LoginActivity.class);
-                    SplashActivity.this.startActivity(loginIntent);
+                    loginIntent.putExtra("u_device", deviceId);
+                    startActivity(loginIntent);
                 }
-                SplashActivity.this.finish();
+
             }
+        });
+    }
 
-        }, 2000);
+    public void responseCheck(JSONObject jsonObject) {
+        try {
+            u_id = jsonObject.getInt("num");
+            u_name = jsonObject.getString("msg");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
+
+        if (u_id > 0) {
+            Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
+            mainIntent.putExtra("u_id", u_id);
+            mainIntent.putExtra("u_name", u_name);
+            mainIntent.putExtra("u_device", deviceId);
+            Toast.makeText(getApplicationContext(), u_name + "님 환영합니다.", Toast.LENGTH_SHORT).show();
+            startActivity(mainIntent);
+        } else {
+            Toast.makeText(getApplicationContext(), u_id, Toast.LENGTH_SHORT).show();
+            Intent loginIntent = new Intent(SplashActivity.this, LoginActivity.class);
+            loginIntent.putExtra("u_device", deviceId);
+            startActivity(loginIntent);
+        }
+        SplashActivity.this.finish();
     }
 
 
     @TargetApi(Build.VERSION_CODES.M)
-    private void checkPermission(){    //사용자에게 디바이스 정보 받아오는거 확인
-            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
-                    != PackageManager.PERMISSION_GRANTED) {
+    private void checkPermission() {    //사용자에게 디바이스 정보 받아오는거 확인
+        if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
 
-                // Should we show an explanation?
-                if (shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE)) {
-                    // Explain to the user why we need to write the permission.
-                    Toast.makeText(this, "Read/Write external storage", Toast.LENGTH_SHORT).show();
-                }
-
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        MY_READ_PHONE_STATE);
-
-                // MY_PERMISSION_REQUEST_STORAGE is an
-                // app-defined int constant
-
-            } else {
-                // 다음 부분은 항상 허용일 경우에 해당이 됩니다.
-                getUUID();
+            // Should we show an explanation?
+            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE)) {
+                // Explain to the user why we need to write the permission.
+                Toast.makeText(this, "Read/Write external storage", Toast.LENGTH_SHORT).show();
             }
+
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_READ_PHONE_STATE);
+
+            // MY_PERMISSION_REQUEST_STORAGE is an
+            // app-defined int constant
+
+        } else {
+            // 다음 부분은 항상 허용일 경우에 해당이 됩니다.
+            getUUID();
+        }
 
     }
 
@@ -177,9 +151,9 @@ public class SplashActivity extends Activity {
         tmSerial = "" + tm.getSimSerialNumber();
         androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
 
-        UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
+        UUID deviceUuid = new UUID(androidId.hashCode(), ((long) tmDevice.hashCode() << 32) | tmSerial.hashCode());
         deviceId = deviceUuid.toString();
 
-        Log.d("test","Device UUID : "+ deviceId);
+        Log.d("test", "Device UUID : " + deviceId);
     }
 }

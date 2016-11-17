@@ -1,5 +1,6 @@
 package com.example.hosea.dr_r_android.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -24,6 +25,7 @@ import java.util.Map;
 
 public class WriteDiaryActivity extends AppCompatActivity {
 
+    private Intent previousIntent;
     private AQuery aq = new AQuery(this);
     RadioButton drinking;
     Button submit;
@@ -37,6 +39,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_writediary);
+        previousIntent = getIntent();
 
         drinking = (RadioButton) findViewById(R.id.drink_yes);
         //아침 메뉴
@@ -252,7 +255,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
     public void writeDiary() {
         MyApplication myapp = (MyApplication)getApplicationContext();
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id", myapp.getU_id());
+        params.put("u_id", previousIntent.getIntExtra("u_id", 0));
         params.put("breakfast",b_menu1.toString() +","+ b_menu2.toString() +","+ b_menu3.toString());
         params.put("lunch",l_menu1.toString() +","+ l_menu2.toString() +","+ l_menu3.toString());
         params.put("dinner",d_menu1.toString() +","+ d_menu2.toString() +","+ d_menu3.toString());
