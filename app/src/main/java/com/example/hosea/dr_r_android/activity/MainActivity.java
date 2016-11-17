@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 
 import com.example.hosea.dr_r_android.R;
 
@@ -25,7 +26,15 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_main_4).setOnClickListener(mClick);
 
-
+        Button logout = (Button)findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent logoutIntent = new Intent(getApplicationContext(),LoginActivity.class);
+                startActivity(logoutIntent);
+                MainActivity.this.finish();
+            }
+        });
     }
 
 

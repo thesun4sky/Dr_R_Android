@@ -51,9 +51,6 @@ public class SplashActivity extends Activity {
             checkPermission();
         }
 
-
-
-
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_device", deviceId);
         aq.ajax("http://52.41.218.18:8080/checkUserDevice", params, JSONObject.class, new AjaxCallback<JSONObject>() {
@@ -63,17 +60,11 @@ public class SplashActivity extends Activity {
                     responseCheck(html);
                 } else {
                     Toast.makeText(getApplicationContext(), "연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
-                    Handler mHandler = new Handler();
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            // TODO Auto-generated method stub
-                            Intent i = new Intent(SplashActivity.this, LoginActivity.class);
-                            //yyy가 이동할 activity
-                            startActivity(i);
-                            SplashActivity.this.finish();
-                        }
-                    }, 2500); // 1000ms
+                    u_id = -1;
+                    Intent loginIntent = new Intent(SplashActivity.this, LoginActivity.class);
+                    loginIntent.putExtra("u_device", deviceId);
+                    startActivity(loginIntent);
+                    SplashActivity.this.finish();
                 }
             }
         });
@@ -94,6 +85,12 @@ public class SplashActivity extends Activity {
             mainIntent.putExtra("u_device", deviceId);
             Toast.makeText(getApplicationContext(), u_name + "님 환영합니다.", Toast.LENGTH_SHORT).show();
             startActivity(mainIntent);
+            SplashActivity.this.finish();
+        } else {
+            Toast.makeText(getApplicationContext(), ""+u_id, Toast.LENGTH_SHORT).show();
+            Intent loginIntent = new Intent(SplashActivity.this, LoginActivity.class);
+            loginIntent.putExtra("u_device", deviceId);
+            startActivity(loginIntent);
             SplashActivity.this.finish();
         }
     }

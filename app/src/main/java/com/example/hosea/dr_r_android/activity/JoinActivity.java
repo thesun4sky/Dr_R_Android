@@ -112,8 +112,8 @@ public class JoinActivity extends AppCompatActivity {
                         @Override
                         public void callback(String url, JSONObject html, AjaxStatus status) {
                             Toast.makeText(getApplicationContext(), html.toString(), Toast.LENGTH_SHORT).show();
-                            try {
-                                login_id.setText(html.getString("login_id"));
+                                try {
+                                    login_id.setText(html.getString("login_id"));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
