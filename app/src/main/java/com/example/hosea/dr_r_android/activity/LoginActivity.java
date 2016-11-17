@@ -61,8 +61,8 @@ public class LoginActivity extends AppCompatActivity {
                     public void callback(String url, JSONObject jsonObject, AjaxStatus status) {
                         if (jsonObject != null) {
                             try {
-                                u_id = jsonObject.getInt("u_id");
-                                u_name = jsonObject.getString("u_name");
+                                u_id = jsonObject.getInt("num");
+                                u_name = jsonObject.getString("msg");
 
                                 if (u_id > 0) {
                                     Toast.makeText(getApplicationContext(), u_name + "님 환영합니다.", Toast.LENGTH_SHORT).show();

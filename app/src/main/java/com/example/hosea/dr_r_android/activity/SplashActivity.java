@@ -64,8 +64,8 @@ public class SplashActivity extends Activity {
                     Intent loginIntent = new Intent(SplashActivity.this, LoginActivity.class);
                     loginIntent.putExtra("u_device", deviceId);
                     startActivity(loginIntent);
+                    SplashActivity.this.finish();
                 }
-
             }
         });
     }
@@ -78,7 +78,6 @@ public class SplashActivity extends Activity {
             e.printStackTrace();
         }
 
-
         if (u_id > 0) {
             Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
             mainIntent.putExtra("u_id", u_id);
@@ -86,13 +85,14 @@ public class SplashActivity extends Activity {
             mainIntent.putExtra("u_device", deviceId);
             Toast.makeText(getApplicationContext(), u_name + "님 환영합니다.", Toast.LENGTH_SHORT).show();
             startActivity(mainIntent);
+            SplashActivity.this.finish();
         } else {
             Toast.makeText(getApplicationContext(), u_id, Toast.LENGTH_SHORT).show();
             Intent loginIntent = new Intent(SplashActivity.this, LoginActivity.class);
             loginIntent.putExtra("u_device", deviceId);
             startActivity(loginIntent);
+            SplashActivity.this.finish();
         }
-        SplashActivity.this.finish();
     }
 
 
