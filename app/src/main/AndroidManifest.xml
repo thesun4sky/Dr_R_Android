@@ -3,7 +3,9 @@
     package="com.example.hosea.dr_r_android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:name=".activity.MyApplication"
         android:allowBackup="true"
@@ -23,6 +25,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.VoiceToTextActivity"/>
         <activity android:name=".activity.LoginActivity"/>
         <activity android:name=".activity.ApplicationQnaActivity" />
         <activity android:name=".activity.JoinActivity" />
