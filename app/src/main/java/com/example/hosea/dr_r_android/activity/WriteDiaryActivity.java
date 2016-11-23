@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,16 +30,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WriteDiaryActivity extends AppCompatActivity  {
+    private static final int BREAKFAST_CODE =1001;
+    private static final int LUNCH_CODE =1002;
+    private static final int DINNER_CODE =1003;
 
     private Intent previousIntent;
     private AQuery aq = new AQuery(this);
     RadioButton drinking;
     Button submit;
-    Object b_menu1,b_menu2,b_menu3;
     Button recordAudio;
-    TextView audioToText;
-    Object l_menu1,l_menu2,l_menu3;
-    Object d_menu1,d_menu2,d_menu3;
+    TextView breakfast;
+    TextView lunch;
+    TextView dinner;
     Object temperature ,humidity ,sleepTime, bloodPressure ;
     SpeechRecognizer mRecognizer;
 
@@ -50,14 +53,17 @@ public class WriteDiaryActivity extends AppCompatActivity  {
 
         previousIntent = getIntent();
         recordAudio = (Button)findViewById(R.id.audio);
-        audioToText = (TextView)findViewById(R.id.breakfast);
+        breakfast = (TextView)findViewById(R.id.breakfast);
+        lunch = (TextView)findViewById(R.id.lunch);
+        dinner = (TextView)findViewById(R.id.dinner);
+
 
         recordAudio.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 Intent intent= new Intent(getApplicationContext(),VoiceToTextActivity.class);
-                intent.putExtra("tospeach", "아침 머드셧나요");
-                startActivityForResult(intent,1001);
+                intent.putExtra("tospeach", "아침 뭐 드셧나요");
+                startActivityForResult(intent,BREAKFAST_CODE);
             }
         });
 
@@ -108,99 +114,6 @@ public class WriteDiaryActivity extends AppCompatActivity  {
 //            public void onNothingSelected(AdapterView<?>  parent) {
 //            }
 //        });
-
-        //점심 메뉴
-        //메뉴 1 선택
-        Spinner l_menu1Spinner = (Spinner)findViewById(R.id.l_spinner_menu1);
-        final ArrayAdapter l_menu1Adapter = ArrayAdapter.createFromResource(this,
-                R.array.menu1, android.R.layout.simple_spinner_item);
-        l_menu1Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        l_menu1Spinner.setAdapter(l_menu1Adapter);
-
-        l_menu1Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                l_menu1 = parent.getItemAtPosition(position);
-            }
-            public void onNothingSelected(AdapterView<?>  parent) {
-            }
-        });
-
-        //메뉴 2 선택
-        Spinner l_menu2Spinner = (Spinner)findViewById(R.id.l_spinner_menu2);
-        final ArrayAdapter l_menu2Adapter = ArrayAdapter.createFromResource(this,
-                R.array.menu2, android.R.layout.simple_spinner_item);
-        l_menu2Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        l_menu2Spinner.setAdapter(l_menu2Adapter);
-
-        l_menu2Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                l_menu2 = parent.getItemAtPosition(position);
-            }
-            public void onNothingSelected(AdapterView<?>  parent) {
-            }
-        });
-
-        //메뉴 3 선택
-        Spinner l_menu3Spinner = (Spinner)findViewById(R.id.l_spinner_menu3);
-        final ArrayAdapter l_menu3Adapter = ArrayAdapter.createFromResource(this,
-                R.array.menu3, android.R.layout.simple_spinner_item);
-        l_menu3Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        l_menu3Spinner.setAdapter(l_menu3Adapter);
-
-        l_menu3Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                l_menu3 = parent.getItemAtPosition(position);
-            }
-            public void onNothingSelected(AdapterView<?>  parent) {
-            }
-        });
-
-
-        //저녁 메뉴
-        //메뉴 1 선택
-        Spinner d_menu1Spinner = (Spinner)findViewById(R.id.d_spinner_menu1);
-        final ArrayAdapter d_menu1Adapter = ArrayAdapter.createFromResource(this,
-                R.array.menu1, android.R.layout.simple_spinner_item);
-        d_menu1Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        d_menu1Spinner.setAdapter(d_menu1Adapter);
-
-        d_menu1Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                d_menu1 = parent.getItemAtPosition(position);
-            }
-            public void onNothingSelected(AdapterView<?>  parent) {
-            }
-        });
-
-        //메뉴 2 선택
-        Spinner d_menu2Spinner = (Spinner)findViewById(R.id.d_spinner_menu2);
-        final ArrayAdapter d_menu2Adapter = ArrayAdapter.createFromResource(this,
-                R.array.menu2, android.R.layout.simple_spinner_item);
-        d_menu2Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        d_menu2Spinner.setAdapter(d_menu2Adapter);
-
-        d_menu2Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                d_menu2 = parent.getItemAtPosition(position);
-            }
-            public void onNothingSelected(AdapterView<?>  parent) {
-            }
-        });
-
-        //메뉴 3 선택
-        Spinner d_menu3Spinner = (Spinner)findViewById(R.id.d_spinner_menu3);
-        final ArrayAdapter d_menu3Adapter = ArrayAdapter.createFromResource(this,
-                R.array.menu3, android.R.layout.simple_spinner_item);
-        d_menu3Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        d_menu3Spinner.setAdapter(d_menu3Adapter);
-
-        d_menu3Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                d_menu3 = parent.getItemAtPosition(position);
-            }
-            public void onNothingSelected(AdapterView<?>  parent) {
-            }
-        });
 
 
         //온도 선택
@@ -277,9 +190,9 @@ public class WriteDiaryActivity extends AppCompatActivity  {
         MyApplication myapp = (MyApplication)getApplicationContext();
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        params.put("breakfast",b_menu1.toString() +","+ b_menu2.toString() +","+ b_menu3.toString());
-        params.put("lunch",l_menu1.toString() +","+ l_menu2.toString() +","+ l_menu3.toString());
-        params.put("dinner",d_menu1.toString() +","+ d_menu2.toString() +","+ d_menu3.toString());
+        params.put("breakfast", breakfast.getText().toString());
+        params.put("lunch", lunch.getText().toString());
+        params.put("dinner",dinner.getText().toString());
         params.put("temperature", Integer.parseInt(temperature.toString()));
         params.put("humid", Integer.parseInt((humidity.toString())));
         params.put("sleepTime", Integer.parseInt((sleepTime.toString())));
@@ -305,9 +218,23 @@ public class WriteDiaryActivity extends AppCompatActivity  {
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(requestCode ==1001 &&resultCode == RESULT_OK) {
+        if(requestCode ==BREAKFAST_CODE &&resultCode == RESULT_OK) {
             String result = data.getExtras().getString("result_speach");
-            audioToText.setText(result);
+            breakfast.setText(result);
+            Intent intent= new Intent(getApplicationContext(),VoiceToTextActivity.class);
+            intent.putExtra("tospeach", "점심 뭐 드셧나요");
+            startActivityForResult(intent,LUNCH_CODE);
+        }
+        if(requestCode ==LUNCH_CODE &&resultCode == RESULT_OK) {
+            String result = data.getExtras().getString("result_speach");
+            lunch.setText(result);
+            Intent intent= new Intent(getApplicationContext(),VoiceToTextActivity.class);
+            intent.putExtra("tospeach", "저녁 뭐 드셧나요");
+            startActivityForResult(intent,DINNER_CODE);
+        }
+        if(requestCode ==DINNER_CODE &&resultCode == RESULT_OK) {
+            String result = data.getExtras().getString("result_speach");
+            dinner.setText(result);
         }
     }
 //    public void onClick(View v) {
