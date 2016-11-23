@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 
 import com.example.hosea.dr_r_android.R;
@@ -24,7 +25,7 @@ import java.util.Locale;
 public class VoiceToTextActivity  extends AppCompatActivity {
         private final int REQ_CODE_SPEECH_INPUT = 1001;
         String input;
-        Button btnspeak;
+
         TextToSpeech tts;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +33,7 @@ public class VoiceToTextActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voicetotext);
         input = getIntent().getStringExtra("tospeach");
-        btnspeak =(Button)findViewById(R.id.startspeach);
-
-
+        
         tts=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -45,12 +44,15 @@ public class VoiceToTextActivity  extends AppCompatActivity {
             }
         });
 
-        btnspeak.setOnClickListener(new View.OnClickListener(){
+
+        new Handler().postDelayed(new Runnable()
+        {
             @Override
-            public void onClick(View view){
+            public void run()
+            {
                 promptSpeechInput();
             }
-        });
+        }, 1500);// 0.5초 정도 딜레이를 준 후 시작
 
 
     }
