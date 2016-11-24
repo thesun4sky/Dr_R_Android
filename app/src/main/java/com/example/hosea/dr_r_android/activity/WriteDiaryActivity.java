@@ -1,11 +1,13 @@
 package com.example.hosea.dr_r_android.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,10 +32,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WriteDiaryActivity extends AppCompatActivity  {
+    private static final String BREAKFAST_SPEACH = "아침 뭐 드셨나요";
+    private static final String LUNCH_SPEACH = "점심 뭐 드셨나요";
+    private static final String DINNER_SPEACH = "저녁 뭐 드셨나요";
     private static final int BREAKFAST_CODE =1001;
     private static final int LUNCH_CODE =1002;
     private static final int DINNER_CODE =1003;
-
+    int selected ;
     private Intent previousIntent;
     private AQuery aq = new AQuery(this);
     RadioButton drinking;
@@ -62,7 +67,7 @@ public class WriteDiaryActivity extends AppCompatActivity  {
             @Override
             public void onClick(View view){
                 Intent intent= new Intent(getApplicationContext(),VoiceToTextActivity.class);
-                intent.putExtra("tospeach", "아침 뭐 드셧나요");
+                intent.putExtra("tospeach", BREAKFAST_SPEACH);
                 startActivityForResult(intent,BREAKFAST_CODE);
             }
         });
@@ -219,35 +224,88 @@ public class WriteDiaryActivity extends AppCompatActivity  {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if(requestCode ==BREAKFAST_CODE &&resultCode == RESULT_OK) {
-            String result = data.getExtras().getString("result_speach");
-            breakfast.setText(result);
-            Intent intent= new Intent(getApplicationContext(),VoiceToTextActivity.class);
-            intent.putExtra("tospeach", "점심 뭐 드셧나요");
-            startActivityForResult(intent,LUNCH_CODE);
+            ArrayList<String> result0 = data.getStringArrayListExtra("result_speach");
+            String[] result = new String[3];
+            result[0] = result0.get(0);
+            result[1] = result0.get(1);
+            result[2] = result0.get(2);
+            DialogSelectOption(requestCode, result);
+//            //String result = data.getExtras().getString("result_speach");
+//            Intent intent= new Intent(getApplicationContext(),VoiceToTextActivity.class);
+//            intent.putExtra("tospeach", "점심 뭐 드셧나요");
+//            startActivityForResult(intent,LUNCH_CODE);
         }
         if(requestCode ==LUNCH_CODE &&resultCode == RESULT_OK) {
-            String result = data.getExtras().getString("result_speach");
-            lunch.setText(result);
-            Intent intent= new Intent(getApplicationContext(),VoiceToTextActivity.class);
-            intent.putExtra("tospeach", "저녁 뭐 드셧나요");
-            startActivityForResult(intent,DINNER_CODE);
+            ArrayList<String> result0 = data.getStringArrayListExtra("result_speach");
+            String[] result = new String[3];
+            result[0] = result0.get(0);
+            result[1] = result0.get(1);
+            result[2] = result0.get(2);
+            DialogSelectOption(requestCode, result);
         }
         if(requestCode ==DINNER_CODE &&resultCode == RESULT_OK) {
-            String result = data.getExtras().getString("result_speach");
-            dinner.setText(result);
+            ArrayList<String> result0 = data.getStringArrayListExtra("result_speach");
+            String[] result = new String[3];
+            result[0] = result0.get(0);
+            result[1] = result0.get(1);
+            result[2] = result0.get(2);
+            DialogSelectOption(requestCode, result);
         }
     }
-//    public void onClick(View v) {
-//        int view = v.getId();
-//        if(view == 2131034112) {
-//            Intent i = new Intent("android.speech.action.RECOGNIZE_SPEECH");
-//            i.putExtra("calling_package", this.getPackageName());
-//            i.putExtra("android.speech.extra.LANGUAGE", "ko-KR");
-//            i.putExtra("android.speech.extra.PROMPT", "말을 하세요.");
-//            this.startActivityForResult(i, 1000);
-//        } else if(view == 2131034113) {
-//            this.startActivityForResult(new Intent(this, CustomUIActivity.class), 1001);
-//        }
+    private void DialogSelectOption(final int requestCode, String[] item) {
+        final String[] items = item;
+        selected = 0;
+        AlertDialog.Builder ab = new AlertDialog.Builder(WriteDiaryActivity.this);
+        ab.setTitle("Title");
+        ab.setSingleChoiceItems(item, 0,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Toast.makeText(getApplicationContext(),items[whichButton],Toast.LENGTH_SHORT).show();
+                        selected = whichButton;
+                    }
+                }).setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if(requestCode == BREAKFAST_CODE) {
+                            breakfast.setText(items[selected]);
+                            Intent intent= new Intent(getApplicationContext(),VoiceToTextActivity.class);
+                            intent.putExtra("tospeach", LUNCH_SPEACH);
+                            startActivityForResult(intent,LUNCH_CODE);
+                        }
+                        if(requestCode == LUNCH_CODE){
+                            lunch.setText(items[selected]);
+                            Intent intent= new Intent(getApplicationContext(),VoiceToTextActivity.class);
+                            intent.putExtra("tospeach", DINNER_SPEACH);
+                            startActivityForResult(intent,DINNER_CODE);
+                        }
+                        if(requestCode == DINNER_CODE){
+                            dinner.setText(items[selected]);
+                        }
+                        dialog.cancel();
 
+                    }
+                }).setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.cancel();
+                        if(requestCode ==BREAKFAST_CODE) {
+                            Intent intent = new Intent(getApplicationContext(), VoiceToTextActivity.class);
+                            intent.putExtra("tospeach", BREAKFAST_SPEACH);
+                            startActivityForResult(intent, requestCode);
+                        }
+                        if(requestCode ==LUNCH_CODE) {
+                            Intent intent = new Intent(getApplicationContext(), VoiceToTextActivity.class);
+                            intent.putExtra("tospeach", LUNCH_SPEACH);
+                            startActivityForResult(intent, requestCode);
+                        }
+                        if(requestCode ==DINNER_CODE) {
+                            Intent intent = new Intent(getApplicationContext(), VoiceToTextActivity.class);
+                            intent.putExtra("tospeach", DINNER_SPEACH);
+                            startActivityForResult(intent, requestCode);
+                        }
+                    }
+                });
+        ab.show();
+    }
 
 }

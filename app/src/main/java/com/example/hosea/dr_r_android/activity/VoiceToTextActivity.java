@@ -44,7 +44,7 @@ public class VoiceToTextActivity  extends AppCompatActivity {
             }
         });
 
-
+        //1.5초 이후에 자동으로 음성 인식 시
         new Handler().postDelayed(new Runnable()
         {
             @Override
@@ -84,7 +84,7 @@ public class VoiceToTextActivity  extends AppCompatActivity {
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     Intent i =new Intent();
-                    i.putExtra("result_speach",result.get(0));
+                    i.putExtra("result_speach",result);
                     setResult(RESULT_OK,i);
                     finish();
                 }
