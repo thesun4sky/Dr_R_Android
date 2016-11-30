@@ -263,7 +263,7 @@ public class WriteDiaryActivity extends AppCompatActivity  {
                         Toast.makeText(getApplicationContext(),items[whichButton],Toast.LENGTH_SHORT).show();
                         selected = whichButton;
                     }
-                }).setPositiveButton("Ok",
+                }).setPositiveButton("확인",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         if(requestCode == BREAKFAST_CODE) {
@@ -284,7 +284,7 @@ public class WriteDiaryActivity extends AppCompatActivity  {
                         dialog.cancel();
 
                     }
-                }).setNegativeButton("Cancel",
+                }).setNegativeButton("재입력",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.cancel();
