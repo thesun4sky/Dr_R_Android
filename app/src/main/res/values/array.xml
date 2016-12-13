@@ -195,8 +195,9 @@
         <item>140</item>
 
     </string-array>
-    <string-array name="menu1">
-        <item>잡곡밥</item>
+    <string-array name="hospital">
+        <item>안과</item>
+        <item>소아청소년과</item>
     </string-array>
     <string-array name="menu2">
         <item>된장찌개</item>
