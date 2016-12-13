@@ -3,16 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF40bdb7"
+    android:background="#FFEECC"
     tools:context=".activity.MainActivity">
-
-    <ImageView
-        android:id="@+id/bgimage"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/img_bg" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -42,6 +34,7 @@
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="0px"
+                android:background="#6CD9DCDD"
                 android:layout_weight="1">
 
                 <LinearLayout

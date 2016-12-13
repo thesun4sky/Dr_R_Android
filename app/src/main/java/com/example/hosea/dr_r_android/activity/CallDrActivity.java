@@ -36,7 +36,8 @@ public class CallDrActivity extends AppCompatActivity {
         previousIntent = getIntent();
 
         tv = (TextView) findViewById(R.id.tv_doctor_phone_num);
-        iv = (ImageView) findViewById(R.id.doctor_img);
+        /*iv = (ImageView) findViewById(R.id.doctor_img);
+*/
 
 
         Map<String, Object> params = new HashMap<String, Object>();

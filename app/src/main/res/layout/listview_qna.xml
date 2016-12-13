@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#6CD9DC"
     tools:context=".activity.ReadDiaryActivity">
 
     <TextView
@@ -21,6 +22,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
         android:layout_weight="1"
+        android:background="#6CD9DCDD"
         android:fillViewport="true">
 
         <ListView
