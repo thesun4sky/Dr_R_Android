@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_gravity="center"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+
+    <TextView
+        android:id="@+id/today_sleep"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:text="날짜"
+        android:gravity="center"
+        android:background="#333333"
+        android:textColor="#ffffff"
+        />
+    <TextView
+        android:id="@+id/time_out"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="40sp"
+        android:background="#cccccc"
+        android:textColor="#777777"
+        android:text="00:00:00" />
+
+    <TextView
+        android:id="@+id/sleep_toggle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:text="기록 시작"
+        android:onClick="myOnClick"
+        android:gravity="center"
+        android:background="#333333"
+        android:textColor="#ffffff"
+        />
+
+
+</LinearLayout>
