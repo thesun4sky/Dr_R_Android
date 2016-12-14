@@ -38,6 +38,7 @@
         android:layout_gravity="center"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
+        android:background="#FFEECC"
         android:text="@string/make_question" />
 
 
