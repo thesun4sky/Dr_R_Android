@@ -25,7 +25,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.VoiceToTextActivity"/>
         <activity android:name=".activity.LoginActivity"/>
         <activity android:name=".activity.ApplicationQnaActivity" />
         <activity android:name=".activity.JoinActivity" />
@@ -36,8 +35,19 @@
                 <data android:scheme="tel" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.SleepTimeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".activity.ReadDiaryActivity" />
-        <activity android:name=".activity.WriteDiaryActivity" />
+        <activity android:name=".activity.WriteDiaryActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".activity.MakeQuestionActivity" />
 
     </application>

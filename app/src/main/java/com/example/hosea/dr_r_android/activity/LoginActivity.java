@@ -55,8 +55,9 @@ public class LoginActivity extends AppCompatActivity {
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("login_id", id.getText().toString());
                 params.put("u_password", password.getText().toString());
+                params.put("u_device" ,priviousIntent.getStringExtra("u_device"));
 
-                aq.ajax("http://52.41.218.18:8080/login", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                aq.ajax("http://223.194.159.175:8080/login", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                     @Override
                     public void callback(String url, JSONObject jsonObject, AjaxStatus status) {
                         if (jsonObject != null) {

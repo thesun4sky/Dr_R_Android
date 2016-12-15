@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.btn_main_1:
-                    intent = new Intent(getApplicationContext(), ReadDiaryActivity.class);
+                    intent = new Intent(getApplicationContext(), SleepTimeActivity.class);
                     intent.putExtra("u_id", previousIntent.getIntExtra("u_id", 0))
                             .putExtra("u_name", previousIntent.getStringExtra("u_name"));
                     startActivity(intent);
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     break;
                 case R.id.btn_main_4:
-                    intent = new Intent(getApplicationContext(), CallDrActivity.class);
+                    intent = new Intent(getApplicationContext(), ReadDiaryActivity.class);
                     intent.putExtra("u_id", previousIntent.getIntExtra("u_id", 0))
                             .putExtra("u_name", previousIntent.getStringExtra("u_name"));
                     startActivity(intent);

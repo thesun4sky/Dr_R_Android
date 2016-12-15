@@ -15,6 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -36,13 +38,15 @@ import java.util.UUID;
 public class JoinActivity extends AppCompatActivity {
 
     private AQuery aq = new AQuery(this);
-    private EditText login_id, name, password1, password2, phone, disease;
+    private EditText login_id, name, password1, password2;
+    private EditText a_week, a_date;
+    private EditText b_month, b_date;
+    private EditText b_weight, b_height;
     private static final int MY_READ_PHONE_STATE = 0;
     private Button checkId, submit;
     private String array, deviceId;
-    private Object hospitalName;
     private String[] string;
-    private Spinner spinner;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,31 +59,20 @@ public class JoinActivity extends AppCompatActivity {
             checkPermission();
         }
 
+        a_week = (EditText)findViewById(R.id.a_week);
+        a_date = (EditText)findViewById(R.id.a_date);
+        b_month = (EditText)findViewById(R.id.b_month);
+        b_date = (EditText)findViewById(R.id.b_date);
+        b_weight =(EditText)findViewById(R.id.b_weight);
+        b_height =(EditText)findViewById(R.id.b_height);
         login_id = (EditText) findViewById(R.id.login_id);
         name = (EditText) findViewById(R.id.user_name);
         password1 = (EditText) findViewById(R.id.password1);
         password2 = (EditText) findViewById(R.id.password2);
-        phone = (EditText) findViewById(R.id.user_phone);
-        disease = (EditText) findViewById(R.id.disease);
-        spinner = (Spinner) findViewById(R.id.spinner_hospital);
         checkId = (Button) findViewById(R.id.checkId);
         submit = (Button) findViewById(R.id.joinSubmit);
-        aq.ajax("http://52.41.218.18:8080/getHospital", JSONArray.class, new AjaxCallback<JSONArray>() {
-            @Override
-            public void callback(String url, JSONArray html, AjaxStatus status) {
-                string = new String[html.length()];
-                for (int i = 0; i < html.length(); i++) {
-                    try {
-                        JSONObject jsonobject = html.getJSONObject(i);
-                        array = jsonobject.getString("a_hospital");
-                        string[i] = array;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                makeSpinner(spinner);
-            }
-        });
+
+        final RadioGroup rg = (RadioGroup)findViewById(R.id.radioForSex);
 
 
         checkId.setOnClickListener(new View.OnClickListener() {
@@ -87,7 +80,7 @@ public class JoinActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("login_id", login_id.getText().toString());
-                aq.ajax("http://52.41.218.18:8080/checkLoginId", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                aq.ajax("http://223.194.159.175:8080/checkLoginId", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                     @Override
                     public void callback(String url, JSONObject html, AjaxStatus status) {
                         try {
@@ -103,6 +96,8 @@ public class JoinActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                int id = rg.getCheckedRadioButtonId();
+                RadioButton rb = (RadioButton) findViewById(id);
 
                 //비밀번호 테스트
                 if (!password1.getText().toString().equals(password2.getText().toString()) || password1.getText().toString().length() < 5) {
@@ -118,24 +113,20 @@ public class JoinActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "이름을 입력하세요.", Toast.LENGTH_SHORT).show();
                     name.setText("");
                     name.requestFocus();
-                } else if ((phone.getText().toString().equals(""))) {
-                    Toast.makeText(getApplicationContext(), "핸드폰 번호를 입력하세요.", Toast.LENGTH_SHORT).show();
-                    phone.setText("");
-                    phone.requestFocus();
-                } else if ((disease.getText().toString().equals(""))) {
-                    Toast.makeText(getApplicationContext(), "병 명을 입력하세요.", Toast.LENGTH_SHORT).show();
-                    disease.setText("");
-                    disease.requestFocus();
                 } else {
                     Map<String, Object> params = new HashMap<String, Object>();
                     params.put("login_id", login_id.getText().toString());
-                    params.put("u_name", name.getText().toString());
                     params.put("u_password", password1.getText().toString());
-                    params.put("u_phone", phone.getText().toString());
-                    params.put("u_disease", disease.getText().toString());
-                    params.put("u_hospital", hospitalName.toString());
+                    params.put("u_name", name.getText().toString());
+                    params.put("u_a_week", a_week.getText().toString());
+                    params.put("u_a_date", a_date.getText().toString());
+                    params.put("u_b_month", b_month.getText().toString());
+                    params.put("u_b_date", b_date.getText().toString());
+                    params.put("u_w", b_weight.getText().toString());
+                    params.put("u_h", b_height.getText().toString());
+                    params.put("u_sex", rb.getText().toString());
                     params.put("u_device", deviceId);
-                    aq.ajax("http://52.41.218.18:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                    aq.ajax("http://223.194.159.175:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                         @Override
                         public void callback(String url, JSONObject html, AjaxStatus status) {
                             try {
@@ -192,23 +183,5 @@ public class JoinActivity extends AppCompatActivity {
         }
 
     }
-
-
-    //병원리스트 받아와서 선택하는 스피너 생성
-    public void makeSpinner(Spinner spinner) {
-        // Application of the Array to the Spinner
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, string);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-        spinner.setAdapter(spinnerArrayAdapter);
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                hospitalName = parent.getItemAtPosition(position);
-            }
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-    }
-
 
 }

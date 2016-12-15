@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Dr.R</string>
-    <string name="main_btn1">일지 보기</string>
+    <string name="main_btn1">수면 측정</string>
     <string name="main_btn2">일지 작성</string>
     <string name="main_btn3">Q &amp; A</string>
-    <string name="main_btn4">병원 연결</string>
+    <string name="main_btn4">일지 보기</string>
     <string name="doctor_phone_num">의사 확인 중..</string>
     <string name="drImgDescription">의사 사진입니다.</string>
     <string name="Created">Created by CoAwesome</string>

@@ -145,11 +145,11 @@ public class SleepTimeActivity extends AppCompatActivity {
     public void writeDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
         //params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        params.put("u_id" , 1);
+        params.put("u_id" , previousIntent.getIntExtra("u_id", 0));
         params.put("s_start" , dateFormat.format(s_start));
         params.put("s_end" , dateFormat.format(s_end));
         params.put("s_total" , endTime-startTime);
-        aq.ajax("http://223.194.152.69:8080/addSleepTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax("http://223.194.159.175:8080/addSleepTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 try {
