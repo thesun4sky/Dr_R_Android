@@ -7,10 +7,20 @@
     android:background="#6CD9DC"
     tools:context=".activity.ReadDiaryActivity">
 
+
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+
+        <view
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            class="im.dacer.androidcharts.ClockPieView"
+            android:id="@+id/clock_pie_view" />
+
 
         <ScrollView
             android:layout_width="match_parent"

@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -41,6 +42,11 @@ import java.util.Map;
 public class WriteDiaryActivity extends AppCompatActivity  {
 
     int year, month, day;
+    EditText weight, height;
+    EditText memo;
+    EditText hospital_name;
+    String result;
+    CheckBox fever, cough ,diarrhea;
     TextView tv;
     TextView today;
     int start_year =0 , start_month=0, start_day =0;
@@ -58,6 +64,36 @@ public class WriteDiaryActivity extends AppCompatActivity  {
         tv = (TextView)findViewById(R.id.date) ;
         today = (TextView)findViewById(R.id.today);
 
+        weight =(EditText)findViewById(R.id.weight);
+        height = (EditText)findViewById(R.id.height);
+        memo = (EditText)findViewById(R.id.memo);
+        memo = (EditText)findViewById(R.id.hospital_name);
+
+        fever = (CheckBox)findViewById(R.id.fever);
+        cough =(CheckBox)findViewById(R.id.cough) ;
+        diarrhea = (CheckBox)findViewById(R.id.diarrhea);
+
+
+        fever.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                printdisease();
+            }
+        });
+
+        cough.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                printdisease();
+            }
+        });
+
+        diarrhea.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                printdisease();
+            }
+        });
         Spinner spinner = (Spinner)findViewById(R.id.b_spinner1);
         final ArrayAdapter spinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.hospital, android.R.layout.simple_spinner_item);
@@ -171,4 +207,15 @@ public class WriteDiaryActivity extends AppCompatActivity  {
         return "( "+week[cnt]+" )";
     }
 
+    public void printdisease(){
+        if(fever.isChecked()){
+            result += fever.getText().toString();
+        }
+        if(cough.isChecked()){
+            result+=cough.getText().toString();
+        }
+        if(diarrhea.isChecked()){
+            result+=diarrhea.getText().toString();
+        }
+    }
 }
