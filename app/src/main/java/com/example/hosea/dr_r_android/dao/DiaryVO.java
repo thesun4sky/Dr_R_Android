@@ -18,7 +18,68 @@ public class DiaryVO {
     private String drinking;
     private String memo;
 
+    public double getAge() {
+        return age;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    //테스트 변수
+    private double age;
+    private double weight;
+    private double height;
+    private String memo2;
+
     public DiaryVO() {}
+
+    public void setAge(double age) {
+        this.age = age;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public DiaryVO(double age , double weight , float height, String memo2){
+        this.age = age;
+        this.weight = weight;
+        this.height =height;
+        this.memo2 = memo2;
+    }
+
+
+
+    public void setAge(float age) {
+        this.age = age;
+    }
+
+
+    public void setWeight(float weight) {
+        this.weight = weight;
+    }
+
+
+    public void setHeight(float height) {
+        this.height = height;
+    }
+
+    public String getMemo2() {
+        return memo2;
+    }
+
+    public void setMemo2(String memo2) {
+        this.memo2 = memo2;
+    }
 
     public DiaryVO (JSONObject json) {
         try {

@@ -40,10 +40,11 @@ public class ReadDiaryActivity extends AppCompatActivity {
     ClockPieView pieView2;
     private Intent previousIntent;
     private AQuery aq = new AQuery(this);
+    long result_sleep=0;
     int start_year =0 , start_month=0, start_day =0;
     int year, month, day;
     String date;
-    TextView tv , today;
+    TextView tv , today, sleepTotal;
     SimpleDateFormat dateFormat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,16 +52,17 @@ public class ReadDiaryActivity extends AppCompatActivity {
         setContentView(R.layout.listview);
         previousIntent = getIntent();
         dateFormat = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
-
+        clockPieHelperArrayList = new ArrayList<ClockPieHelper>();
         //이름 설정
-        tv = (TextView) findViewById(R.id.tv_listView_title);
-        tv.setText(previousIntent.getStringExtra("u_name"));
+//        tv = (TextView) findViewById(R.id.tv_listView_title);
+//        tv.setText(previousIntent.getStringExtra("u_name"));
 
         GregorianCalendar calendar = new GregorianCalendar();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
         tv = (TextView)findViewById(R.id.date) ;
+        sleepTotal = (TextView)findViewById(R.id.tv_sleepTotal);
         today = (TextView)findViewById(R.id.dateForList);
 
         date = year+"-"+(month+1)+"-"+day+" ";
@@ -84,15 +86,22 @@ public class ReadDiaryActivity extends AppCompatActivity {
 
         today.setText(year+"년 "+(month+1)+"월 "+day+"일 "+ getDayKor() );
         set();
-        readDiary();
+        //readDiary();
 
+
+        ArrayList<DiaryVO> arrayList = new ArrayList<>();
+        arrayList.add(new DiaryVO(3.8 , 4.5 , 78 , "건강하게 잘 자려주렴"));
+        DiaryAdapter diaryAdapter = new DiaryAdapter(getApplicationContext(), R.layout.itemsfordiarylist, arrayList);
+        //어댑터 연결
+        ListView lv = (ListView) findViewById(R.id.listView);
+        lv.setAdapter(diaryAdapter);
     }
     private void set(){
-        clockPieHelperArrayList = new ArrayList<ClockPieHelper>();
         readSleep();
     }
 
     public void readSleep(){
+        result_sleep = 0;
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", 1);
         params.put("s_start", date+"00:00:00");
@@ -107,9 +116,6 @@ public class ReadDiaryActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 } else {
-                    clockPieHelperArrayList.clear();
-                    pieView.setDate(clockPieHelperArrayList);
-                    pieView2.setDate(clockPieHelperArrayList);
                     tv.setText("해당하는 데이터가 없습니다.");
                 }
             }
@@ -125,6 +131,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
 
             long s_time = Long.parseLong(jsonArr.getJSONObject(i).getString("s_start")) ;
             long e_time = Long.parseLong(jsonArr.getJSONObject(i).getString("s_end")) ;
+            result_sleep += e_time-s_time;
             Date start = new Date(s_time );
             Date end = new Date(e_time );
             int s_hour = Integer.parseInt(curHourFormat.format(start));
@@ -138,6 +145,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
             pieView.setDate(clockPieHelperArrayList);
             pieView2.setDate(clockPieHelperArrayList);
         }
+        sleepTotal.setText( result_sleep / 1000 / 3600 +" 시간 "+ (result_sleep / 1000 % 3600) / 60 +" 분 "+ (result_sleep / 1000 %3600 %60 ) +" 초 ");
     }
     public void readDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
@@ -149,6 +157,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
                     jsonArrayToArrayList(html);
                 } else {
                     tv.setText("해당하는 데이터가 없습니다.");
+
                 }
             }
         });
@@ -202,6 +211,9 @@ public class ReadDiaryActivity extends AppCompatActivity {
             start_month = monthOfYear +1;
             start_day = dayOfMonth;
             date = start_year+"-"+start_month+"-"+start_day+" ";
+            clockPieHelperArrayList.clear();
+            pieView.setDate(clockPieHelperArrayList);
+            pieView2.setDate(clockPieHelperArrayList);
             set();
             today.setText(start_year+"년 "+(start_month)+"월 "+start_day+"일 "+ getChangeDayKor() );
         }
