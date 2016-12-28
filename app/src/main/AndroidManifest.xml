@@ -35,7 +35,7 @@
                 <data android:scheme="tel" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.SleepTimeActivity">
+        <activity android:name=".activity.TimeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />

@@ -57,10 +57,11 @@ public class SplashActivity extends Activity {
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_device", deviceId);
-        aq.ajax("http://52.41.218.18:8080/checkUserDevice", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax("http://172.30.1.48:8080/checkUserDevice", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
+                    Log.d("hosea","html is not null");
                     responseCheck(html);
                 } else {
                     Toast.makeText(getApplicationContext(), "연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();

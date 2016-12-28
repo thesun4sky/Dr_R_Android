@@ -1,16 +1,14 @@
-package com.example.hosea.dr_r_android.activity;
+package com.example.hosea.dr_r_android.fragment;
 
-/**
- * Created by LeeMoonSeong on 2016-12-14.
- */
-
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +16,7 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.example.hosea.dr_r_android.R;
+import com.example.hosea.dr_r_android.activity.TimeActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,12 +28,14 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class SleepTimeActivity extends AppCompatActivity {
-    private Intent previousIntent;
-    private AQuery aq = new AQuery(this);
-    TextView myOutput;
-    TextView myToday;
-    TextView myToggle;
+/**
+ * Created by hosea on 2016-12-29.
+ */
+
+public class SleepTimeFragment extends Fragment {
+
+    private AQuery aq = new AQuery(getActivity());
+    private TextView myOutput, myToday, myToggle;
     long startTime ,endTime;
     Date s_start;
     Date s_end;
@@ -51,14 +52,22 @@ public class SleepTimeActivity extends AppCompatActivity {
     Date date = new Date();
     int year, month, day;
     SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+
+    public SleepTimeFragment() {}
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stopwatch);
-        previousIntent = getIntent();
-        myOutput = (TextView) findViewById(R.id.time_out);
-        myToday = (TextView) findViewById(R.id.today_sleep);
-        myToggle = (TextView) findViewById(R.id.sleep_toggle);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        //inflate the layout for this fragment
+        final View view = inflater.inflate(R.layout.fragment_sleeptime, container, false);
+        myToday = (TextView) view.findViewById(R.id.today_sleep);
+        myOutput = (TextView) view.findViewById(R.id.time_out);
+        myToggle = (TextView) view.findViewById(R.id.sleep_toggle);
+        myToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myOnClick(v);
+            }
+        });
 
         //현재 날짜 받아오기
         // 년,월,일로 쪼갬
@@ -66,14 +75,19 @@ public class SleepTimeActivity extends AppCompatActivity {
         month =Integer.parseInt(curMonthFormat.format(date));
         day = Integer.parseInt(curDayFormat.format(date));
 
-          myToday.setText(year+"년 "+(month)+"월 "+day+"일 "+ getDayKor() );
-
+        myToday.setText(year+"년 "+(month)+"월 "+day+"일 "+ getDayKor() );
+        return view;
     }
 
     @Override
-    protected void onDestroy() {
-        // TODO Auto-generated method stub
-        super.onDestroy();
+    public void onResume(){
+        super.onResume();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
     }
 
     public void myOnClick(View v) {
@@ -111,7 +125,6 @@ public class SleepTimeActivity extends AppCompatActivity {
                         myToggle.setText("기록 중지");
                         cur_Status = Run;
                         break;
-
                 }
                 break;
         }
@@ -132,7 +145,6 @@ public class SleepTimeActivity extends AppCompatActivity {
         outTime = now - myBaseTime;
         String easy_outTime = String.format("%02d:%02d:%02d", outTime / 1000 / 3600 , (outTime / 1000 % 3600) / 60, (outTime / 1000 %3600 %60 ));
         return easy_outTime;
-
     }
 
     public static String getDayKor(){
@@ -145,16 +157,16 @@ public class SleepTimeActivity extends AppCompatActivity {
     public void writeDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
         //params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        params.put("u_id" , previousIntent.getIntExtra("u_id", 0));
+        params.put("u_id" , ((TimeActivity)getActivity()).u_id);
         params.put("s_start" , dateFormat.format(s_start));
         params.put("s_end" , dateFormat.format(s_end));
         params.put("s_total" , endTime-startTime);
-        aq.ajax("http://223.194.159.175:8080/addSleepTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax("http://172.30.1.48:8080/addSleepTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 try {
                     if (html.getString("msg").equals("정상 작동")) {
-                        Toast.makeText(getApplicationContext(), "작성 되었습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "작성 되었습니다.", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -163,3 +175,4 @@ public class SleepTimeActivity extends AppCompatActivity {
         });
     }
 }
+

@@ -1,0 +1,69 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.hosea.dr_r_android.activity.TimeActivity">
+
+    <RadioGroup
+        android:id="@+id/measureTimeGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/feed_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:layout_weight="1"
+            android:text="좌" />
+
+        <RadioButton
+            android:id="@+id/feed_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="우" />
+
+        <RadioButton
+            android:id="@+id/feed_prepared"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="예비" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/today_feed"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:text="수유 시간"
+        android:gravity="center"
+        android:background="#333333"
+        android:textColor="#ffffff"
+        />
+    <TextView
+        android:id="@+id/time_out"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="40sp"
+        android:background="#cccccc"
+        android:textColor="#777777"
+        android:text="00:00:00" />
+
+    <TextView
+        android:id="@+id/sleep_toggle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:text="기록 시작"
+        android:gravity="center"
+        android:background="#333333"
+        android:textColor="#ffffff"
+        />
+
+</LinearLayout>

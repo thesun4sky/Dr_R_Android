@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Dr.R</string>
-    <string name="main_btn1">수면 측정</string>
+    <string name="main_btn1">시간 측정</string>
     <string name="main_btn2">일지 작성</string>
     <string name="main_btn3">Q &amp; A</string>
     <string name="main_btn4">일지 보기</string>

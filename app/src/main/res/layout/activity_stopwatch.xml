@@ -1,42 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_gravity="center"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioGroup
+            android:id="@+id/measureTimeGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/today_sleep"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textSize="25sp"
-        android:text="날짜"
-        android:gravity="center"
-        android:background="#333333"
-        android:textColor="#ffffff"
-        />
-    <TextView
-        android:id="@+id/time_out"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="40sp"
-        android:background="#cccccc"
-        android:textColor="#777777"
-        android:text="00:00:00" />
+            <RadioButton
+                android:id="@+id/measureSleepingTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:layout_weight="1"
+                android:text="수면 시간" />
 
-    <TextView
-        android:id="@+id/sleep_toggle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textSize="25sp"
-        android:text="기록 시작"
-        android:onClick="myOnClick"
-        android:gravity="center"
-        android:background="#333333"
-        android:textColor="#ffffff"
-        />
+            <RadioButton
+                android:id="@+id/measureFeedingTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="수유 시간" />
+
+        </RadioGroup>
+    </LinearLayout>
+    <FrameLayout
+        android:id="@+id/time_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@color/colorAccent">
+        <fragment
+            android:name="com.example.hosea.dr_r_android.fragment.SleepTimeFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
 
 
 </LinearLayout>

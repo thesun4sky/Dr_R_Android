@@ -80,7 +80,7 @@ public class JoinActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("login_id", login_id.getText().toString());
-                aq.ajax("http://52.41.218.18:8080/checkLoginId", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                aq.ajax("http://172.30.1.48:8080/checkLoginId", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                     @Override
                     public void callback(String url, JSONObject html, AjaxStatus status) {
                         try {
@@ -125,8 +125,9 @@ public class JoinActivity extends AppCompatActivity {
                     params.put("u_w", b_weight.getText().toString());
                     params.put("u_h", b_height.getText().toString());
                     params.put("u_sex", rb.getText().toString());
-                    params.put("u_device", deviceId);
-                    aq.ajax("http://52.41.218.18:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+//                    params.put("u_device", deviceId);
+                    params.put("u_device", "1234");
+                    aq.ajax("http://172.30.1.48:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                         @Override
                         public void callback(String url, JSONObject html, AjaxStatus status) {
                             try {
