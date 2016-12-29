@@ -8,14 +8,9 @@ import org.json.JSONObject;
  */
 public class DiaryVO {
     private int u_id;
-    private String breakfast;
-    private String lunch;
-    private String dinner;
-    private int temperature;
-    private int humid;
-    private int sleepTime;
-    private int bloodPressure;
-    private String drinking;
+    private double height;
+    private double weight;
+    private String hospital_name;
     private String memo;
 
     public double getAge() {
@@ -32,8 +27,6 @@ public class DiaryVO {
 
     //테스트 변수
     private double age;
-    private double weight;
-    private double height;
     private String memo2;
 
     public DiaryVO() {}
@@ -64,15 +57,6 @@ public class DiaryVO {
     }
 
 
-    public void setWeight(float weight) {
-        this.weight = weight;
-    }
-
-
-    public void setHeight(float height) {
-        this.height = height;
-    }
-
     public String getMemo2() {
         return memo2;
     }
@@ -83,15 +67,10 @@ public class DiaryVO {
 
     public DiaryVO (JSONObject json) {
         try {
-            breakfast = json.getString("c_breakfast");
-            lunch = json.getString("c_lunch");
-            dinner = json.getString("c_dinner");
-            temperature = json.getInt("c_temperature");
-            humid = json.getInt("c_humid");
-            sleepTime = json.getInt("c_sleepTime");
-            bloodPressure = json.getInt("c_bloodPressure");
-            drinking = json.getString("c_drinking");
-            memo = json.getString("c_memo");
+            height = json.getDouble("height");
+            weight = json.getDouble("weight");
+            hospital_name = json.getString("hospital_name");
+            memo = json.getString("memo");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -99,9 +78,8 @@ public class DiaryVO {
 
     @Override
     public String toString() {
-        return "{" + "u_id:" + u_id + "breakfast:" + u_id + "lunch:" + u_id + "dinner:"
-                + u_id + "temperature:" + u_id + "humid:" + u_id + "sleepTime:" + u_id
-                + "bloodPressure:" + u_id + "drinking:" + u_id + "memo:" + u_id;
+        return "{" + "u_id:" + u_id + "height:" + height + "weight:" + weight + "hospital_name:"
+                + hospital_name + "memo:" + memo + "}";
     }
 
     public int getU_id() {
@@ -112,68 +90,22 @@ public class DiaryVO {
         this.u_id = u_id;
     }
 
-    public String getBreakfast() {
-        return breakfast;
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 
-    public void setBreakfast(String breakfast) {
-        this.breakfast = breakfast;
+
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 
-    public String getLunch() {
-        return lunch;
+    public String getHospital_name() {
+        return hospital_name;
     }
 
-    public void setLunch(String lunch) {
-        this.lunch = lunch;
-    }
-
-    public String getDinner() {
-        return dinner;
-    }
-
-    public void setDinner(String dinner) {
-        this.dinner = dinner;
-    }
-
-    public int getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(int temperature) {
-        this.temperature = temperature;
-    }
-
-    public int getHumid() {
-        return humid;
-    }
-
-    public void setHumid(int humid) {
-        this.humid = humid;
-    }
-
-    public int getSleepTime() {
-        return sleepTime;
-    }
-
-    public void setSleepTime(int sleepTime) {
-        this.sleepTime = sleepTime;
-    }
-
-    public int getBloodPressure() {
-        return bloodPressure;
-    }
-
-    public void setBloodPressure(int bloodPressure) {
-        this.bloodPressure = bloodPressure;
-    }
-
-    public String getDrinking() {
-        return drinking;
-    }
-
-    public void setDrinking(String drinking) {
-        this.drinking = drinking;
+    public void setHospital_name(String hospital_name) {
+        this.hospital_name = hospital_name;
     }
 
     public String getMemo() {
