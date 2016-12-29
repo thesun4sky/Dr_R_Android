@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#FFFFFF"
     tools:context="com.example.hosea.dr_r_android.activity.TimeActivity">
 
     <TextView
@@ -36,5 +37,13 @@
         android:background="#333333"
         android:textColor="#ffffff"
         />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ListView
+            android:id="@+id/sleep_listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </ScrollView>
 
 </LinearLayout>

@@ -3,13 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#FFFFFF"
     tools:context="com.example.hosea.dr_r_android.activity.TimeActivity">
 
     <RadioGroup
         android:id="@+id/measureTimeGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="#FFFFFF">
 
         <RadioButton
             android:id="@+id/feed_left"
@@ -65,5 +67,13 @@
         android:background="#333333"
         android:textColor="#ffffff"
         />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ListView
+            android:id="@+id/feed_listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </ScrollView>
 
 </LinearLayout>
