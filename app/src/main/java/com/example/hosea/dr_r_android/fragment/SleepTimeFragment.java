@@ -161,7 +161,7 @@ public class SleepTimeFragment extends Fragment {
         params.put("s_start" , dateFormat.format(s_start));
         params.put("s_end" , dateFormat.format(s_end));
         params.put("s_total" , endTime-startTime);
-        aq.ajax("http://172.30.1.48:8080/addSleepTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax("http://52.41.218.18:8080/addSleepTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 try {

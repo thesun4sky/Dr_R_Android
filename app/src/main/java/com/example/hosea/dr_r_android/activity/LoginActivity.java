@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
                 params.put("u_password", password.getText().toString());
 //                params.put("u_device" ,priviousIntent.getStringExtra("u_device"));
                 params.put("u_device", "1234");
-                aq.ajax("http://172.30.1.48:8080/login", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                aq.ajax("http://52.41.218.18:8080/login", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                     @Override
                     public void callback(String url, JSONObject jsonObject, AjaxStatus status) {
                         if (jsonObject != null) {
