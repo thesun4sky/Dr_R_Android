@@ -19,6 +19,7 @@ import com.example.hosea.dr_r_android.dao.DiaryVO;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -87,15 +88,8 @@ public class ReadDiaryActivity extends AppCompatActivity {
 
         today.setText(year+"년 "+(month+1)+"월 "+day+"일 "+ getDayKor() );
         set();
-        //readDiary();
+        readDiary();
 
-
-        ArrayList<DiaryVO> arrayList = new ArrayList<>();
-        arrayList.add(new DiaryVO(3.8 , 4.5 , 78 , "건강하게 잘 자려주렴"));
-        DiaryAdapter diaryAdapter = new DiaryAdapter(getApplicationContext(), R.layout.itemsfordiarylist, arrayList);
-        //어댑터 연결
-        ListView lv = (ListView) findViewById(R.id.listView);
-        lv.setAdapter(diaryAdapter);
     }
     private void set(){
         readSleep();
@@ -152,27 +146,24 @@ public class ReadDiaryActivity extends AppCompatActivity {
     public void readDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        aq.ajax("http://52.41.218.18:8080/getDiaries", params, JSONArray.class, new AjaxCallback<JSONArray>() {
+        params.put("c_date", date+"00:00:00");
+        aq.ajax("http://52.41.218.18:8080/getDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
-            public void callback(String url, JSONArray html, AjaxStatus status) {
+            public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
                     jsonArrayToArrayList(html);
                 } else {
-                    tv.setText("해당하는 데이터가 없습니다.");
 
                 }
             }
         });
     }
-    public void jsonArrayToArrayList(JSONArray jsonArr) {
+    public void jsonArrayToArrayList(JSONObject jsonObject) {
         ArrayList<DiaryVO> arrayList = new ArrayList<>();
-        for (int i = 0; i < jsonArr.length(); i++) {
-            try {
-                arrayList.add(new DiaryVO(jsonArr.getJSONObject(i)));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+
+        arrayList.add(new DiaryVO(jsonObject));
+
+
         linktoAdapter(arrayList);
     }
 
@@ -217,6 +208,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
             pieView.setDate(clockPieHelperArrayList);
             pieView2.setDate(clockPieHelperArrayList);
             set();
+            readDiary();
             today.setText(start_year+"년 "+(start_month)+"월 "+start_day+"일 "+ getChangeDayKor() );
         }
     };

@@ -11,7 +11,10 @@ import android.widget.TextView;
 import com.example.hosea.dr_r_android.R;
 import com.example.hosea.dr_r_android.dao.DiaryVO;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by Hosea on 2016-11-01.
@@ -67,12 +70,31 @@ public class DiaryAdapter extends BaseAdapter {
         TextView weight = (TextView) view.findViewById(R.id.diary_tv_weight);
         TextView height = (TextView) view.findViewById(R.id.diary_tv_height);
         TextView memo = (TextView) view.findViewById(R.id.diary_tv_memo);
+        TextView hospital = (TextView)view.findViewById(R.id.diary_tv_hospital);
+        TextView treat = (TextView)view.findViewById(R.id.diary_tv_treat);
+        TextView shot = (TextView)view.findViewById(R.id.diary_tv_shot);
+        TextView next = (TextView)view.findViewById(R.id.diary_tv_next);
+        TextView depart = (TextView)view.findViewById(R.id.diary_tv_depart);
         DiaryVO diary = dItems.get(i);
+
+        long next_time = Long.parseLong(diary.getNext());
+        final SimpleDateFormat curYearFormat = new SimpleDateFormat("yyyy", Locale.KOREA);
+        final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);
+        final SimpleDateFormat curDayFormat = new SimpleDateFormat("dd", Locale.KOREA);
+        Date next_date = new Date(next_time );
+        int year = Integer.parseInt(curYearFormat.format(next_date));
+        int month = Integer.parseInt(curMonthFormat.format(next_date));
+        int day = Integer.parseInt(curDayFormat.format(next_date));
 
         age.setText(diary.getAge()+"");
         weight.setText(diary.getWeight()+"");
         height.setText(diary.getHeight()+"");
-        memo.setText(diary.getMemo2());
+        memo.setText(diary.getMemo());
+        hospital.setText(diary.getHospital_name());
+        treat.setText(diary.getTreat());
+        shot.setText(diary.getShot());
+        next.setText(year+"-"+month+"-"+day);
+        depart.setText(diary.getDepart());
 
 //        temperature.setText("" + diary.getTemperature());
 //        if (diary.getTemperature() > 30) {

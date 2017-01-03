@@ -9,9 +9,46 @@ import org.json.JSONObject;
 public class DiaryVO {
     private int u_id;
     private double height;
+    private double age;
     private double weight;
     private String hospital_name;
+    private String treat;
+    private String shot;
+    private String next;
+    private String depart;
     private String memo;
+
+    public String getTreat() {
+        return treat;
+    }
+
+    public void setTreat(String treat) {
+        this.treat = treat;
+    }
+
+    public String getShot() {
+        return shot;
+    }
+
+    public void setShot(String shot) {
+        this.shot = shot;
+    }
+
+    public String getNext() {
+        return next;
+    }
+
+    public void setNext(String next) {
+        this.next = next;
+    }
+
+    public String getDepart() {
+        return depart;
+    }
+
+    public void setDepart(String depart) {
+        this.depart = depart;
+    }
 
     public double getAge() {
         return age;
@@ -25,11 +62,9 @@ public class DiaryVO {
         return height;
     }
 
-    //테스트 변수
-    private double age;
-    private String memo2;
 
-    public DiaryVO() {}
+    public DiaryVO() {
+    }
 
     public void setAge(double age) {
         this.age = age;
@@ -43,34 +78,21 @@ public class DiaryVO {
         this.height = height;
     }
 
-    public DiaryVO(double age , double weight , float height, String memo2){
-        this.age = age;
-        this.weight = weight;
-        this.height =height;
-        this.memo2 = memo2;
-    }
-
-
-
     public void setAge(float age) {
         this.age = age;
     }
 
-
-    public String getMemo2() {
-        return memo2;
-    }
-
-    public void setMemo2(String memo2) {
-        this.memo2 = memo2;
-    }
-
-    public DiaryVO (JSONObject json) {
+    public DiaryVO(JSONObject json) {
         try {
-            height = json.getDouble("height");
-            weight = json.getDouble("weight");
-            hospital_name = json.getString("hospital_name");
-            memo = json.getString("memo");
+            age = 3.5;
+            height = json.getDouble("c_h");
+            weight = json.getDouble("c_w");
+            hospital_name = json.getString("c_hospital");
+            memo = json.getString("c_memo");
+            treat = json.getString("c_treat");
+            shot = json.getString("c_shot");
+            next = json.getString("c_next");
+            depart = json.getString("c_depart");
         } catch (JSONException e) {
             e.printStackTrace();
         }

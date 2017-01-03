@@ -148,6 +148,7 @@ public class WriteDiaryActivity extends AppCompatActivity  {
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
+                depart = parent.getItemAtPosition(0);
             }
         });
 
