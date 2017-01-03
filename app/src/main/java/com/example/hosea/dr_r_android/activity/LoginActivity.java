@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public class LoginActivity extends AppCompatActivity {
     private AQuery aq = new AQuery(this);
-    private Intent priviousIntent;
+    private Intent previousIntent;
     private EditText id, password;
     private Button join, login;
     private String u_name;
@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        priviousIntent = getIntent();
+        previousIntent = getIntent();
 
         id = (EditText) findViewById(R.id.login_id);
         password = (EditText) findViewById(R.id.login_password);
@@ -55,8 +55,7 @@ public class LoginActivity extends AppCompatActivity {
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("login_id", id.getText().toString());
                 params.put("u_password", password.getText().toString());
-//                params.put("u_device" ,priviousIntent.getStringExtra("u_device"));
-                params.put("u_device", priviousIntent.getStringExtra("u_device"));
+                params.put("u_device" ,previousIntent.getStringExtra("u_device"));
                 aq.ajax("http://52.41.218.18:8080/login", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                     @Override
                     public void callback(String url, JSONObject jsonObject, AjaxStatus status) {
@@ -70,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                     mainIntent.putExtra("u_id", u_id);
                                     mainIntent.putExtra("u_name", u_name);
-                                    mainIntent.putExtra("u_device", priviousIntent.getStringExtra("u_device"));
+                                    mainIntent.putExtra("u_device", previousIntent.getStringExtra("u_device"));
                                     startActivity(mainIntent);
                                     LoginActivity.this.finish();
                                 } else {
