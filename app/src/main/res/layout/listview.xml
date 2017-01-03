@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#6CD9DC"
+    android:background="#FFFFFF"
     tools:context=".activity.ReadDiaryActivity">
 
 
@@ -51,19 +51,34 @@
 
         </LinearLayout>
         <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
+                android:layout_weight="1"
                 android:text="총 수면시간 : "
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <TextView
+                android:layout_weight="1"
                 android:text="total"
                 android:id="@+id/tv_sleepTotal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+            <TextView
+                android:layout_weight="1"
+                android:text="총 수유시간 : "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_weight="1"
+                android:text="total"
+                android:id="@+id/tv_feedTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </LinearLayout>
             <ListView
+                android:background="#FFDDDD"
                 android:id="@+id/listView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

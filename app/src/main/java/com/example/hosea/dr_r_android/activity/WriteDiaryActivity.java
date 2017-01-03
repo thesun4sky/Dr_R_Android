@@ -40,19 +40,28 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class WriteDiaryActivity extends AppCompatActivity  {
 
     private AQuery aq = new AQuery(this);
     int year, month, day;
-    private Object weight, height;
+    final SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+    private EditText weight, height;
     EditText memo;
+    Date diary_date;
+    Date next_date;
+    Object depart;
+    String diary_date_string;
+    String next_date_string;
     EditText hospital_name;
     private Intent previousIntent;
     private Button submit, addPhoto;
@@ -62,6 +71,9 @@ public class WriteDiaryActivity extends AppCompatActivity  {
     CheckBox fever, cough ,diarrhea;
     TextView tv;
     TextView today;
+    TextView shot;
+    int result_year =0 ,result_month = 0, result_day=0;
+    int next_year =0 ,next_month = 0, next_day=0;
     int start_year =0 , start_month=0, start_day =0;
     private final int PICK_FROM_ALBUM = 1;
     TextView start;
@@ -73,19 +85,24 @@ public class WriteDiaryActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_writediary);
+
+
+        previousIntent = getIntent();
         GregorianCalendar calendar = new GregorianCalendar();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
+
         tv = (TextView) findViewById(R.id.date);
         today = (TextView) findViewById(R.id.today);
-        height = findViewById(R.id.height);
-        weight = findViewById(R.id.weight);
+        height = (EditText)findViewById(R.id.height);
+        weight = (EditText)findViewById(R.id.weight);
         memo = (EditText) findViewById(R.id.memo);
-
+        hospital_name = (EditText)findViewById(R.id.hospital_name);
         fever = (CheckBox) findViewById(R.id.fever);
         cough = (CheckBox) findViewById(R.id.cough);
         diarrhea = (CheckBox) findViewById(R.id.diarrhea);
+        shot =(TextView)findViewById(R.id.shot);
 
         addPhoto = (Button) findViewById(R.id.add_photo);
         ivImg = (ImageView) findViewById(R.id.photo);
@@ -127,7 +144,7 @@ public class WriteDiaryActivity extends AppCompatActivity  {
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                depart = parent.getItemAtPosition(position);
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
@@ -155,24 +172,47 @@ public class WriteDiaryActivity extends AppCompatActivity  {
         });
         today.setText(year + "년 " + (month + 1) + "월 " + day + "일 " + getDayKor());
 
+        //아무 선택없을때 db에 보낼 Date;
+        result_year= year;
+        result_month=month+1;
+        result_day=day;
+
         submit = (Button) findViewById(R.id.submit);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                writeDiary();
+                try {
+                    writeDiary();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
     }
 
 
-    public void writeDiary() {
-        MyApplication myapp = (MyApplication)getApplicationContext();
+    public void writeDiary() throws ParseException {
+        diary_date_string = result_year+"-"+result_month+"-"+result_day+" "+"00:00:00";
+        next_date_string = next_year+"-"+next_month+"-"+next_day+" "+"00:00:00";
+
+        diary_date = dateFormat.parse(diary_date_string);
+        next_date = dateFormat.parse(next_date_string);
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        params.put("memo", memo.getText().toString());
-        params.put("weight", Integer.parseInt(weight.toString()));
-        params.put("height", Integer.parseInt((height.toString())));
+        params.put("c_memo", memo.getText().toString());
+        params.put("c_w", Double.parseDouble(weight.getText().toString()));
+        params.put("c_h", Double.parseDouble(height.getText().toString()));
+        params.put("c_hospital",hospital_name.getText().toString());
+        params.put("c_treat",result.toString());
+        params.put("c_shot",shot.getText().toString());
+        params.put("c_depart",depart.toString());
+        params.put("c_date",dateFormat.format(diary_date));
+        params.put("c_next",dateFormat.format(next_date));
+        //c_date 보내기
+
+
 
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -180,7 +220,7 @@ public class WriteDiaryActivity extends AppCompatActivity  {
             bitmapPhoto.compress(Bitmap.CompressFormat.PNG, 50, stream);
             byteArray = stream.toByteArray();
             params.put("file", byteArray);
-            params.put("fileName", fileName);
+            params.put("c_img", fileName);
             aq.ajax("http://52.41.218.18:8080/writeDiaryWithImg", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                 @Override
                 public void callback(String url, JSONObject html, AjaxStatus status) {
@@ -214,6 +254,7 @@ public class WriteDiaryActivity extends AppCompatActivity  {
 
         if (requestCode == PICK_FROM_ALBUM) {
             if (data != null) {
+                addPhoto.setVisibility(addPhoto.GONE);
                 Uri mImageCaptureUri = data.getData();
                 bitmapPhoto = null;
                 try {
@@ -245,6 +286,10 @@ public class WriteDiaryActivity extends AppCompatActivity  {
             start_day = dayOfMonth;
 
             tv.setText(start_year +"/"+ start_month +"/"+ start_day);
+            next_year = start_year;
+            next_month = start_month;
+            next_day = start_day;
+
         }
     };
 
@@ -257,9 +302,11 @@ public class WriteDiaryActivity extends AppCompatActivity  {
             start_year = year;
             start_month = monthOfYear +1;
             start_day = dayOfMonth;
-
-
             today.setText(start_year+"년 "+(start_month)+"월 "+start_day+"일 "+ getChangeDayKor() );
+            //날짜 선택후  db에 보탤 Date;
+            result_year= start_year;
+            result_month=start_month;
+            result_day=start_day;
         }
     };
 

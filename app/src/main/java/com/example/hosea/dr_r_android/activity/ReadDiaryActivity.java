@@ -44,7 +44,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
     int start_year =0 , start_month=0, start_day =0;
     int year, month, day;
     String date;
-    TextView tv , today, sleepTotal;
+    TextView tv , today, sleepTotal, feedTotal;
     SimpleDateFormat dateFormat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +63,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
         day = calendar.get(Calendar.DAY_OF_MONTH);
         tv = (TextView)findViewById(R.id.date) ;
         sleepTotal = (TextView)findViewById(R.id.tv_sleepTotal);
+        feedTotal = (TextView)findViewById(R.id.tv_feedTotal);
         today = (TextView)findViewById(R.id.dateForList);
 
         date = year+"-"+(month+1)+"-"+day+" ";
@@ -146,6 +147,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
             pieView2.setDate(clockPieHelperArrayList);
         }
         sleepTotal.setText( result_sleep / 1000 / 3600 +" 시간 "+ (result_sleep / 1000 % 3600) / 60 +" 분 "+ (result_sleep / 1000 %3600 %60 ) +" 초 ");
+        feedTotal.setText( result_sleep / 1000 / 3600 +" 시간 "+ (result_sleep / 1000 % 3600) / 60 +" 분 "+ (result_sleep / 1000 %3600 %60 ) +" 초 "); //임시
     }
     public void readDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
