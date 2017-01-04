@@ -221,6 +221,7 @@ public class FeedTimeFragment extends Fragment {
                 try {
                     if (html.getString("msg").equals("정상 작동")) {
                         Toast.makeText(getActivity(), "작성 되었습니다.", Toast.LENGTH_SHORT).show();
+                        readFeed();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
