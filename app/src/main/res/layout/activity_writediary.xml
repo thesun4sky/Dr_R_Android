@@ -8,111 +8,111 @@
     tools:context=".activity.MainActivity">
 
     <LinearLayout
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
-        android:background="#FFFFFFDD"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="20dp"
+        android:background="#FFFFFFDD">
 
         <TextView
-            android:textSize="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="오늘 날짜 : " />
+            android:text="오늘 날짜 : "
+            android:textSize="15dp" />
 
         <TextView
-            android:textSize="15dp"
             android:id="@+id/today"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textSize="15dp" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_marginBottom="20dp"
         android:layout_width="match_parent"
-        android:background="#FFFFFFDD"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="#FFFFFFDD">
 
         <TextView
-            android:textSize="15dp"
             android:id="@+id/todayAge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="오늘 교정 연령 : " />
+            android:text="오늘 교정 연령 : "
+            android:textSize="15dp" />
 
         <TextView
-            android:textSize="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textSize="15dp" />
     </LinearLayout>
 
 
     <View
-        android:layout_marginBottom="20dp"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#000"/>
+        android:layout_marginBottom="20dp"
+        android:background="#000" />
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="#FFFFFFDD"
-        android:layout_height="wrap_content">
+        android:orientation="horizontal">
 
         <TextView
-            android:textSize="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="키 : "
-            android:layout_weight="1" />
+            android:textSize="15dp" />
 
         <EditText
+            android:id="@+id/height"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
+            android:layout_weight="1"
             android:ems="8"
-            android:id="@+id/height"
-            android:layout_weight="1" />
+            android:inputType="numberDecimal" />
 
         <TextView
-            android:textSize="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="몸무게 : "
-            android:layout_weight="1" />
+            android:textSize="15dp" />
 
         <EditText
+            android:id="@+id/weight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
+            android:layout_weight="1"
             android:ems="8"
-            android:id="@+id/weight"
-            android:layout_weight="1" />
+            android:inputType="numberDecimal" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginBottom="10dp"
         android:background="#FFFFFFDD"
-        android:layout_height="120dp">
+        android:orientation="horizontal">
 
         <TextView
-            android:textSize="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="엄마 일기 : " />
+            android:text="엄마 일기 : "
+            android:textSize="15dp" />
 
         <EditText
-            android:layout_weight="4.77"
             android:id="@+id/memo"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
+            android:layout_weight="4.77"
             android:background="@drawable/textbox"
             android:gravity="top"
             android:inputType="textMultiLine" />
@@ -123,28 +123,28 @@
             android:layout_weight="1">
 
             <ImageView
-            android:layout_weight="1"
-            android:id="@+id/photo"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"/>
+                android:id="@+id/photo"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/add_photo"
-                android:text="사진첨부"
-                android:background="#FFDDDD"
-                android:textColor="#000000"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
+                android:background="#FFDDDD"
+                android:text="사진첨부"
+                android:textColor="#000000" />
         </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:background="#FFFFFFDD"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#FFFFFFDD">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -152,10 +152,10 @@
             android:layout_weight="1">
 
             <TextView
-                android:textSize="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="병원 : " />
+                android:text="병원 : "
+                android:textSize="15dp" />
 
             <EditText
                 android:id="@+id/hospital_name"
@@ -164,11 +164,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#FFFFFFDD"
-            android:layout_weight="1">
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1"
+            android:background="#FFFFFFDD">
 
             <CheckBox
                 android:id="@+id/fever"
@@ -194,10 +194,10 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
-        android:background="#FFFFFFDD"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="#FFFFFFDD">
 
 
         <LinearLayout
@@ -206,10 +206,10 @@
             android:layout_weight="1">
 
             <TextView
-                android:textSize="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="접종 : " />
+                android:text="접종 : "
+                android:textSize="15dp" />
 
             <EditText
                 android:id="@+id/shot"
@@ -220,8 +220,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:background="#FFFFFFDD"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#FFFFFFDD">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -229,15 +229,16 @@
             android:layout_weight="1">
 
             <TextView
-                android:textSize="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="예정 진료 : " />
+                android:text="예정 진료 : "
+                android:textSize="15dp" />
+
             <TextView
                 android:id="@+id/date"
-                android:text="날짜 선택"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="날짜 선택" />
         </LinearLayout>
 
         <LinearLayout
@@ -246,15 +247,15 @@
             android:layout_weight="1">
 
             <TextView
-                android:textSize="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="진료 병원 : " />
+                android:text="진료 병원 : "
+                android:textSize="15dp" />
+
             <Spinner
                 android:id="@+id/b_spinner1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
+                android:layout_height="wrap_content" />
 
 
         </LinearLayout>
@@ -263,18 +264,18 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
-            android:layout_gravity="center_horizontal|center_vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical">
 
             <Button
-            android:id="@+id/submit"
-            android:text="등록"
+                android:id="@+id/submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="#6CD9DC"
-                android:textColor="#FFF"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+                android:textColor="#FFF" />
         </LinearLayout>
     </FrameLayout>
 

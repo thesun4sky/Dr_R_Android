@@ -14,7 +14,8 @@ import com.example.hosea.dr_r_android.dao.DiaryVO;
 
 import org.w3c.dom.Text;
 
-import java.sql.Date;
+import java.util.Date;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -24,6 +25,7 @@ import java.util.Locale;
  */
 
 public class DiaryAdapter extends BaseAdapter {
+    final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
     private Context dContext;
     private int dResource;
     private ArrayList<DiaryVO> dItems = new ArrayList<>();
@@ -57,7 +59,7 @@ public class DiaryAdapter extends BaseAdapter {
         if (view == null) {
             LayoutInflater inflater =
                     (LayoutInflater) dContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(dResource, viewGroup,false);
+            view = inflater.inflate(dResource, viewGroup, false);
         }
         mAq = new AQuery(view);
 //        TextView breakfast = (TextView) view.findViewById(R.id.diary_tv_breakfast);
@@ -73,23 +75,19 @@ public class DiaryAdapter extends BaseAdapter {
         TextView weight = (TextView) view.findViewById(R.id.diary_tv_weight);
         TextView height = (TextView) view.findViewById(R.id.diary_tv_height);
         TextView memo = (TextView) view.findViewById(R.id.diary_tv_memo);
-        TextView hospital = (TextView)view.findViewById(R.id.diary_tv_hospital);
-        TextView treat = (TextView)view.findViewById(R.id.diary_tv_treat);
-        TextView shot = (TextView)view.findViewById(R.id.diary_tv_shot);
-        TextView next = (TextView)view.findViewById(R.id.diary_tv_next);
-        TextView depart = (TextView)view.findViewById(R.id.diary_tv_depart);
+        TextView hospital = (TextView) view.findViewById(R.id.diary_tv_hospital);
+        TextView treat = (TextView) view.findViewById(R.id.diary_tv_treat);
+        TextView shot = (TextView) view.findViewById(R.id.diary_tv_shot);
+        TextView next = (TextView) view.findViewById(R.id.diary_tv_next);
+        TextView depart = (TextView) view.findViewById(R.id.diary_tv_depart);
 
 
-        if(dItems != null ) {
+        if (dItems != null) {
             DiaryVO diary = dItems.get(i);
-            long next_time = Long.parseLong(diary.getNext());
+
             final SimpleDateFormat curYearFormat = new SimpleDateFormat("yyyy", Locale.KOREA);
             final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);
             final SimpleDateFormat curDayFormat = new SimpleDateFormat("dd", Locale.KOREA);
-            Date next_date = new Date(next_time);
-            int year = Integer.parseInt(curYearFormat.format(next_date));
-            int month = Integer.parseInt(curMonthFormat.format(next_date));
-            int day = Integer.parseInt(curDayFormat.format(next_date));
             age.setText(diary.getAge() + "");
             weight.setText(diary.getWeight() + "");
             height.setText(diary.getHeight() + "");
@@ -97,12 +95,25 @@ public class DiaryAdapter extends BaseAdapter {
             hospital.setText(diary.getHospital_name());
             treat.setText(diary.getTreat());
             shot.setText(diary.getShot());
-            next.setText(year + "-" + month + "-" + day);
+            Date next_date = new Date();
+
+
+            if (!diary.getNext().equals("0")) {
+                try {
+                    next_date = dateFormat.parse(diary.getNext());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                long next_time = next_date.getTime();
+                int year = Integer.parseInt(curYearFormat.format(next_date));
+                int month = Integer.parseInt(curMonthFormat.format(next_date));
+                int day = Integer.parseInt(curDayFormat.format(next_date));
+                next.setText(year + "-" + month + "-" + day);
+            }
             depart.setText(diary.getDepart());
             String IMG_URL = "http://52.41.218.18/storedimg/" + diary.getC_img();
             mAq.id(R.id.diary_iv_photo).image(IMG_URL);
-        }
-        else{
+        } else {
             age.setText("");
             weight.setText("");
             height.setText("");

@@ -34,6 +34,7 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.example.hosea.dr_r_android.R;
+import com.example.hosea.dr_r_android.dao.DiaryVO;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,15 +51,17 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class WriteDiaryActivity extends AppCompatActivity  {
+public class WriteDiaryActivity extends AppCompatActivity {
 
     private AQuery aq = new AQuery(this);
     int year, month, day;
-    final SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+    final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
     private EditText weight, height;
     EditText memo;
     Date diary_date;
+    Spinner spinner;
     Date next_date;
+    String date;
     Object depart;
     String diary_date_string;
     String next_date_string;
@@ -66,15 +69,16 @@ public class WriteDiaryActivity extends AppCompatActivity  {
     private Intent previousIntent;
     private Button submit, addPhoto;
     private ImageView ivImg;
+    boolean photo_has_changed;
     private Bitmap bitmapPhoto;
     String result;
-    CheckBox fever, cough ,diarrhea;
+    CheckBox fever, cough, diarrhea;
     TextView tv;
     TextView today;
     TextView shot;
-    int result_year =0 ,result_month = 0, result_day=0;
-    int next_year =0 ,next_month = 0, next_day=0;
-    int start_year =0 , start_month=0, start_day =0;
+    int result_year = 0, result_month = 0, result_day = 0;
+    int next_year = 0, next_month = 0, next_day = 0;
+    int start_year = 0, start_month = 0, start_day = 0;
     private final int PICK_FROM_ALBUM = 1;
     TextView start;
     TextView end;
@@ -85,8 +89,7 @@ public class WriteDiaryActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_writediary);
-
-
+        photo_has_changed = false;
         previousIntent = getIntent();
         GregorianCalendar calendar = new GregorianCalendar();
         year = calendar.get(Calendar.YEAR);
@@ -95,17 +98,28 @@ public class WriteDiaryActivity extends AppCompatActivity  {
 
         tv = (TextView) findViewById(R.id.date);
         today = (TextView) findViewById(R.id.today);
-        height = (EditText)findViewById(R.id.height);
-        weight = (EditText)findViewById(R.id.weight);
+        height = (EditText) findViewById(R.id.height);
+        weight = (EditText) findViewById(R.id.weight);
         memo = (EditText) findViewById(R.id.memo);
-        hospital_name = (EditText)findViewById(R.id.hospital_name);
+        hospital_name = (EditText) findViewById(R.id.hospital_name);
         fever = (CheckBox) findViewById(R.id.fever);
         cough = (CheckBox) findViewById(R.id.cough);
         diarrhea = (CheckBox) findViewById(R.id.diarrhea);
-        shot =(TextView)findViewById(R.id.shot);
+        shot = (TextView) findViewById(R.id.shot);
 
         addPhoto = (Button) findViewById(R.id.add_photo);
         ivImg = (ImageView) findViewById(R.id.photo);
+
+        ivImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
+                startActivityForResult(intent, PICK_FROM_ALBUM);
+            }
+        });
+
+
         addPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,28 +129,7 @@ public class WriteDiaryActivity extends AppCompatActivity  {
             }
         });
 
-
-        fever.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                printdisease();
-            }
-        });
-
-        cough.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                printdisease();
-            }
-        });
-
-        diarrhea.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                printdisease();
-            }
-        });
-        Spinner spinner = (Spinner) findViewById(R.id.b_spinner1);
+        spinner = (Spinner) findViewById(R.id.b_spinner1);
         final ArrayAdapter spinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.hospital, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -174,11 +167,20 @@ public class WriteDiaryActivity extends AppCompatActivity  {
         today.setText(year + "년 " + (month + 1) + "월 " + day + "일 " + getDayKor());
 
         //아무 선택없을때 db에 보낼 Date;
-        result_year= year;
-        result_month=month+1;
-        result_day=day;
+        result_year = year;
+        result_month = month + 1;
+        result_day = day;
+
+        date = result_year + "-" + result_month + "-" + result_day + " ";
+
+
+        readDiary();
+
 
         submit = (Button) findViewById(R.id.submit);
+        submit.setText("등록");
+
+
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -190,29 +192,148 @@ public class WriteDiaryActivity extends AppCompatActivity  {
             }
         });
 
+
     }
 
 
-    public void writeDiary() throws ParseException {
-        diary_date_string = result_year+"-"+result_month+"-"+result_day+" "+"00:00:00";
-        next_date_string = next_year+"-"+next_month+"-"+next_day+" "+"00:00:00";
-
-        diary_date = dateFormat.parse(diary_date_string);
-        next_date = dateFormat.parse(next_date_string);
-
+    public void readDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
+        params.put("u_id", previousIntent.getIntExtra("u_id", 0));
+        params.put("c_date", date + "00:00:00");
+        aq.ajax("http://52.41.218.18:8080/getDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject html, AjaxStatus status) {
+                if (html != null) {
+                    inputDataForUpdate(html);
+                } else {
+                    Toast.makeText(getApplicationContext(), "해당하는 데이터가 없습니다", Toast.LENGTH_SHORT).show();
+                    inputForNewData();
+
+                }
+            }
+        });
+    }
+
+    public void inputForNewData(){
+        submit.setText("등록");
+        weight.setText("");
+        height.setText("");
+        memo.setText("");
+        hospital_name.setText("");
+        fever.setChecked(false);
+        cough.setChecked(false);
+        diarrhea.setChecked(false);
+        shot.setText("");
+        tv.setText("날짜 선택");
+        next_year=0;
+        next_month=0;
+        next_day=0;
+        spinner.setSelection(0);
+        depart = spinner.getItemAtPosition(0);
+        ivImg.setImageDrawable(null);
+        addPhoto.setVisibility(addPhoto.VISIBLE);
+
+    }
+
+    public void inputDataForUpdate(JSONObject jsonObject) {
+        submit.setText("수정");
+        DiaryVO diaryVO = new DiaryVO(jsonObject);
+        weight.setText(diaryVO.getWeight() + "");
+        height.setText(diaryVO.getHeight() + "");
+        memo.setText(diaryVO.getMemo());
+        hospital_name.setText(diaryVO.getHospital_name());
+
+        //질병 체크 박스
+        String original_treat = diaryVO.getTreat();
+        String[] splitValue = original_treat.split(",");
+        for (int i = 0; i < splitValue.length; i++) {
+            if (splitValue[i].equals("열")) {
+                fever.setChecked(true);
+            } else if (splitValue[i].equals("기침")) {
+                cough.setChecked(true);
+            } else if (splitValue[i].equals("설사")) {
+                diarrhea.setChecked(true);
+            }
+        }
+
+        shot.setText(diaryVO.getShot());
+        if(!diaryVO.getNext().equals("0")) {
+            Date next_date = new Date();
+            try {
+                next_date = dateFormat.parse(diaryVO.getNext());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            long next_time = next_date.getTime();
+
+            final SimpleDateFormat curYearFormat = new SimpleDateFormat("yyyy", Locale.KOREA);
+            final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);
+            final SimpleDateFormat curDayFormat = new SimpleDateFormat("dd", Locale.KOREA);
+            next_date = new Date(next_time);
+            int year = Integer.parseInt(curYearFormat.format(next_date));
+            int month = Integer.parseInt(curMonthFormat.format(next_date));
+            int day = Integer.parseInt(curDayFormat.format(next_date));
+            tv.setText(year + "/" + month + "/" + day);
+
+            next_year = year;
+            next_month = month;
+            next_day = day;
+        }
+        else{
+            tv.setText("날짜 선택");
+            next_year = 0;
+            next_month = 0;
+            next_day = 0;
+        }
+
+        //스피너 선택 적용
+        if (diaryVO.getDepart().equals("안과")) {
+            spinner.setSelection(0);
+            depart = spinner.getItemAtPosition(0);
+        } else if (diaryVO.getDepart().equals("소아청소년과")) {
+            spinner.setSelection(1);
+            depart = spinner.getItemAtPosition(1);
+        }
+        if(!diaryVO.getC_img().equals(null) && !diaryVO.getC_img().equals("") && !diaryVO.getC_img().equals("null")  ) {
+            String IMG_URL = "http://52.41.218.18/storedimg/" + diaryVO.getC_img();
+            aq.id(R.id.photo).image(IMG_URL);
+            addPhoto.setVisibility(addPhoto.GONE);
+        }
+        else{
+            ivImg.setImageDrawable(null);
+            addPhoto.setVisibility(View.VISIBLE);
+        }
+
+
+
+    }
+
+    public void writeDiary() throws ParseException {
+        Map<String, Object> params = new HashMap<String, Object>();
+        diary_date_string = result_year + "-" + result_month + "-" + result_day + " " + "00:00:00";
+        if(next_year != 0) {
+            next_date_string = next_year + "-" + next_month + "-" + next_day + " " + "00:00:00";
+            next_date = dateFormat.parse(next_date_string);
+            params.put("c_next", dateFormat.format(next_date));
+        }
+        else{
+            params.put("c_next",next_year);
+        }
+        diary_date = dateFormat.parse(diary_date_string);
+
+
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
         params.put("c_memo", memo.getText().toString());
         params.put("c_w", Double.parseDouble(weight.getText().toString()));
         params.put("c_h", Double.parseDouble(height.getText().toString()));
-        params.put("c_hospital",hospital_name.getText().toString());
-        params.put("c_treat",result.toString());
-        params.put("c_shot",shot.getText().toString());
-        params.put("c_depart",depart.toString());
-        params.put("c_date",dateFormat.format(diary_date));
-        params.put("c_next",dateFormat.format(next_date));
-        //c_date 보내기
+        params.put("c_hospital", hospital_name.getText().toString());
+        params.put("c_treat", printdisease());
+        params.put("c_shot", shot.getText().toString());
+        params.put("c_depart", depart.toString());
+        params.put("c_date", dateFormat.format(diary_date));
 
+
+        //c_date 보내기
 
 
         try {
@@ -249,7 +370,6 @@ public class WriteDiaryActivity extends AppCompatActivity  {
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -266,6 +386,7 @@ public class WriteDiaryActivity extends AppCompatActivity  {
                     fileName = absolutePath.substring(absolutePath.lastIndexOf("/") + 1);
                     if (bitmapPhoto != null) {
                         ivImg.setImageBitmap(bitmapPhoto);
+                        photo_has_changed = true;
                     }
 
                 } catch (IOException e) {
@@ -283,10 +404,10 @@ public class WriteDiaryActivity extends AppCompatActivity  {
                               int dayOfMonth) {
             // TODO Auto-generated method stub
             start_year = year;
-            start_month = monthOfYear +1;
+            start_month = monthOfYear + 1;
             start_day = dayOfMonth;
 
-            tv.setText(start_year +"/"+ start_month +"/"+ start_day);
+            tv.setText(start_year + "/" + start_month + "/" + start_day);
             next_year = start_year;
             next_month = start_month;
             next_day = start_day;
@@ -301,43 +422,49 @@ public class WriteDiaryActivity extends AppCompatActivity  {
                               int dayOfMonth) {
             // TODO Auto-generated method stub
             start_year = year;
-            start_month = monthOfYear +1;
+            start_month = monthOfYear + 1;
             start_day = dayOfMonth;
-            today.setText(start_year+"년 "+(start_month)+"월 "+start_day+"일 "+ getChangeDayKor() );
+            today.setText(start_year + "년 " + (start_month) + "월 " + start_day + "일 " + getChangeDayKor());
             //날짜 선택후  db에 보탤 Date;
-            result_year= start_year;
-            result_month=start_month;
-            result_day=start_day;
+            result_year = start_year;
+            result_month = start_month;
+            result_day = start_day;
+
+            date = result_year + "-" + result_month + "-" + result_day + " ";
+            readDiary();
         }
     };
 
-    public static String getDayKor(){
+    public static String getDayKor() {
         Calendar cal = Calendar.getInstance();
         int cnt = cal.get(Calendar.DAY_OF_WEEK) - 1;
-        String[] week = { "일", "월", "화", "수", "목", "금", "토" };
+        String[] week = {"일", "월", "화", "수", "목", "금", "토"};
 
-        return "( "+week[cnt]+" )";
+        return "( " + week[cnt] + " )";
     }
-    public String getChangeDayKor(){
-        Calendar cal= Calendar.getInstance ();
+
+    public String getChangeDayKor() {
+        Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, start_year);
-        cal.set(Calendar.MONTH, start_month-1);
+        cal.set(Calendar.MONTH, start_month - 1);
         cal.set(Calendar.DATE, start_day);
         int cnt = cal.get(Calendar.DAY_OF_WEEK) - 1;
-        String[] week = { "일", "월", "화", "수", "목", "금", "토" };
+        String[] week = {"일", "월", "화", "수", "목", "금", "토"};
 
-        return "( "+week[cnt]+" )";
+        return "( " + week[cnt] + " )";
     }
 
-    public void printdisease(){
-        if(fever.isChecked()){
-            result += fever.getText().toString();
+    public String printdisease() {
+        result = "";
+        if (fever.isChecked()) {
+            result += fever.getText().toString() + ",";
         }
-        if(cough.isChecked()){
-            result+=cough.getText().toString();
+        if (cough.isChecked()) {
+            result += cough.getText().toString() + ",";
         }
-        if(diarrhea.isChecked()){
-            result+=diarrhea.getText().toString();
+        if (diarrhea.isChecked()) {
+            result += diarrhea.getText().toString() + ",";
         }
+        return result;
     }
 }
