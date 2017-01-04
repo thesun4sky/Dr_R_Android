@@ -1,8 +1,10 @@
 package com.example.hosea.dr_r_android.dao;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.sql.Timestamp;
-
-
+import java.util.Date;
 
 
 public class SleepVO {
@@ -20,6 +22,22 @@ public class SleepVO {
         this.s_start = s_start;
         this.s_end = s_end;
         this.s_total = s_total;
+    }
+
+    public SleepVO(JSONObject jsonObject) {
+        try {
+            this.s_id = jsonObject.getInt("s_id");
+            this.u_id = jsonObject.getInt("u_id");
+            Long s_sleep = Long.parseLong(jsonObject.getString("s_start"));
+            Long e_sleep = Long.parseLong(jsonObject.getString("s_end"));
+            s_start = new Timestamp(s_sleep);
+            s_end = new Timestamp(e_sleep);
+            s_total = (int) (e_sleep -  s_sleep);
+            this.s_end = s_end;
+            this.s_total = s_total;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public int getS_id() {

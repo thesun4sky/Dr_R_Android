@@ -12,6 +12,7 @@ import com.example.hosea.dr_r_android.dao.SleepVO;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.TimeZone;
 
 /**
  * Created by Hosea on 2016-11-01.
@@ -60,6 +61,7 @@ public class SleepAdapter extends BaseAdapter {
         // Set Text 01
         SleepVO sleepVO = sItems.get(i);
         SimpleDateFormat formatForTime = new SimpleDateFormat("HH:mm:ss");
+        formatForTime.setTimeZone(TimeZone.getTimeZone("GMT+9"));
         startTime.setText(formatForTime.format(sleepVO.getS_start()));
 //        endTime.setText(formatForTime.format(sleepVO.getS_end()));
         total.setText(""+sleepVO.getS_total());

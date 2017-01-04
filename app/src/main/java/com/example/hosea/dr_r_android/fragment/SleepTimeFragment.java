@@ -45,6 +45,7 @@ public class SleepTimeFragment extends Fragment {
     long startTime ,endTime;
     private SleepAdapter sleepAdapter;
     private ArrayList<SleepVO> sleepDataList;
+    int user_id = 0;
     Date s_start;
     Date s_end;
     long outTime;
@@ -67,6 +68,10 @@ public class SleepTimeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_sleeptime, container, false);
+
+        Bundle args = getActivity().getIntent().getExtras();
+        user_id = args.getInt("u_id");
+
         myToday = (TextView) view.findViewById(R.id.today_sleep);
         myOutput = (TextView) view.findViewById(R.id.time_out);
         myToggle = (TextView) view.findViewById(R.id.sleep_toggle);
@@ -83,13 +88,14 @@ public class SleepTimeFragment extends Fragment {
         month =Integer.parseInt(curMonthFormat.format(date));
         day = Integer.parseInt(curDayFormat.format(date));
         sleepDataList = new ArrayList<>();
-        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(22123123), 3));
-        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 2));
-        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(11123123), 1));
+//        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(22123123), 3));
+//        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 2));
+//        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(11123123), 1));
         sleepAdapter = new SleepAdapter(view.getContext(),R.layout.itemsforsleeplist, sleepDataList);
         listView.setAdapter(sleepAdapter); // uses the view to get the context instead of getActivity().
 
         myToday.setText(year+"년 "+(month)+"월 "+day+"일 "+ getDayKor() );
+        readSleep();
         return view;
     }
 
@@ -171,7 +177,7 @@ public class SleepTimeFragment extends Fragment {
     public void writeDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
         //params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        params.put("u_id" , ((TimeActivity)getActivity()).u_id);
+        params.put("u_id" , user_id);
         params.put("s_start" , dateFormat.format(s_start));
         params.put("s_end" , dateFormat.format(s_end));
         params.put("s_total" , endTime-startTime);
@@ -181,6 +187,7 @@ public class SleepTimeFragment extends Fragment {
                 try {
                     if (html.getString("msg").equals("정상 작동")) {
                         Toast.makeText(getActivity(), "작성 되었습니다.", Toast.LENGTH_SHORT).show();
+                        readSleep();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -191,8 +198,9 @@ public class SleepTimeFragment extends Fragment {
 
     public void readSleep() {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id", ((TimeActivity)getActivity()).u_id);
-        params.put("s_start", date + "00:00:00");
+        SimpleDateFormat dateFormat2 = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+        params.put("u_id", user_id);
+        params.put("s_start", dateFormat2.format(date));
         aq.ajax("http://52.41.218.18:8080/getSleepTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
             public void callback(String url, JSONArray html, AjaxStatus status) {
@@ -212,7 +220,8 @@ public class SleepTimeFragment extends Fragment {
     }
     public void jsonArrayToSleepArray(JSONArray jsonArr) throws JSONException {
         for (int i = 0; i < jsonArr.length(); i++) {
-
+            sleepDataList.add(new SleepVO(jsonArr.getJSONObject(i)));
+            sleepAdapter.notifyDataSetChanged();
         }
     }
 }
