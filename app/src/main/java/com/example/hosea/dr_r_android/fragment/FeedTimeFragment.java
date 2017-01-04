@@ -8,6 +8,8 @@ import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,16 +19,26 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.example.hosea.dr_r_android.R;
 import com.example.hosea.dr_r_android.activity.TimeActivity;
+import com.example.hosea.dr_r_android.adapter.FeedAdapter;
+import com.example.hosea.dr_r_android.adapter.SleepAdapter;
+import com.example.hosea.dr_r_android.dao.FeedVO;
+import com.example.hosea.dr_r_android.dao.SleepVO;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
+
+import im.dacer.androidcharts.ClockPieHelper;
 
 /**
  * Created by hosea on 2016-12-29.
@@ -35,6 +47,9 @@ import java.util.Map;
 public class FeedTimeFragment extends Fragment {
     private AQuery aq = new AQuery(getActivity());
     private TextView myOutput, myToday, myToggle;
+    private ImageView myCircle;
+    private FeedAdapter feedAdapter;
+    private ArrayList<FeedVO> feedDataList;
     long startTime ,endTime;
     Date s_start;
     Date s_end;
@@ -59,15 +74,22 @@ public class FeedTimeFragment extends Fragment {
         //inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_feedtime, container, false);
         myToday = (TextView) view.findViewById(R.id.today_feed);
-        myOutput = (TextView) view.findViewById(R.id.time_out);
-        myToggle = (TextView) view.findViewById(R.id.sleep_toggle);
+        myOutput = (TextView) view.findViewById(R.id.time_out_feed);
+        myToggle = (TextView) view.findViewById(R.id.feed_toggle);
+        myCircle = (ImageView) view.findViewById(R.id.feed_toggle_img);
+        myCircle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myOnClick(v);
+            }
+        });
         myToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 myOnClick(v);
             }
         });
-
+        final ListView listView = (ListView) view.findViewById(R.id.feed_listView);
         final RadioButton right = (RadioButton) view.findViewById(R.id.feed_right);
         final RadioButton left = (RadioButton) view.findViewById(R.id.feed_left);
         final RadioButton prepared = (RadioButton) view.findViewById(R.id.feed_prepared);
@@ -90,6 +112,13 @@ public class FeedTimeFragment extends Fragment {
         right.setOnClickListener(optionOnClickListener);
         left.setOnClickListener(optionOnClickListener);
         prepared.setOnClickListener(optionOnClickListener);
+        feedDataList = new ArrayList<>();
+        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
+        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
+        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
+        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
+        feedAdapter = new FeedAdapter(view.getContext(),R.layout.itemsforfeedlist, feedDataList);
+        listView.setAdapter(feedAdapter); // uses the view to get the context instead of getActivity().
 
 
         //현재 날짜 받아오기
@@ -104,7 +133,7 @@ public class FeedTimeFragment extends Fragment {
 
     public void myOnClick(View v) {
         switch (v.getId()) {
-            case R.id.sleep_toggle: //시작버튼을 클릭했을때 현재 상태값에 따라 다른 동작을 할수있게끔 구현.
+            case R.id.feed_toggle: //시작버튼을 클릭했을때 현재 상태값에 따라 다른 동작을 할수있게끔 구현.
                 switch (cur_Status) {
                     case Init:
                         myBaseTime = SystemClock.elapsedRealtime();
@@ -186,6 +215,44 @@ public class FeedTimeFragment extends Fragment {
                 }
             }
         });
+        aq.ajax("http://52.41.218.18:8080/addFeedTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject html, AjaxStatus status) {
+                try {
+                    if (html.getString("msg").equals("정상 작동")) {
+                        Toast.makeText(getActivity(), "작성 되었습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    public void readFeed() {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("u_id", ((TimeActivity)getActivity()).u_id);
+        params.put("f_start", date + "00:00:00");
+        aq.ajax("http://52.41.218.18:8080/getFeedTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
+            @Override
+            public void callback(String url, JSONArray html, AjaxStatus status) {
+                if (html != null) {
+                    try {
+                        Toast.makeText(getActivity(),html.toString(), Toast.LENGTH_SHORT).show();
+                        feedDataList.clear();
+                        jsonArrayToSleepArray(html);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getActivity(),"연결상태가 좋지않아 목록을 부를 수 없습니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+    public void jsonArrayToSleepArray(JSONArray jsonArr) throws JSONException {
+        for (int i = 0; i < jsonArr.length(); i++) {
+
+        }
     }
 }
 

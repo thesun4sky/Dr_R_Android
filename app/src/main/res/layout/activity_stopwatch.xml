@@ -33,7 +33,7 @@
     <FrameLayout
         android:id="@+id/time_fragment"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="match_parent"
         android:background="@color/colorAccent">
         <fragment
             android:name="com.example.hosea.dr_r_android.fragment.SleepTimeFragment"

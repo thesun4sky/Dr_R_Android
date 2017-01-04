@@ -9,6 +9,7 @@ import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,11 +18,16 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.example.hosea.dr_r_android.R;
 import com.example.hosea.dr_r_android.activity.TimeActivity;
+import com.example.hosea.dr_r_android.adapter.SleepAdapter;
+import com.example.hosea.dr_r_android.dao.SleepVO;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +43,8 @@ public class SleepTimeFragment extends Fragment {
     private AQuery aq = new AQuery(getActivity());
     private TextView myOutput, myToday, myToggle;
     long startTime ,endTime;
+    private SleepAdapter sleepAdapter;
+    private ArrayList<SleepVO> sleepDataList;
     Date s_start;
     Date s_end;
     long outTime;
@@ -68,12 +76,18 @@ public class SleepTimeFragment extends Fragment {
                 myOnClick(v);
             }
         });
-
+        final ListView listView = (ListView) view.findViewById(R.id.sleep_listView);
         //현재 날짜 받아오기
         // 년,월,일로 쪼갬
         year = Integer.parseInt(curYearFormat.format(date));
         month =Integer.parseInt(curMonthFormat.format(date));
         day = Integer.parseInt(curDayFormat.format(date));
+        sleepDataList = new ArrayList<>();
+        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(22123123), 3));
+        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 2));
+        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(11123123), 1));
+        sleepAdapter = new SleepAdapter(view.getContext(),R.layout.itemsforsleeplist, sleepDataList);
+        listView.setAdapter(sleepAdapter); // uses the view to get the context instead of getActivity().
 
         myToday.setText(year+"년 "+(month)+"월 "+day+"일 "+ getDayKor() );
         return view;
@@ -173,6 +187,33 @@ public class SleepTimeFragment extends Fragment {
                 }
             }
         });
+    }
+
+    public void readSleep() {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("u_id", ((TimeActivity)getActivity()).u_id);
+        params.put("s_start", date + "00:00:00");
+        aq.ajax("http://52.41.218.18:8080/getSleepTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
+            @Override
+            public void callback(String url, JSONArray html, AjaxStatus status) {
+                if (html != null) {
+                    try {
+                        Toast.makeText(getActivity(),html.toString(), Toast.LENGTH_SHORT).show();
+                        sleepDataList.clear();
+                        jsonArrayToSleepArray(html);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getActivity(),"연결상태가 좋지않아 목록을 부를 수 없습니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+    public void jsonArrayToSleepArray(JSONArray jsonArr) throws JSONException {
+        for (int i = 0; i < jsonArr.length(); i++) {
+
+        }
     }
 }
 
