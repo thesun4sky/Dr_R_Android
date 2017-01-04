@@ -18,6 +18,20 @@ public class DiaryVO {
     private String depart;
     private String memo;
 
+
+    public DiaryVO() {
+    }
+
+    public String getC_img() {
+        return c_img;
+    }
+
+    public void setC_img(String c_img) {
+        this.c_img = c_img;
+    }
+
+    private String c_img;
+
     public String getTreat() {
         return treat;
     }
@@ -62,10 +76,6 @@ public class DiaryVO {
         return height;
     }
 
-
-    public DiaryVO() {
-    }
-
     public void setAge(double age) {
         this.age = age;
     }
@@ -93,6 +103,7 @@ public class DiaryVO {
             shot = json.getString("c_shot");
             next = json.getString("c_next");
             depart = json.getString("c_depart");
+            c_img = json.getString("c_img");
         } catch (JSONException e) {
             e.printStackTrace();
         }

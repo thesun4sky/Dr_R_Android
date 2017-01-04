@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.androidquery.AQuery;
 import com.example.hosea.dr_r_android.R;
 import com.example.hosea.dr_r_android.dao.DiaryVO;
 
@@ -28,6 +29,7 @@ public class DiaryAdapter extends BaseAdapter {
     private ArrayList<DiaryVO> dItems = new ArrayList<>();
     private static final String RED = "#FF0000";
     private static final String BLUE = "#0000FF";
+    AQuery mAq;
 
     public DiaryAdapter(Context context, int resource, ArrayList<DiaryVO> items) {
         dContext = context;
@@ -57,7 +59,7 @@ public class DiaryAdapter extends BaseAdapter {
                     (LayoutInflater) dContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(dResource, viewGroup,false);
         }
-
+        mAq = new AQuery(view);
 //        TextView breakfast = (TextView) view.findViewById(R.id.diary_tv_breakfast);
 //        TextView lunch = (TextView) view.findViewById(R.id.diary_tv_lunch);
 //        TextView dinner = (TextView) view.findViewById(R.id.diary_tv_dinner);
@@ -76,26 +78,41 @@ public class DiaryAdapter extends BaseAdapter {
         TextView shot = (TextView)view.findViewById(R.id.diary_tv_shot);
         TextView next = (TextView)view.findViewById(R.id.diary_tv_next);
         TextView depart = (TextView)view.findViewById(R.id.diary_tv_depart);
-        DiaryVO diary = dItems.get(i);
 
-        long next_time = Long.parseLong(diary.getNext());
-        final SimpleDateFormat curYearFormat = new SimpleDateFormat("yyyy", Locale.KOREA);
-        final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);
-        final SimpleDateFormat curDayFormat = new SimpleDateFormat("dd", Locale.KOREA);
-        Date next_date = new Date(next_time );
-        int year = Integer.parseInt(curYearFormat.format(next_date));
-        int month = Integer.parseInt(curMonthFormat.format(next_date));
-        int day = Integer.parseInt(curDayFormat.format(next_date));
 
-        age.setText(diary.getAge()+"");
-        weight.setText(diary.getWeight()+"");
-        height.setText(diary.getHeight()+"");
-        memo.setText(diary.getMemo());
-        hospital.setText(diary.getHospital_name());
-        treat.setText(diary.getTreat());
-        shot.setText(diary.getShot());
-        next.setText(year+"-"+month+"-"+day);
-        depart.setText(diary.getDepart());
+        if(dItems != null ) {
+            DiaryVO diary = dItems.get(i);
+            long next_time = Long.parseLong(diary.getNext());
+            final SimpleDateFormat curYearFormat = new SimpleDateFormat("yyyy", Locale.KOREA);
+            final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);
+            final SimpleDateFormat curDayFormat = new SimpleDateFormat("dd", Locale.KOREA);
+            Date next_date = new Date(next_time);
+            int year = Integer.parseInt(curYearFormat.format(next_date));
+            int month = Integer.parseInt(curMonthFormat.format(next_date));
+            int day = Integer.parseInt(curDayFormat.format(next_date));
+            age.setText(diary.getAge() + "");
+            weight.setText(diary.getWeight() + "");
+            height.setText(diary.getHeight() + "");
+            memo.setText(diary.getMemo());
+            hospital.setText(diary.getHospital_name());
+            treat.setText(diary.getTreat());
+            shot.setText(diary.getShot());
+            next.setText(year + "-" + month + "-" + day);
+            depart.setText(diary.getDepart());
+            String IMG_URL = "http://52.41.218.18/storedimg/" + diary.getC_img();
+            mAq.id(R.id.diary_iv_photo).image(IMG_URL);
+        }
+        else{
+            age.setText("");
+            weight.setText("");
+            height.setText("");
+            memo.setText("");
+            hospital.setText("");
+            treat.setText("");
+            shot.setText("");
+            next.setText("");
+            depart.setText("");
+        }
 
 //        temperature.setText("" + diary.getTemperature());
 //        if (diary.getTemperature() > 30) {

@@ -41,18 +41,20 @@ public class ReadDiaryActivity extends AppCompatActivity {
     ClockPieView pieView2;
     private Intent previousIntent;
     private AQuery aq = new AQuery(this);
-    long result_sleep=0;
-    int start_year =0 , start_month=0, start_day =0;
+    long result_sleep = 0;
+    int start_year = 0, start_month = 0, start_day = 0;
     int year, month, day;
     String date;
-    TextView tv , today, sleepTotal, feedTotal;
+    TextView tv, today, sleepTotal, feedTotal;
     SimpleDateFormat dateFormat;
+    DiaryAdapter diaryAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview);
         previousIntent = getIntent();
-        dateFormat = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
         clockPieHelperArrayList = new ArrayList<ClockPieHelper>();
         //이름 설정
 //        tv = (TextView) findViewById(R.id.tv_listView_title);
@@ -62,12 +64,12 @@ public class ReadDiaryActivity extends AppCompatActivity {
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
-        tv = (TextView)findViewById(R.id.date) ;
-        sleepTotal = (TextView)findViewById(R.id.tv_sleepTotal);
-        feedTotal = (TextView)findViewById(R.id.tv_feedTotal);
-        today = (TextView)findViewById(R.id.dateForList);
+        tv = (TextView) findViewById(R.id.date);
+        sleepTotal = (TextView) findViewById(R.id.tv_sleepTotal);
+        feedTotal = (TextView) findViewById(R.id.tv_feedTotal);
+        today = (TextView) findViewById(R.id.dateForList);
 
-        date = year+"-"+(month+1)+"-"+day+" ";
+        date = year + "-" + (month + 1) + "-" + day + " ";
 
         findViewById(R.id.dateForList).setOnClickListener(new View.OnClickListener() {
 
@@ -79,27 +81,28 @@ public class ReadDiaryActivity extends AppCompatActivity {
             }
         });
 
-        pieView = (ClockPieView)findViewById(R.id.clock_pie_view);
-        pieView2 = (ClockPieView)findViewById(R.id.clock_pie_view2);
+        pieView = (ClockPieView) findViewById(R.id.clock_pie_view);
+        pieView2 = (ClockPieView) findViewById(R.id.clock_pie_view2);
         ArrayList<ClockPieHelper> pieHelperArrayList = new ArrayList<ClockPieHelper>();
         pieView.setDate(pieHelperArrayList);
 
         pieView2.setDate(pieHelperArrayList);
 
-        today.setText(year+"년 "+(month+1)+"월 "+day+"일 "+ getDayKor() );
+        today.setText(year + "년 " + (month + 1) + "월 " + day + "일 " + getDayKor());
         set();
         readDiary();
 
     }
-    private void set(){
+
+    private void set() {
         readSleep();
     }
 
-    public void readSleep(){
+    public void readSleep() {
         result_sleep = 0;
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", 1);
-        params.put("s_start", date+"00:00:00");
+        params.put("s_start", date + "00:00:00");
         aq.ajax("http://52.41.218.18:8080/getSleepTime", params, JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
             public void callback(String url, JSONArray html, AjaxStatus status) {
@@ -124,46 +127,51 @@ public class ReadDiaryActivity extends AppCompatActivity {
         final SimpleDateFormat curSecFormat = new SimpleDateFormat("ss", Locale.KOREA);
         for (int i = 0; i < jsonArr.length(); i++) {
 
-            long s_time = Long.parseLong(jsonArr.getJSONObject(i).getString("s_start")) ;
-            long e_time = Long.parseLong(jsonArr.getJSONObject(i).getString("s_end")) ;
-            result_sleep += e_time-s_time;
-            Date start = new Date(s_time );
-            Date end = new Date(e_time );
+            long s_time = Long.parseLong(jsonArr.getJSONObject(i).getString("s_start"));
+            long e_time = Long.parseLong(jsonArr.getJSONObject(i).getString("s_end"));
+            result_sleep += e_time - s_time;
+            Date start = new Date(s_time);
+            Date end = new Date(e_time);
             int s_hour = Integer.parseInt(curHourFormat.format(start));
             int s_min = Integer.parseInt(curMinuteFormat.format(start));
             int s_sec = Integer.parseInt(curSecFormat.format(start));
             int e_hour = Integer.parseInt(curHourFormat.format(end));
-            int e_min =  Integer.parseInt(curMinuteFormat.format(end));
-            int e_sec =  Integer.parseInt(curSecFormat.format(end));
+            int e_min = Integer.parseInt(curMinuteFormat.format(end));
+            int e_sec = Integer.parseInt(curSecFormat.format(end));
 
-            clockPieHelperArrayList.add(new ClockPieHelper(s_hour,s_min,s_sec,e_hour,e_min,e_sec));
+            clockPieHelperArrayList.add(new ClockPieHelper(s_hour, s_min, s_sec, e_hour, e_min, e_sec));
             pieView.setDate(clockPieHelperArrayList);
             pieView2.setDate(clockPieHelperArrayList);
         }
-        sleepTotal.setText( result_sleep / 1000 / 3600 +" 시간 "+ (result_sleep / 1000 % 3600) / 60 +" 분 "+ (result_sleep / 1000 %3600 %60 ) +" 초 ");
-        feedTotal.setText( result_sleep / 1000 / 3600 +" 시간 "+ (result_sleep / 1000 % 3600) / 60 +" 분 "+ (result_sleep / 1000 %3600 %60 ) +" 초 "); //임시
+        sleepTotal.setText(result_sleep / 1000 / 3600 + " 시간 " + (result_sleep / 1000 % 3600) / 60 + " 분 " + (result_sleep / 1000 % 3600 % 60) + " 초 ");
+        feedTotal.setText(result_sleep / 1000 / 3600 + " 시간 " + (result_sleep / 1000 % 3600) / 60 + " 분 " + (result_sleep / 1000 % 3600 % 60) + " 초 "); //임시
     }
+
     public void readDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        params.put("c_date", date+"00:00:00");
+        params.put("c_date", date + "00:00:00");
         aq.ajax("http://52.41.218.18:8080/getDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
                     jsonArrayToArrayList(html);
                 } else {
-
+                   Toast.makeText(getApplicationContext(),"해당하는 데이터가 없습니다",Toast.LENGTH_SHORT).show();
+                    jsonArrayToArrayListNoData();
                 }
             }
         });
     }
+
     public void jsonArrayToArrayList(JSONObject jsonObject) {
         ArrayList<DiaryVO> arrayList = new ArrayList<>();
-
         arrayList.add(new DiaryVO(jsonObject));
+        linktoAdapter(arrayList);
+    }
 
-
+    public void jsonArrayToArrayListNoData( ) {
+        ArrayList<DiaryVO> arrayList = new ArrayList<>();
         linktoAdapter(arrayList);
     }
 
@@ -176,22 +184,23 @@ public class ReadDiaryActivity extends AppCompatActivity {
         lv.setAdapter(diaryAdapter);
     }
 
-    public static String getDayKor(){
+    public static String getDayKor() {
         Calendar cal = Calendar.getInstance();
         int cnt = cal.get(Calendar.DAY_OF_WEEK) - 1;
-        String[] week = { "일", "월", "화", "수", "목", "금", "토" };
+        String[] week = {"일", "월", "화", "수", "목", "금", "토"};
 
-        return "( "+week[cnt]+" )";
+        return "( " + week[cnt] + " )";
     }
-    public String getChangeDayKor(){
-        Calendar cal= Calendar.getInstance ();
+
+    public String getChangeDayKor() {
+        Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, start_year);
-        cal.set(Calendar.MONTH, start_month-1);
+        cal.set(Calendar.MONTH, start_month - 1);
         cal.set(Calendar.DATE, start_day);
         int cnt = cal.get(Calendar.DAY_OF_WEEK) - 1;
-        String[] week = { "일", "월", "화", "수", "목", "금", "토" };
+        String[] week = {"일", "월", "화", "수", "목", "금", "토"};
 
-        return "( "+week[cnt]+" )";
+        return "( " + week[cnt] + " )";
     }
 
     private DatePickerDialog.OnDateSetListener dateSetListener2 = new DatePickerDialog.OnDateSetListener() {
@@ -201,15 +210,15 @@ public class ReadDiaryActivity extends AppCompatActivity {
                               int dayOfMonth) {
             // TODO Auto-generated method stub
             start_year = year;
-            start_month = monthOfYear +1;
+            start_month = monthOfYear + 1;
             start_day = dayOfMonth;
-            date = start_year+"-"+start_month+"-"+start_day+" ";
+            date = start_year + "-" + start_month + "-" + start_day + " ";
             clockPieHelperArrayList.clear();
             pieView.setDate(clockPieHelperArrayList);
             pieView2.setDate(clockPieHelperArrayList);
             set();
             readDiary();
-            today.setText(start_year+"년 "+(start_month)+"월 "+start_day+"일 "+ getChangeDayKor() );
+            today.setText(start_year + "년 " + (start_month) + "월 " + start_day + "일 " + getChangeDayKor());
         }
     };
 }
