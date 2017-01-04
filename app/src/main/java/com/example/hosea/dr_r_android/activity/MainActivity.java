@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     break;
                 case R.id.btn_main_3:
-                    intent = new Intent(getApplicationContext(), ApplicationQnaActivity.class);
+                    intent = new Intent(getApplicationContext(), GraphActivity.class);
                     intent.putExtra("u_id", previousIntent.getIntExtra("u_id", 0))
                             .putExtra("u_name", previousIntent.getStringExtra("u_name"));
                     startActivity(intent);

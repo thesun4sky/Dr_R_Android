@@ -30,11 +30,9 @@ public class SleepVO {
             this.u_id = jsonObject.getInt("u_id");
             Long s_sleep = Long.parseLong(jsonObject.getString("s_start"));
             Long e_sleep = Long.parseLong(jsonObject.getString("s_end"));
-            s_start = new Timestamp(s_sleep);
-            s_end = new Timestamp(e_sleep);
-            s_total = (int) (e_sleep -  s_sleep);
-            this.s_end = s_end;
-            this.s_total = s_total;
+            this.s_start = new Timestamp(s_sleep);
+            this.s_end = new Timestamp(e_sleep);
+            this.s_total = jsonObject.getInt("s_total");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -72,9 +70,11 @@ public class SleepVO {
         this.s_start = s_start;
     }
 
+
     public Timestamp getS_end() {
         return s_end;
     }
+
 
     public void setS_end(Timestamp s_end) {
         this.s_end = s_end;

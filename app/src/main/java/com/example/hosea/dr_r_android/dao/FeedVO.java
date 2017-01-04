@@ -1,5 +1,8 @@
 package com.example.hosea.dr_r_android.dao;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.sql.Timestamp;
 
 public class FeedVO {
@@ -19,6 +22,20 @@ public class FeedVO {
         this.f_end = f_end;
         this.f_total = f_total;
         this.feed = feed;
+    }
+
+    public FeedVO(JSONObject jsonObject) {
+        try {
+            this.f_id = jsonObject.getInt("f_id");
+            this.u_id = jsonObject.getInt("u_id");
+            Long start = Long.parseLong(jsonObject.getString("f_start"));
+            Long end = Long.parseLong(jsonObject.getString("f_end"));
+            this.f_start = new Timestamp(start);
+            this.f_end = new Timestamp(end);
+            this.f_total = jsonObject.getInt("f_total");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public int getF_id() {

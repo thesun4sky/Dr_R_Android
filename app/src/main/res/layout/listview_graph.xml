@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFEECC"
+    tools:context=".activity.ReadDiaryActivity">
+
+    <TextView
+        android:text="수면 그래프 : "
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:textSize="60px"
+        android:id="@+id/textView3"
+        android:textAlignment="center"
+        android:textStyle="normal|bold" />
+
+    <com.jjoe64.graphview.GraphView
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFFDD"
+        android:id="@+id/sleep_graph"/>
+
+    <TextView
+        android:text="수유 그래프 : "
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:textSize="60px"
+        android:id="@+id/textView4"
+        android:textAlignment="center"
+        android:textStyle="normal|bold" />
+
+    <com.jjoe64.graphview.GraphView
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFFDD"
+        android:id="@+id/feed_graph"/>
+
+</LinearLayout>
