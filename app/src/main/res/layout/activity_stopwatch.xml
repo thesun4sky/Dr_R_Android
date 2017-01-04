@@ -20,15 +20,16 @@
                 android:checked="true"
                 android:layout_weight="1"
                 android:text="수면 시간" />
+            <RadioButton
+                android:id="@+id/measureFeedingTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="수유 시간" />
 
         </RadioGroup>
 
-        <RadioButton
-            android:id="@+id/measureFeedingTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="수유 시간" />
+
     </LinearLayout>
 
     <FrameLayout
