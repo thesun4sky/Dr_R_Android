@@ -206,7 +206,6 @@ public class SleepTimeFragment extends Fragment {
             public void callback(String url, JSONArray html, AjaxStatus status) {
                 if (html != null) {
                     try {
-                        Toast.makeText(getActivity(),html.toString(), Toast.LENGTH_SHORT).show();
                         sleepDataList.clear();
                         jsonArrayToSleepArray(html);
                     } catch (JSONException e) {

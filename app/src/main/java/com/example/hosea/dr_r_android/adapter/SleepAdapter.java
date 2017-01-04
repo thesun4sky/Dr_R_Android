@@ -10,8 +10,11 @@ import android.widget.TextView;
 import com.example.hosea.dr_r_android.R;
 import com.example.hosea.dr_r_android.dao.SleepVO;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -60,9 +63,17 @@ public class SleepAdapter extends BaseAdapter {
 
         // Set Text 01
         SleepVO sleepVO = sItems.get(i);
-        SimpleDateFormat formatForTime = new SimpleDateFormat("HH:mm:ss");
-        formatForTime.setTimeZone(TimeZone.getTimeZone("GMT+9"));
-        startTime.setText(formatForTime.format(sleepVO.getS_start()));
+        final SimpleDateFormat curHourFormat = new SimpleDateFormat("HH", Locale.KOREA);
+        curHourFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        final SimpleDateFormat curMinuteFormat = new SimpleDateFormat("mm", Locale.KOREA);
+        final SimpleDateFormat curSecFormat = new SimpleDateFormat("ss", Locale.KOREA);
+        Date sleep_start = new Date(sleepVO.getS_start().getTime());
+
+        int s_hour = Integer.parseInt(curHourFormat.format(sleep_start));
+        int s_min = Integer.parseInt(curMinuteFormat.format(sleep_start));
+        int s_sec = Integer.parseInt(curSecFormat.format(sleep_start));
+
+        startTime.setText(s_hour+":"+s_min+":"+s_sec);
 //        endTime.setText(formatForTime.format(sleepVO.getS_end()));
         total.setText(""+sleepVO.getS_total());
 
