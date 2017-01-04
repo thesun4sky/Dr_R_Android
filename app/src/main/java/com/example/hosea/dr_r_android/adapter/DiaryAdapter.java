@@ -11,6 +11,8 @@ import android.widget.TextView;
 import com.example.hosea.dr_r_android.R;
 import com.example.hosea.dr_r_android.dao.DiaryVO;
 
+import org.w3c.dom.Text;
+
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,7 +66,6 @@ public class DiaryAdapter extends BaseAdapter {
 //        TextView sleeptime = (TextView) view.findViewById(R.id.diary_tv_sleepTime);
 //        TextView bloodPressure = (TextView) view.findViewById(R.id.diary_tv_bloodPressure);
 //        TextView drinking = (TextView) view.findViewById(R.id.diary_tv_drinking);
-
 
         TextView age = (TextView) view.findViewById(R.id.diary_tv_age);
         TextView weight = (TextView) view.findViewById(R.id.diary_tv_weight);
