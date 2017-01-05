@@ -76,6 +76,7 @@ public class FeedTimeFragment extends Fragment {
 
         Bundle args = getActivity().getIntent().getExtras();
         user_id = args.getInt("u_id");
+        feed = "좌";
         final View view = inflater.inflate(R.layout.fragment_feedtime, container, false);
         myToday = (TextView) view.findViewById(R.id.today_feed);
         myOutput = (TextView) view.findViewById(R.id.time_out_feed);
@@ -227,18 +228,6 @@ public class FeedTimeFragment extends Fragment {
                 try {
                     if (html.getString("msg").equals("정상 작동")) {
                         Toast.makeText(getActivity(), "작성 되었습니다.", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        aq.ajax("http://52.41.218.18:8080/addFeedTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject html, AjaxStatus status) {
-                try {
-                    if (html.getString("msg").equals("정상 작동")) {
-                        Toast.makeText(getActivity(), "작성 되었습니다.", Toast.LENGTH_SHORT).show();
                         readFeed();
                     }
                 } catch (JSONException e) {
@@ -246,6 +235,7 @@ public class FeedTimeFragment extends Fragment {
                 }
             }
         });
+
     }
     public void readFeed() {
         Map<String, Object> params = new HashMap<String, Object>();
@@ -257,7 +247,6 @@ public class FeedTimeFragment extends Fragment {
             public void callback(String url, JSONArray html, AjaxStatus status) {
                 if (html != null) {
                     try {
-                        Toast.makeText(getActivity(),html.toString(), Toast.LENGTH_SHORT).show();
                         feedDataList.clear();
                         jsonArrayToSleepArray(html);
                     } catch (JSONException e) {
