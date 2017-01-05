@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view){
                 Intent logoutIntent = new Intent(getApplicationContext(),LoginActivity.class);
+                logoutIntent.putExtra("u_device", previousIntent.getStringExtra("u_device"));
                 startActivity(logoutIntent);
                 MainActivity.this.finish();
             }
