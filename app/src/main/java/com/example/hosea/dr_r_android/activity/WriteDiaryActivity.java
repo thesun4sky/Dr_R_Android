@@ -57,7 +57,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
     int year, month, day;
     final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
     private EditText weight, height;
-    EditText memo;
+    EditText memo ,etc;
     Date diary_date;
     Spinner spinner_hospital;
     Spinner spinner_depart;
@@ -73,7 +73,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
     boolean photo_has_changed;
     private Bitmap bitmapPhoto;
     String result;
-    CheckBox fever, cough, diarrhea;
+    CheckBox fever, cough, diarrhea , cb_etc;
     TextView tv;
     TextView today;
     int result_year = 0, result_month = 0, result_day = 0;
@@ -104,6 +104,22 @@ public class WriteDiaryActivity extends AppCompatActivity {
         fever = (CheckBox) findViewById(R.id.fever);
         cough = (CheckBox) findViewById(R.id.cough);
         diarrhea = (CheckBox) findViewById(R.id.diarrhea);
+        cb_etc = (CheckBox)findViewById(R.id.cb_etc);
+        etc = (EditText)findViewById(R.id.et_etc);
+        etc.setVisibility(View.GONE);
+
+        cb_etc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(cb_etc.isChecked()){
+                    etc.setVisibility(View.VISIBLE);
+                }
+                else if(!cb_etc.isChecked()){
+                    etc.setVisibility(View.GONE);
+                    etc.setText("");
+                }
+            }
+        });
 
         addPhoto = (Button) findViewById(R.id.add_photo);
         ivImg = (ImageView) findViewById(R.id.photo);
@@ -256,6 +272,9 @@ public class WriteDiaryActivity extends AppCompatActivity {
         fever.setChecked(false);
         cough.setChecked(false);
         diarrhea.setChecked(false);
+        cb_etc.setChecked(false);
+        etc.setText("");
+        etc.setVisibility(View.GONE);
         tv.setText("날짜 선택");
         next_year=0;
         next_month=0;
@@ -288,8 +307,14 @@ public class WriteDiaryActivity extends AppCompatActivity {
                 cough.setChecked(true);
             } else if (splitValue[i].equals("설사")) {
                 diarrhea.setChecked(true);
+            }else if(splitValue[i].contains("기타")){
+                cb_etc.setChecked(true);
+                etc.setVisibility(View.VISIBLE);
+                String[] splitValueForEtc = original_treat.split(":");
+                etc.setText(splitValueForEtc[1]);
             }
         }
+
 
         if(!diaryVO.getNext().equals("0")) {
             Date next_date = new Date();
@@ -639,6 +664,9 @@ public class WriteDiaryActivity extends AppCompatActivity {
         }
         if (diarrhea.isChecked()) {
             result += diarrhea.getText().toString() + ",";
+        }
+        if(cb_etc.isChecked()){
+            result+=cb_etc.getText().toString()+":"+etc.getText();
         }
         return result;
     }
