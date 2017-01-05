@@ -59,13 +59,14 @@ public class WriteDiaryActivity extends AppCompatActivity {
     private EditText weight, height;
     EditText memo;
     Date diary_date;
-    Spinner spinner;
+    Spinner spinner_hospital;
+    Spinner spinner_depart;
+    Spinner spinner_shot;
     Date next_date;
     String date;
-    Object depart;
+    Object depart , hospital_depart , shot;
     String diary_date_string;
     String next_date_string;
-    EditText hospital_name;
     private Intent previousIntent;
     private Button submit, addPhoto;
     private ImageView ivImg;
@@ -75,7 +76,6 @@ public class WriteDiaryActivity extends AppCompatActivity {
     CheckBox fever, cough, diarrhea;
     TextView tv;
     TextView today;
-    TextView shot;
     int result_year = 0, result_month = 0, result_day = 0;
     int next_year = 0, next_month = 0, next_day = 0;
     int start_year = 0, start_month = 0, start_day = 0;
@@ -101,11 +101,9 @@ public class WriteDiaryActivity extends AppCompatActivity {
         height = (EditText) findViewById(R.id.height);
         weight = (EditText) findViewById(R.id.weight);
         memo = (EditText) findViewById(R.id.memo);
-        hospital_name = (EditText) findViewById(R.id.hospital_name);
         fever = (CheckBox) findViewById(R.id.fever);
         cough = (CheckBox) findViewById(R.id.cough);
         diarrhea = (CheckBox) findViewById(R.id.diarrhea);
-        shot = (TextView) findViewById(R.id.shot);
 
         addPhoto = (Button) findViewById(R.id.add_photo);
         ivImg = (ImageView) findViewById(R.id.photo);
@@ -129,13 +127,15 @@ public class WriteDiaryActivity extends AppCompatActivity {
             }
         });
 
-        spinner = (Spinner) findViewById(R.id.b_spinner1);
-        final ArrayAdapter spinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.hospital, android.R.layout.simple_spinner_item);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerAdapter);
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        //다음 진료 과
+        spinner_hospital = (Spinner) findViewById(R.id.b_spinner1);
+        final ArrayAdapter spinnerAdapter_hospital = ArrayAdapter.createFromResource(this,
+                R.array.depart, android.R.layout.simple_spinner_item);
+        spinnerAdapter_hospital.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_hospital.setAdapter(spinnerAdapter_hospital);
+
+        spinner_hospital.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 depart = parent.getItemAtPosition(position);
             }
@@ -144,6 +144,40 @@ public class WriteDiaryActivity extends AppCompatActivity {
                 depart = parent.getItemAtPosition(0);
             }
         });
+        //오늘 다녀온 과
+        spinner_depart = (Spinner) findViewById(R.id.spinner_hospital);
+        final ArrayAdapter spinnerAdapter_depart = ArrayAdapter.createFromResource(this,
+                R.array.hospital, android.R.layout.simple_spinner_item);
+        spinnerAdapter_depart.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_depart.setAdapter(spinnerAdapter_depart);
+
+        spinner_depart.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                hospital_depart = parent.getItemAtPosition(position);
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+                hospital_depart = parent.getItemAtPosition(0);
+            }
+        });
+
+        //접종
+        spinner_shot = (Spinner) findViewById(R.id.spinner_shot);
+        final ArrayAdapter spinnerAdapter_shot = ArrayAdapter.createFromResource(this,
+                R.array.shot, android.R.layout.simple_spinner_item);
+        spinnerAdapter_shot.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+        spinner_shot.setAdapter(spinnerAdapter_shot);
+
+        spinner_shot.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                hospital_depart = parent.getItemAtPosition(position);
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+                hospital_depart = parent.getItemAtPosition(0);
+            }
+        });
+
 
         findViewById(R.id.date).setOnClickListener(new View.OnClickListener() {
 
@@ -219,17 +253,19 @@ public class WriteDiaryActivity extends AppCompatActivity {
         weight.setText("");
         height.setText("");
         memo.setText("");
-        hospital_name.setText("");
         fever.setChecked(false);
         cough.setChecked(false);
         diarrhea.setChecked(false);
-        shot.setText("");
         tv.setText("날짜 선택");
         next_year=0;
         next_month=0;
         next_day=0;
-        spinner.setSelection(0);
-        depart = spinner.getItemAtPosition(0);
+        spinner_depart.setSelection(0);
+        hospital_depart = spinner_depart.getItemAtPosition(0);
+        spinner_hospital.setSelection(0);
+        depart = spinner_hospital.getItemAtPosition(0);
+        spinner_shot.setSelection(0);
+        shot = spinner_shot.getItemAtPosition(0);
         ivImg.setImageDrawable(null);
         addPhoto.setVisibility(addPhoto.VISIBLE);
 
@@ -241,7 +277,6 @@ public class WriteDiaryActivity extends AppCompatActivity {
         weight.setText(diaryVO.getWeight() + "");
         height.setText(diaryVO.getHeight() + "");
         memo.setText(diaryVO.getMemo());
-        hospital_name.setText(diaryVO.getHospital_name());
 
         //질병 체크 박스
         String original_treat = diaryVO.getTreat();
@@ -256,7 +291,6 @@ public class WriteDiaryActivity extends AppCompatActivity {
             }
         }
 
-        shot.setText(diaryVO.getShot());
         if(!diaryVO.getNext().equals("0")) {
             Date next_date = new Date();
             try {
@@ -286,14 +320,139 @@ public class WriteDiaryActivity extends AppCompatActivity {
             next_day = 0;
         }
 
-        //스피너 선택 적용
-        if (diaryVO.getDepart().equals("안과")) {
-            spinner.setSelection(0);
-            depart = spinner.getItemAtPosition(0);
-        } else if (diaryVO.getDepart().equals("소아청소년과")) {
-            spinner.setSelection(1);
-            depart = spinner.getItemAtPosition(1);
+        //오늘 다녀온 과 스피너 선택 적용
+        if (diaryVO.getHospital_name().equals("")) {
+            spinner_depart.setSelection(0);
+            hospital_depart = spinner_depart.getItemAtPosition(0);
+        } else if (diaryVO.getHospital_name().equals("소아청소년과")) {
+            spinner_depart.setSelection(1);
+            hospital_depart = spinner_depart.getItemAtPosition(1);
         }
+        else if (diaryVO.getHospital_name().equals("내과")) {
+            spinner_depart.setSelection(2);
+            hospital_depart = spinner_depart.getItemAtPosition(2);
+        }
+        else if (diaryVO.getHospital_name().equals("안과")) {
+            spinner_depart.setSelection(3);
+            hospital_depart = spinner_depart.getItemAtPosition(3);
+        }
+        else if (diaryVO.getHospital_name().equals("이비인후과")) {
+            spinner_depart.setSelection(4);
+            hospital_depart = spinner_depart.getItemAtPosition(4);
+        }
+        else if (diaryVO.getHospital_name().equals("재활의학과")) {
+            spinner_depart.setSelection(5);
+            hospital_depart = spinner_depart.getItemAtPosition(5);
+        }
+        else if (diaryVO.getHospital_name().equals("정형외과")) {
+            spinner_depart.setSelection(6);
+            hospital_depart = spinner_depart.getItemAtPosition(6);
+        }
+        else if (diaryVO.getHospital_name().equals("치과")) {
+            spinner_depart.setSelection(7);
+            hospital_depart = spinner_depart.getItemAtPosition(7);
+        }
+        else if (diaryVO.getHospital_name().equals("피부과")) {
+            spinner_depart.setSelection(8);
+            hospital_depart = spinner_depart.getItemAtPosition(8);
+        }
+        else{
+
+        }
+
+        //다음 진료 과 스피너 선택 적용
+        if (diaryVO.getDepart().equals("")) {
+            spinner_hospital.setSelection(0);
+            depart = spinner_hospital.getItemAtPosition(0);
+        } else if (diaryVO.getDepart().equals("소아청소년과")) {
+            spinner_hospital.setSelection(1);
+            depart = spinner_hospital.getItemAtPosition(1);
+        }
+        else if (diaryVO.getDepart().equals("내과")) {
+            spinner_hospital.setSelection(2);
+            depart = spinner_hospital.getItemAtPosition(2);
+        }
+        else if (diaryVO.getDepart().equals("안과")) {
+            spinner_hospital.setSelection(3);
+            depart = spinner_hospital.getItemAtPosition(3);
+        }
+        else if (diaryVO.getDepart().equals("이비인후과")) {
+            spinner_hospital.setSelection(4);
+            depart = spinner_hospital.getItemAtPosition(4);
+        }
+        else if (diaryVO.getDepart().equals("재활의학과")) {
+            spinner_hospital.setSelection(5);
+            depart = spinner_hospital.getItemAtPosition(5);
+        }
+        else if (diaryVO.getDepart().equals("정형외과")) {
+            spinner_hospital.setSelection(6);
+            depart = spinner_hospital.getItemAtPosition(6);
+        }
+        else if (diaryVO.getDepart().equals("치과")) {
+            spinner_hospital.setSelection(7);
+            depart = spinner_hospital.getItemAtPosition(7);
+        }
+        else if (diaryVO.getDepart().equals("피부과")) {
+            spinner_hospital.setSelection(8);
+            depart = spinner_hospital.getItemAtPosition(8);
+        }
+        else{
+
+        }
+
+        //접종 드롭다운
+        if(diaryVO.getShot().equals("")){
+            spinner_shot.setSelection(0);
+            shot = spinner_shot.getItemAtPosition(0);
+        }
+        else if(diaryVO.getShot().equals("일본뇌염")){
+            spinner_shot.setSelection(1);
+            shot = spinner_shot.getItemAtPosition(1);
+        }
+        else if(diaryVO.getShot().equals("수두")){
+            spinner_shot.setSelection(2);
+            shot = spinner_shot.getItemAtPosition(2);
+        }
+        else if(diaryVO.getShot().equals("A형간염")){
+            spinner_shot.setSelection(3);
+            shot = spinner_shot.getItemAtPosition(3);
+        }
+        else if(diaryVO.getShot().equals("B형간염")){
+            spinner_shot.setSelection(4);
+            shot = spinner_shot.getItemAtPosition(4);
+        }
+        else if(diaryVO.getShot().equals("폴리오")){
+            spinner_shot.setSelection(5);
+            shot = spinner_shot.getItemAtPosition(5);
+        }
+        else if(diaryVO.getShot().equals("BCG")){
+            spinner_shot.setSelection(6);
+            shot = spinner_shot.getItemAtPosition(6);
+        }
+        else if(diaryVO.getShot().equals("DTaP")){
+            spinner_shot.setSelection(7);
+            shot = spinner_shot.getItemAtPosition(7);
+        }
+        else if(diaryVO.getShot().equals("Rotavirus")){
+            spinner_shot.setSelection(8);
+            shot = spinner_shot.getItemAtPosition(8);
+        }
+        else if(diaryVO.getShot().equals("MMR")){
+            spinner_shot.setSelection(9);
+            shot = spinner_shot.getItemAtPosition(9);
+        }
+        else if(diaryVO.getShot().equals("PCV")){
+            spinner_shot.setSelection(10);
+            shot = spinner_shot.getItemAtPosition(10);
+        }
+        else if(diaryVO.getShot().equals("Hib")){
+            spinner_shot.setSelection(11);
+            shot = spinner_shot.getItemAtPosition(11);
+        }
+
+
+
+
         if(!diaryVO.getC_img().equals(null) && !diaryVO.getC_img().equals("") && !diaryVO.getC_img().equals("null")  ) {
             String IMG_URL = "http://52.41.218.18/storedimg/" + diaryVO.getC_img();
             aq.id(R.id.photo).image(IMG_URL);
@@ -321,15 +480,31 @@ public class WriteDiaryActivity extends AppCompatActivity {
         }
         diary_date = dateFormat.parse(diary_date_string);
 
+        if(depart.toString().equals("선택")){
+            params.put("c_depart","");
+        }
+        else{
+            params.put("c_depart", depart.toString());
+        }
+        if(hospital_depart.toString().equals("선택")){
+            params.put("c_hospital","");
+        }
+        else{
+            params.put("c_hospital", hospital_depart.toString());
+        }
+        if(shot.toString().equals("선택")){
+            params.put("c_shot","");
+        }
+        else{
+            params.put("c_shot", shot.toString());
+        }
 
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
         params.put("c_memo", memo.getText().toString());
         params.put("c_w", Double.parseDouble(weight.getText().toString()));
         params.put("c_h", Double.parseDouble(height.getText().toString()));
-        params.put("c_hospital", hospital_name.getText().toString());
         params.put("c_treat", printdisease());
-        params.put("c_shot", shot.getText().toString());
-        params.put("c_depart", depart.toString());
+
         params.put("c_date", dateFormat.format(diary_date));
 
 

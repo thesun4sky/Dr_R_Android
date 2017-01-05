@@ -69,8 +69,43 @@
     </string-array>
 
     <string-array name="hospital">
-        <item>안과</item>
+        <item>선택</item>
         <item>소아청소년과</item>
+        <item>내과</item>
+        <item>안과</item>
+        <item>이비인후과</item>
+        <item>재활의학과</item>
+        <item>정형외과</item>
+        <item>치과</item>
+        <item>피부과</item>
+    </string-array>
+
+
+    <string-array name="depart">
+        <item>선택</item>
+        <item>소아청소년과</item>
+        <item>내과</item>
+        <item>안과</item>
+        <item>이비인후과</item>
+        <item>재활의학과</item>
+        <item>정형외과</item>
+        <item>치과</item>
+        <item>피부과</item>
+    </string-array>
+
+    <string-array name="shot">
+        <item>선택</item>
+        <item>일본뇌염</item>
+        <item>수두</item>
+        <item>A형간염</item>
+        <item>B형간염</item>
+        <item>폴리오</item>
+        <item>BCG</item>
+        <item>DTaP</item>
+        <item>Rotavirus</item>
+        <item>MMR</item>
+        <item>PCV</item>
+        <item>Hib</item>
     </string-array>
 
 </resources>
