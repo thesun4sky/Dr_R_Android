@@ -50,6 +50,7 @@ public class FeedTimeFragment extends Fragment {
     private ImageView myCircle;
     private FeedAdapter feedAdapter;
     private ArrayList<FeedVO> feedDataList;
+    int user_id;
     long startTime ,endTime;
     Date s_start;
     Date s_end;
@@ -72,6 +73,9 @@ public class FeedTimeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //inflate the layout for this fragment
+
+        Bundle args = getActivity().getIntent().getExtras();
+        user_id = args.getInt("u_id");
         final View view = inflater.inflate(R.layout.fragment_feedtime, container, false);
         myToday = (TextView) view.findViewById(R.id.today_feed);
         myOutput = (TextView) view.findViewById(R.id.time_out_feed);
@@ -113,13 +117,16 @@ public class FeedTimeFragment extends Fragment {
         left.setOnClickListener(optionOnClickListener);
         prepared.setOnClickListener(optionOnClickListener);
         feedDataList = new ArrayList<>();
-        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
-        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
-        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
-        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
+//        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
+//        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
+//        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
+//        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
         feedAdapter = new FeedAdapter(view.getContext(),R.layout.itemsforfeedlist, feedDataList);
-        listView.setAdapter(feedAdapter); // uses the view to get the context instead of getActivity().
+        try {
+            listView.setAdapter(feedAdapter); // uses the view to get the context instead of getActivity().
+        } catch (NullPointerException e) {
 
+        }
 
         //현재 날짜 받아오기
         // 년,월,일로 쪼갬
@@ -128,7 +135,18 @@ public class FeedTimeFragment extends Fragment {
         day = Integer.parseInt(curDayFormat.format(date));
 
         myToday.setText(year+"년 "+(month)+"월 "+day+"일 "+ getDayKor());
+        readFeed();
         return view;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     public void myOnClick(View v) {
@@ -198,7 +216,7 @@ public class FeedTimeFragment extends Fragment {
     }
     public void writeDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id" , ((TimeActivity)getActivity()).u_id);
+        params.put("u_id" , user_id);
         params.put("s_start" , dateFormat.format(s_start));
         params.put("s_end" , dateFormat.format(s_end));
         params.put("s_total" , endTime-startTime);
@@ -231,8 +249,9 @@ public class FeedTimeFragment extends Fragment {
     }
     public void readFeed() {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id", ((TimeActivity)getActivity()).u_id);
-        params.put("f_start", date + "00:00:00");
+        SimpleDateFormat dateFormat2 = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+        params.put("u_id", user_id);
+        params.put("f_start", dateFormat2.format(date));
         aq.ajax("http://52.41.218.18:8080/getFeedTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
             public void callback(String url, JSONArray html, AjaxStatus status) {
@@ -252,7 +271,8 @@ public class FeedTimeFragment extends Fragment {
     }
     public void jsonArrayToSleepArray(JSONArray jsonArr) throws JSONException {
         for (int i = 0; i < jsonArr.length(); i++) {
-
+            feedDataList.add(new FeedVO(jsonArr.getJSONObject(i)));
+            feedAdapter.notifyDataSetChanged();
         }
     }
 }

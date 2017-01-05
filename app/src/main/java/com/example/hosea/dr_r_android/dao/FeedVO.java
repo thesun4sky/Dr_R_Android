@@ -28,11 +28,12 @@ public class FeedVO {
         try {
             this.f_id = jsonObject.getInt("f_id");
             this.u_id = jsonObject.getInt("u_id");
-            Long start = Long.parseLong(jsonObject.getString("f_start"));
-            Long end = Long.parseLong(jsonObject.getString("f_end"));
-            this.f_start = new Timestamp(start);
-            this.f_end = new Timestamp(end);
-            this.f_total = jsonObject.getInt("f_total");
+            Long s_feed = Long.parseLong(jsonObject.getString("f_start"));
+            Long e_feed = Long.parseLong(jsonObject.getString("f_end"));
+            f_start = new Timestamp(s_feed);
+            f_end = new Timestamp(e_feed);
+            f_total = jsonObject.getInt("f_total");
+            feed = jsonObject.getString("feed");
         } catch (JSONException e) {
             e.printStackTrace();
         }

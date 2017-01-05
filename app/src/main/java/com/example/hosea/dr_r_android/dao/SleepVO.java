@@ -70,11 +70,9 @@ public class SleepVO {
         this.s_start = s_start;
     }
 
-
     public Timestamp getS_end() {
         return s_end;
     }
-
 
     public void setS_end(Timestamp s_end) {
         this.s_end = s_end;
