@@ -65,7 +65,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="키 : "
             android:textSize="15dp" />
 
@@ -76,11 +75,15 @@
             android:layout_weight="1"
             android:ems="8"
             android:inputType="numberDecimal" />
+        <TextView
+            android:layout_marginRight="5dp"
+            android:text="(cm)"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="몸무게 : "
             android:textSize="15dp" />
 
@@ -91,6 +94,10 @@
             android:layout_weight="1"
             android:ems="8"
             android:inputType="numberDecimal" />
+        <TextView
+            android:text="(kg)"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
