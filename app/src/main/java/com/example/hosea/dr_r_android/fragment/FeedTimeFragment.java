@@ -54,7 +54,7 @@ public class FeedTimeFragment extends Fragment {
     private ImageView myCircle,myPowderCircle;
     private FeedAdapter feedAdapter;
     private ArrayList<FeedVO> feedDataList;
-    Date today = new Date();
+    Date today;
     int user_id;
     long startTime ,endTime;
     Date s_start;
@@ -308,6 +308,7 @@ public class FeedTimeFragment extends Fragment {
         });
     }
     public void writePowder(int amount) {
+        today = new Date();
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id" , user_id);
         params.put("f_start" , dateFormat.format(today));

@@ -153,7 +153,12 @@ public class JoinActivity extends AppCompatActivity {
             public void onClick(View view) {
                 int id = rg.getCheckedRadioButtonId();
                 RadioButton rb = (RadioButton) findViewById(id);
-
+                born_date = null;
+                try {
+                    born_date = dateFormat.parse(born_string);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
 
                 //비밀번호 테스트
                 if ((login_id.getText().toString().equals("")) || login_id.getText().toString().length() < 5) {
@@ -258,7 +263,6 @@ public class JoinActivity extends AppCompatActivity {
 
             u_born.setText(result_year+"년 "+ result_month+"월 "+result_day+"일");
             born_string = result_year + "-" + result_month + "-" + result_day + " " + "00:00:00";
-            born_date = null;
         }
     };
 
