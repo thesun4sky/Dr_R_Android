@@ -62,6 +62,8 @@ public class FeedAdapter extends BaseAdapter {
             view = inflater.inflate(fResource, viewGroup,false);
         }
 
+        if(feedVO.getFeed().equals("분유")){
+        }
 
         // Set DayName
         TextView startTime = (TextView) view.findViewById(R.id.tv_item_feed_start);
