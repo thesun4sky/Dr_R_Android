@@ -128,6 +128,7 @@ public class SleepTimeFragment extends Fragment {
     public void myOnClick(View v) {
         switch (v.getId()) {
             case R.id.sleep_toggle: //시작버튼을 클릭했을때 현재 상태값에 따라 다른 동작을 할수있게끔 구현.
+            case R.id.sleep_toggle_img:
                 switch (cur_Status) {
                     case Init:
                         myBaseTime = SystemClock.elapsedRealtime();

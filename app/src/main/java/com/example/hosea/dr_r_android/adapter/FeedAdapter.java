@@ -1,11 +1,14 @@
 package com.example.hosea.dr_r_android.adapter;
 
 import android.content.Context;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.hosea.dr_r_android.R;
@@ -62,6 +65,24 @@ public class FeedAdapter extends BaseAdapter {
             view = inflater.inflate(fResource, viewGroup,false);
         }
 
+
+        final LinearLayout ItemLayout = (LinearLayout) view.findViewById(R.id.tv_item_layout);
+        TextView feedTime = (TextView) view.findViewById(R.id.tv_item_feed_time);
+        TextView feedAmount = (TextView) view.findViewById(R.id.tv_item_feed_amount);
+        TextView feedValue = (TextView) view.findViewById(R.id.tv_item_feed_value);
+
+        if(feedVO.getFeed().equals("분유")){
+            ItemLayout.setBackgroundColor(0x99FFDDDD);
+            feedTime.setText("분유 시간 : ");
+            feedAmount.setText("총 분유 량 : ");
+            feedValue.setText("ml");
+        }
+        else{
+            ItemLayout.setBackgroundColor(0x00B2CCFF);
+            feedTime.setText("수유 시간 : ");
+            feedAmount.setText("총 수유 시간 : ");
+            feedValue.setText("초");
+        }
 
         // Set DayName
         TextView startTime = (TextView) view.findViewById(R.id.tv_item_feed_start);

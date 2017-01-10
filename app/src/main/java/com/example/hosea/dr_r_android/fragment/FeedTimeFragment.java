@@ -10,9 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,10 +50,11 @@ import im.dacer.androidcharts.ClockPieHelper;
 
 public class FeedTimeFragment extends Fragment {
     private AQuery aq = new AQuery(getActivity());
-    private TextView myOutput, myToday, myToggle;
-    private ImageView myCircle;
+    private TextView myOutput, myToday, myToggle, myPowderToggle;
+    private ImageView myCircle,myPowderCircle;
     private FeedAdapter feedAdapter;
     private ArrayList<FeedVO> feedDataList;
+    Date today = new Date();
     int user_id;
     long startTime ,endTime;
     Date s_start;
@@ -70,6 +73,7 @@ public class FeedTimeFragment extends Fragment {
     Date date = new Date();
     int year, month, day;
     SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+    EditText powderAmount;
     public FeedTimeFragment() {}
 
     @Override
@@ -96,29 +100,55 @@ public class FeedTimeFragment extends Fragment {
                 myOnClick(v);
             }
         });
+
+        myPowderToggle = (TextView) view.findViewById(R.id.powder_toggle);
+        myPowderCircle = (ImageView) view.findViewById(R.id.powder_toggle_img);
+        myPowderCircle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myOnClick(v);
+            }
+        });
+        myPowderToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myOnClick(v);
+            }
+        });
+
+        powderAmount = (EditText) view.findViewById(R.id.powder_amount);
         final ListView listView = (ListView) view.findViewById(R.id.feed_listView);
         final RadioButton right = (RadioButton) view.findViewById(R.id.feed_right);
         final RadioButton left = (RadioButton) view.findViewById(R.id.feed_left);
-        final RadioButton prepared = (RadioButton) view.findViewById(R.id.feed_prepared);
+        final RadioButton powder = (RadioButton) view.findViewById(R.id.feed_powder);
+        final RelativeLayout feedLayout = (RelativeLayout) view.findViewById(R.id.feed);
+        final RelativeLayout powderLayout = (RelativeLayout) view.findViewById(R.id.powder);
 
+        powderLayout.setVisibility(View.GONE);
         RadioButton.OnClickListener optionOnClickListener = new RadioButton.OnClickListener() {
             public void onClick(View v) {
                 if (right.isChecked()) {
                     Toast.makeText(getActivity(), "우", Toast.LENGTH_SHORT).show();
                     feed = "우";
+                    powderLayout.setVisibility(View.GONE);
+                    feedLayout.setVisibility(View.VISIBLE);
                 } else if (left.isChecked()) {
                     Toast.makeText(getActivity(), "좌", Toast.LENGTH_SHORT).show();
                     feed = "좌";
-                } else if (prepared.isChecked()) {
-                    Toast.makeText(getActivity(), "예비", Toast.LENGTH_SHORT).show();
-                    feed = "예비";
+                    powderLayout.setVisibility(View.GONE);
+                    feedLayout.setVisibility(View.VISIBLE);
+                } else if (powder.isChecked()) {
+                    Toast.makeText(getActivity(), "분유", Toast.LENGTH_SHORT).show();
+                    feed = "분유";
+                    feedLayout.setVisibility(View.GONE);
+                    powderLayout.setVisibility(View.VISIBLE);
                 }
             }
         };
 
         right.setOnClickListener(optionOnClickListener);
         left.setOnClickListener(optionOnClickListener);
-        prepared.setOnClickListener(optionOnClickListener);
+        powder.setOnClickListener(optionOnClickListener);
         feedDataList = new ArrayList<>();
 //        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
 //        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
@@ -154,7 +184,8 @@ public class FeedTimeFragment extends Fragment {
 
     public void myOnClick(View v) {
         switch (v.getId()) {
-            case R.id.feed_toggle: //시작버튼을 클릭했을때 현재 상태값에 따라 다른 동작을 할수있게끔 구현.
+            case R.id.feed_toggle: //시작버튼을 클릭했을때 현재 상태값에 따라 다른 동작을 할수있게끔 구현
+            case R.id.feed_toggle_img:
                 switch (cur_Status) {
                     case Init:
                         myBaseTime = SystemClock.elapsedRealtime();
@@ -186,6 +217,13 @@ public class FeedTimeFragment extends Fragment {
                         myToggle.setText("기록 중지");
                         cur_Status = Run;
                         break;
+                }
+                break;
+            case R.id.powder_toggle:
+            case R.id.powder_toggle_img:
+                String pAmount = powderAmount.getText().toString();
+                if(!pAmount.isEmpty() && !pAmount.equals("")) {
+                    writePowder(Integer.parseInt(pAmount));
                 }
                 break;
         }
@@ -232,9 +270,9 @@ public class FeedTimeFragment extends Fragment {
     public void writeDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id" , user_id);
-        params.put("s_start" , dateFormat.format(s_start));
-        params.put("s_end" , dateFormat.format(s_end));
-        params.put("s_total" , endTime-startTime);
+        params.put("f_start" , dateFormat.format(s_start));
+        params.put("f_end" , dateFormat.format(s_end));
+        params.put("f_total" , endTime-startTime);
         params.put("feed", feed);
         aq.ajax("http://52.41.218.18:8080/addFeedTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
@@ -271,6 +309,29 @@ public class FeedTimeFragment extends Fragment {
                 }
             }
         });
+    }
+    public void writePowder(int amount) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("u_id" , user_id);
+        params.put("f_start" , dateFormat.format(today));
+        params.put("f_end" , dateFormat.format(today));
+        params.put("f_total" , amount);
+        params.put("feed", feed);
+        aq.ajax("http://52.41.218.18:8080/addFeedTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject html, AjaxStatus status) {
+                try {
+                    if (html.getString("msg").equals("정상 작동")) {
+                        Toast.makeText(getActivity(), "작성 되었습니다.", Toast.LENGTH_SHORT).show();
+                        powderAmount.setText("");
+                        readFeed();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
     public void jsonArrayToSleepArray(JSONArray jsonArr) throws JSONException {
         for (int i = 0; i < jsonArr.length(); i++) {
