@@ -182,6 +182,7 @@ public class SleepTimeFragment extends Fragment {
         animation.setDuration(1000);
         animation.setStartOffset(30);
         animation.setStartOffset(1);
+
         if (cur_Status == Run) {
             myCircle.startAnimation(animation);
         }

@@ -10,6 +10,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -48,12 +50,15 @@ public class JoinActivity extends AppCompatActivity {
 
     private AQuery aq = new AQuery(this);
     private EditText login_id, name, password1, password2;
+    private Date born_date;
     private EditText a_week, a_date;
     private EditText b_month, b_date;
     private EditText b_weight, b_height;
+    private boolean idChecked = false;
     int year = 0, month = 0, day = 0;
     int result_year = 0, result_month = 0, result_day = 0;
     private TextView u_born;
+    private String born_string = "";
     private static final int MY_READ_PHONE_STATE = 0;
     private Button checkId, submit;
     private String array, deviceId;
@@ -82,13 +87,30 @@ public class JoinActivity extends AppCompatActivity {
         b_date = (EditText) findViewById(R.id.b_date);
         b_weight = (EditText) findViewById(R.id.b_weight);
         b_height = (EditText) findViewById(R.id.b_height);
-        login_id = (EditText) findViewById(R.id.login_id);
+        login_id = (EditText) findViewById(R.id.join_id);
         name = (EditText) findViewById(R.id.user_name);
         u_born = (TextView) findViewById(R.id.u_born);
         password1 = (EditText) findViewById(R.id.password1);
         password2 = (EditText) findViewById(R.id.password2);
         checkId = (Button) findViewById(R.id.checkId);
         submit = (Button) findViewById(R.id.joinSubmit);
+
+        login_id.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                idChecked = false;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                idChecked = false;
+            }
+        });
 
         final RadioGroup rg = (RadioGroup) findViewById(R.id.radioForSex);
 
@@ -103,6 +125,11 @@ public class JoinActivity extends AppCompatActivity {
                     public void callback(String url, JSONObject html, AjaxStatus status) {
                         try {
                             Toast.makeText(getApplicationContext(), html.getString("msg"), Toast.LENGTH_SHORT).show();
+                            if (html.getString("msg").startsWith("사용가능한")) {
+                                idChecked = true;
+                            } else {
+                                idChecked = false;
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -126,28 +153,47 @@ public class JoinActivity extends AppCompatActivity {
             public void onClick(View view) {
                 int id = rg.getCheckedRadioButtonId();
                 RadioButton rb = (RadioButton) findViewById(id);
-                String born_string = result_year + "-" + result_month + "-" + result_day + " " + "00:00:00";
-                Date born_date = null;
-                try {
-                    born_date = dateFormat.parse(born_string);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+
+
                 //비밀번호 테스트
-                if (!password1.getText().toString().equals(password2.getText().toString()) || password1.getText().toString().length() < 5) {
+                /*if ((login_id.getText().toString().equals("")) || login_id.getText().toString().length() < 5) {
+                    Toast.makeText(getApplicationContext(), "id를 다시 입력하세요. (5자 이상)", Toast.LENGTH_SHORT).show();
+                    login_id.setText("");
+                    login_id.requestFocus();
+                } else if (!idChecked) {
+                    Toast.makeText(getApplicationContext(), "아이디를 체크하세요", Toast.LENGTH_SHORT).show();
+                    login_id.requestFocus();
+                } else if (!password1.getText().toString().equals(password2.getText().toString()) || password1.getText().toString().length() < 5) {
                     Toast.makeText(getApplicationContext(), "비밀번호를 입력하세요. (5자 이상)", Toast.LENGTH_SHORT).show();
                     password1.setText("");
                     password2.setText("");
                     password1.requestFocus();
-                } else if ((login_id.getText().toString().equals("")) || login_id.getText().toString().length() < 5) {
-                    Toast.makeText(getApplicationContext(), "id를 다시 입력하세요. (5자 이상)", Toast.LENGTH_SHORT).show();
-                    login_id.setText("");
-                    login_id.requestFocus();
                 } else if ((name.getText().toString().equals(""))) {
-                    Toast.makeText(getApplicationContext(), "이름을 입력하세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "아기 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
                     name.setText("");
                     name.requestFocus();
-                } else {
+                } else if ((a_week.getText().toString().equals("")) || (a_date.getText().toString()==null)) {
+                    Toast.makeText(getApplicationContext(), "출생 주 수를 입력하세요.", Toast.LENGTH_SHORT).show();
+                    a_week.requestFocus();
+                } else if ((b_month.getText().toString().equals("")) || (b_date.getText().toString().equals(""))) {
+                    Toast.makeText(getApplicationContext(), "예정일을 입력하세요.", Toast.LENGTH_SHORT).show();
+                    b_month.requestFocus();
+                } else*/ if (born_string.equals("")) {
+                    Toast.makeText(getApplicationContext(), "출생 일을 입력하세요.", Toast.LENGTH_SHORT).show();
+                    u_born.requestFocus();
+                } else if (rb.getText().toString().equals("")) {
+                    Toast.makeText(getApplicationContext(), "성별을 입력하세요.", Toast.LENGTH_SHORT).show();
+                    rb.requestFocus();
+                } else if ((b_weight.getText().toString().equals(""))) {
+                    Toast.makeText(getApplicationContext(), "출생 몸무게를 입력하세요.", Toast.LENGTH_SHORT).show();
+                    b_weight.setText("");
+                    b_weight.requestFocus();
+                } else if ((b_height.getText().toString().equals(""))) {
+                    Toast.makeText(getApplicationContext(), "출생 키를 입력하세요.", Toast.LENGTH_SHORT).show();
+                    b_height.setText("");
+                    b_height.requestFocus();
+                }  else {
+                    submit.setEnabled(false);
                     Map<String, Object> params = new HashMap<String, Object>();
                     params.put("login_id", login_id.getText().toString());
                     params.put("u_password", password1.getText().toString());
@@ -165,16 +211,21 @@ public class JoinActivity extends AppCompatActivity {
                     aq.ajax("http://52.41.218.18:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                         @Override
                         public void callback(String url, JSONObject html, AjaxStatus status) {
-                            try {
-                                Toast.makeText(getApplicationContext(), html.getString("msg"), Toast.LENGTH_SHORT).show();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            Intent intent = new Intent(JoinActivity.this, LoginActivity.class);
-                            {
-                                intent.putExtra("u_device", deviceId);
-                                startActivity(intent);
-                                JoinActivity.this.finish();
+                            if (html != null) {
+                                try {
+                                    Toast.makeText(getApplicationContext(), html.getString("msg"), Toast.LENGTH_SHORT).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                Intent intent = new Intent(JoinActivity.this, LoginActivity.class);
+                                {
+                                    intent.putExtra("u_device", deviceId);
+                                    startActivity(intent);
+                                    JoinActivity.this.finish();
+                                }
+                            } else {
+                                Toast.makeText(getApplicationContext(), "연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
+                                submit.setEnabled(true);
                             }
                         }
                     });
@@ -208,7 +259,8 @@ public class JoinActivity extends AppCompatActivity {
             result_day = dayOfMonth;
 
             u_born.setText(result_year+"년 "+ result_month+"월 "+result_day+"일");
-
+            born_string = result_year + "-" + result_month + "-" + result_day + " " + "00:00:00";
+            born_date = null;
         }
     };
 
