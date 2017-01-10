@@ -209,7 +209,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
                 if (html != null) {
                     jsonArrayToArrayList(html);
                 } else {
-                   Toast.makeText(getApplicationContext(),"해당하는 데이터가 없습니다",Toast.LENGTH_SHORT).show();
+                   Toast.makeText(getApplicationContext(),"해당날짜의 일지가 없습니다.",Toast.LENGTH_SHORT).show();
                     jsonArrayToArrayListNoData();
                 }
             }
