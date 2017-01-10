@@ -1,7 +1,10 @@
 package com.example.hosea.dr_r_android.fragment;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Fragment;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +12,9 @@ import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +48,7 @@ public class SleepTimeFragment extends Fragment {
 
     private AQuery aq = new AQuery(getActivity());
     private TextView myOutput, myToday, myToggle;
+    private ImageView myCircle;
     long startTime ,endTime;
     private SleepAdapter sleepAdapter;
     private ArrayList<SleepVO> sleepDataList;
@@ -81,6 +88,14 @@ public class SleepTimeFragment extends Fragment {
                 myOnClick(v);
             }
         });
+        myCircle = (ImageView) view.findViewById(R.id.sleep_toggle_img);
+        myCircle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myOnClick(v);
+            }
+        });
+
         final ListView listView = (ListView) view.findViewById(R.id.sleep_listView);
         //현재 날짜 받아오기
         // 년,월,일로 쪼갬
@@ -152,12 +167,28 @@ public class SleepTimeFragment extends Fragment {
 
     Handler myTimer = new Handler() {
         public void handleMessage(Message msg) {
-            myOutput.setText(getTimeOut());
-
-            //sendEmptyMessage 는 비어있는 메세지를 Handler 에게 전송하는겁니다.
-            myTimer.sendEmptyMessage(0);
+            switch (msg.what) {
+                case 0:
+                    myOutput.setText(getTimeOut());
+                    this.sendEmptyMessageDelayed(0, 1000);
+                    CircleTouchAnimation();
+                    break;
+            }
         }
     };
+
+    private void CircleTouchAnimation() {
+        Animation animation = new AlphaAnimation(0.3f, 1.0f);
+        animation.setDuration(1000);
+        animation.setStartOffset(30);
+        animation.setStartOffset(1);
+        if (cur_Status == Run) {
+            myCircle.startAnimation(animation);
+        }
+    }
+
+
+
 
     //현재시간을 계속 구해서 출력하는 메소드
     String getTimeOut() {

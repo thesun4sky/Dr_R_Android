@@ -8,6 +8,8 @@ import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -162,7 +164,6 @@ public class FeedTimeFragment extends Fragment {
                         //myTimer이라는 핸들러를 빈 메세지를 보내서 호출
                         myTimer.sendEmptyMessage(0);
                         myToggle.setText("기록 중지"); //버튼의 문자"시작"을 "멈춤"으로 변경
-
                         cur_Status = Run; //현재상태를 런상태로 변경
                         break;
                     case Run:
@@ -192,12 +193,25 @@ public class FeedTimeFragment extends Fragment {
 
     Handler myTimer = new Handler() {
         public void handleMessage(Message msg) {
-            myOutput.setText(getTimeOut());
-
-            //sendEmptyMessage 는 비어있는 메세지를 Handler 에게 전송하는겁니다.
-            myTimer.sendEmptyMessage(0);
+            switch (msg.what) {
+                case 0:
+                    myOutput.setText(getTimeOut());
+                    this.sendEmptyMessageDelayed(0, 1000);
+                    CircleTouchAnimation();
+                    break;
+            }
         }
     };
+
+    private void CircleTouchAnimation() {
+        Animation animation = new AlphaAnimation(0.3f, 1.0f);
+        animation.setDuration(1000);
+        animation.setStartOffset(30);
+        animation.setStartOffset(1);
+        if (cur_Status == Run) {
+            myCircle.startAnimation(animation);
+        }
+    }
 
     //현재시간을 계속 구해서 출력하는 메소드
     String getTimeOut() {
