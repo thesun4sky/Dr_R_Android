@@ -87,7 +87,7 @@ public class JoinActivity extends AppCompatActivity {
         b_date = (EditText) findViewById(R.id.b_date);
         b_weight = (EditText) findViewById(R.id.b_weight);
         b_height = (EditText) findViewById(R.id.b_height);
-        login_id = (EditText) findViewById(R.id.join_id);
+        login_id = (EditText) findViewById(R.id.login_id);
         name = (EditText) findViewById(R.id.user_name);
         u_born = (TextView) findViewById(R.id.u_born);
         password1 = (EditText) findViewById(R.id.password1);

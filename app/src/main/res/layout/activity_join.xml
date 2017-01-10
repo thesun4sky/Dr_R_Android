@@ -54,7 +54,7 @@
                         android:layout_height="wrap_content">
 
                         <EditText
-                            android:id="@+id/join_id"
+                            android:id="@+id/login_id"
                             android:layout_width="0px"
                             android:layout_height="wrap_content"
                             android:layout_weight="1" />
