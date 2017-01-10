@@ -132,7 +132,7 @@ public class FeedTimeFragment extends Fragment {
                     powderLayout.setVisibility(View.GONE);
                     feedLayout.setVisibility(View.VISIBLE);
                 } else if (left.isChecked()) {
-                    Toast.makeText(getActivity(), "좌", Toast.LENGTH_SHORT).show();
+                    feed = "좌";
                     powderLayout.setVisibility(View.GONE);
                     feedLayout.setVisibility(View.VISIBLE);
                 } else if (powder.isChecked()) {
