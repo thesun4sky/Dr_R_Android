@@ -196,7 +196,6 @@ public class ReadDiaryActivity extends AppCompatActivity {
             clockPieHelperArrayListForFeed.add(new ClockPieHelper(s_hour, s_min, s_sec, e_hour, e_min, e_sec));
             pieView2.setDate(clockPieHelperArrayListForFeed);
         }
-        Toast.makeText(getApplicationContext(),"수유시간",Toast.LENGTH_SHORT).show();
         feedTotal.setText(result_feed / 1000 / 3600 + " 시간 " + (result_feed / 1000 % 3600) / 60 + " 분 " + (result_feed / 1000 % 3600 % 60) + " 초 ");
     }
 
