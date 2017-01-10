@@ -44,41 +44,22 @@ public class SplashActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        requestPermission();
         u_id = 0;
 
         try {
             getUUID();
         } catch (Exception e) {
             checkPermission();
+            mHandler = new Handler();
+
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    getUUID();
+                }
+            }, 9000);
         }
 
-        mHandler = new Handler();
-
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_device", deviceId);
-        aq.ajax("http://52.41.218.18:8080/checkUserDevice", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject html, AjaxStatus status) {
-                if (html != null) {
-                    Log.d("hosea","html is not null");
-                    responseCheck(html);
-                } else {
-                    Toast.makeText(getApplicationContext(), "연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
-
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                            intent.putExtra("u_device", deviceId);
-                            startActivity(intent);
-                            SplashActivity.this.finish();
-                        }
-                    }, 2500);
-                }
-            }
-        });
     }
 
     public void responseCheck(JSONObject jsonObject) {
@@ -110,8 +91,8 @@ public class SplashActivity extends Activity {
         }
     }
 
-    void requestPermission() {
-        final int REQUEST_EXTERNAL_STORAGE = 1;
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermission() {    //사용자에게 디바이스 정보 받아오는거 확인
         String[] PERMISSIONS_STORAGE = {
 
                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -120,20 +101,6 @@ public class SplashActivity extends Activity {
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.READ_PHONE_STATE
         };
-
-        int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-            );
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void checkPermission() {    //사용자에게 디바이스 정보 받아오는거 확인
         if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -143,11 +110,8 @@ public class SplashActivity extends Activity {
                 Toast.makeText(this, "Read/Write external storage", Toast.LENGTH_SHORT).show();
             }
 
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    MY_READ_PHONE_STATE);
+            requestPermissions(PERMISSIONS_STORAGE,MY_READ_PHONE_STATE);
 
-            // MY_PERMISSION_REQUEST_STORAGE is an
-            // app-defined int constant
 
         } else {
             // 다음 부분은 항상 허용일 경우에 해당이 됩니다.
@@ -187,5 +151,30 @@ public class SplashActivity extends Activity {
         deviceId = deviceUuid.toString();
 
         Log.d("test", "Device UUID : " + deviceId);
+
+        mHandler = new Handler();
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("u_device", deviceId);
+        aq.ajax("http://52.41.218.18:8080/checkUserDevice", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject html, AjaxStatus status) {
+                if (html != null) {
+                    Log.d("hosea","html is not null");
+                    responseCheck(html);
+                } else {
+                    Toast.makeText(getApplicationContext(), "연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
+
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                            intent.putExtra("u_device", deviceId);
+                            startActivity(intent);
+                            SplashActivity.this.finish();
+                        }
+                    }, 2500);
+                }
+            }
+        });
     }
 }
