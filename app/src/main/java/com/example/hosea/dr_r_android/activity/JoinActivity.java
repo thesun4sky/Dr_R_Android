@@ -156,7 +156,7 @@ public class JoinActivity extends AppCompatActivity {
 
 
                 //비밀번호 테스트
-                /*if ((login_id.getText().toString().equals("")) || login_id.getText().toString().length() < 5) {
+                if ((login_id.getText().toString().equals("")) || login_id.getText().toString().length() < 5) {
                     Toast.makeText(getApplicationContext(), "id를 다시 입력하세요. (5자 이상)", Toast.LENGTH_SHORT).show();
                     login_id.setText("");
                     login_id.requestFocus();
@@ -178,7 +178,7 @@ public class JoinActivity extends AppCompatActivity {
                 } else if ((b_month.getText().toString().equals("")) || (b_date.getText().toString().equals(""))) {
                     Toast.makeText(getApplicationContext(), "예정일을 입력하세요.", Toast.LENGTH_SHORT).show();
                     b_month.requestFocus();
-                } else*/ if (born_string.equals("")) {
+                } else if (born_string.equals("")) {
                     Toast.makeText(getApplicationContext(), "출생 일을 입력하세요.", Toast.LENGTH_SHORT).show();
                     u_born.requestFocus();
                 } else if (rb.getText().toString().equals("")) {
