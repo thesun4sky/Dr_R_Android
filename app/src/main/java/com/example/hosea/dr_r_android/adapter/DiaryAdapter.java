@@ -88,9 +88,9 @@ public class DiaryAdapter extends BaseAdapter {
             final SimpleDateFormat curYearFormat = new SimpleDateFormat("yyyy", Locale.KOREA);
             final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);
             final SimpleDateFormat curDayFormat = new SimpleDateFormat("dd", Locale.KOREA);
-            age.setText(diary.getAge() + "");
-            weight.setText(diary.getWeight() + "");
-            height.setText(diary.getHeight() + "");
+            age.setText(diary.getAge() + "(세)");
+            weight.setText(diary.getWeight() + "(kg)");
+            height.setText(diary.getHeight() + "(cm)");
             memo.setText(diary.getMemo());
             hospital.setText(diary.getHospital_name());
             treat.setText(diary.getTreat());

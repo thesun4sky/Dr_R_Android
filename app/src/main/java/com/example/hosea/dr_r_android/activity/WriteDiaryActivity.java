@@ -186,11 +186,11 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
         spinner_shot.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                hospital_depart = parent.getItemAtPosition(position);
+                shot = parent.getItemAtPosition(position);
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
-                hospital_depart = parent.getItemAtPosition(0);
+                shot = parent.getItemAtPosition(0);
             }
         });
 
@@ -474,6 +474,9 @@ public class WriteDiaryActivity extends AppCompatActivity {
             spinner_shot.setSelection(11);
             shot = spinner_shot.getItemAtPosition(11);
         }
+        else {
+
+        }
 
 
 
@@ -511,12 +514,14 @@ public class WriteDiaryActivity extends AppCompatActivity {
         else{
             params.put("c_depart", depart.toString());
         }
+
         if(hospital_depart.toString().equals("선택")){
             params.put("c_hospital","");
         }
         else{
             params.put("c_hospital", hospital_depart.toString());
         }
+
         if(shot.toString().equals("선택")){
             params.put("c_shot","");
         }
