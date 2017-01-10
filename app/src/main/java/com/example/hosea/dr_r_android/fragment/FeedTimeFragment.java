@@ -128,17 +128,14 @@ public class FeedTimeFragment extends Fragment {
         RadioButton.OnClickListener optionOnClickListener = new RadioButton.OnClickListener() {
             public void onClick(View v) {
                 if (right.isChecked()) {
-                    Toast.makeText(getActivity(), "우", Toast.LENGTH_SHORT).show();
                     feed = "우";
                     powderLayout.setVisibility(View.GONE);
                     feedLayout.setVisibility(View.VISIBLE);
                 } else if (left.isChecked()) {
                     Toast.makeText(getActivity(), "좌", Toast.LENGTH_SHORT).show();
-                    feed = "좌";
                     powderLayout.setVisibility(View.GONE);
                     feedLayout.setVisibility(View.VISIBLE);
                 } else if (powder.isChecked()) {
-                    Toast.makeText(getActivity(), "분유", Toast.LENGTH_SHORT).show();
                     feed = "분유";
                     feedLayout.setVisibility(View.GONE);
                     powderLayout.setVisibility(View.VISIBLE);

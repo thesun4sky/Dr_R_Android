@@ -165,8 +165,6 @@ public class JoinActivity extends AppCompatActivity {
                     login_id.requestFocus();
                 } else if (!password1.getText().toString().equals(password2.getText().toString()) || password1.getText().toString().length() < 5) {
                     Toast.makeText(getApplicationContext(), "비밀번호를 입력하세요. (5자 이상)", Toast.LENGTH_SHORT).show();
-                    password1.setText("");
-                    password2.setText("");
                     password1.requestFocus();
                 } else if ((name.getText().toString().equals(""))) {
                     Toast.makeText(getApplicationContext(), "아기 이름을 입력하세요.", Toast.LENGTH_SHORT).show();

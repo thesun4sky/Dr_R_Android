@@ -58,12 +58,10 @@ public class TimeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 if (feeding.isChecked()) {
-                    Toast.makeText(getApplicationContext(), "수유 체크드", Toast.LENGTH_SHORT).show();
                     fragmentTransaction.replace(R.id.time_fragment, feedTimeFragment);
                 }
                 else {
                     fragmentTransaction.replace(R.id.time_fragment, sleepTimeFragment);
-                    Toast.makeText(getApplicationContext(), "수면 체크드", Toast.LENGTH_SHORT).show();
                 }
                 fragmentTransaction.commit();
             }
