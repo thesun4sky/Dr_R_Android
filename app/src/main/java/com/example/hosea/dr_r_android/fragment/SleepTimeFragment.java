@@ -3,12 +3,16 @@ package com.example.hosea.dr_r_android.fragment;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v7.app.AlertDialog;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +20,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,27 +54,30 @@ public class SleepTimeFragment extends Fragment {
     private AQuery aq = new AQuery(getActivity());
     private TextView myOutput, myToday, myToggle;
     private ImageView myCircle;
-    long startTime ,endTime;
+    long startTime, endTime;
     private SleepAdapter sleepAdapter;
     private ArrayList<SleepVO> sleepDataList;
     int user_id = 0;
     Date s_start;
     Date s_end;
+
     long outTime;
     final static int Init = 0;
     final static int Run = 1;
     final static int Pause = 2;
     int cur_Status = Init; //현재의 상태를 저장할변수를 초기화함.
     long myBaseTime;
+    RadioButton feeding;
     long myPauseTime;
     final SimpleDateFormat curYearFormat = new SimpleDateFormat("yyyy", Locale.KOREA);
     final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);
     final SimpleDateFormat curDayFormat = new SimpleDateFormat("dd", Locale.KOREA);
     Date date = new Date();
     int year, month, day;
-    SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
 
-    public SleepTimeFragment() {}
+    public SleepTimeFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -78,7 +86,6 @@ public class SleepTimeFragment extends Fragment {
 
         Bundle args = getActivity().getIntent().getExtras();
         user_id = args.getInt("u_id");
-
         myToday = (TextView) view.findViewById(R.id.today_sleep);
         myOutput = (TextView) view.findViewById(R.id.time_out);
         myToggle = (TextView) view.findViewById(R.id.sleep_toggle);
@@ -100,23 +107,97 @@ public class SleepTimeFragment extends Fragment {
         //현재 날짜 받아오기
         // 년,월,일로 쪼갬
         year = Integer.parseInt(curYearFormat.format(date));
-        month =Integer.parseInt(curMonthFormat.format(date));
+        month = Integer.parseInt(curMonthFormat.format(date));
         day = Integer.parseInt(curDayFormat.format(date));
         sleepDataList = new ArrayList<>();
 //        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(22123123), 3));
 //        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 2));
 //        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(11123123), 1));
-        sleepAdapter = new SleepAdapter(view.getContext(),R.layout.itemsforsleeplist, sleepDataList);
+        sleepAdapter = new SleepAdapter(view.getContext(), R.layout.itemsforsleeplist, sleepDataList);
         listView.setAdapter(sleepAdapter); // uses the view to get the context instead of getActivity().
 
-        myToday.setText(year+"년 "+(month)+"월 "+day+"일 "+ getDayKor() );
+        myToday.setText(year + "년 " + (month) + "월 " + day + "일 " + getDayKor());
+
+
         readSleep();
+
         return view;
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
+
+
+        if (getView() == null) {
+            return;
+        }
+
+        final RadioButton feeding = (RadioButton) ((TimeActivity) getActivity()).findViewById(R.id.measureFeedingTime);
+        final RadioButton sleeping = (RadioButton) ((TimeActivity) getActivity()).findViewById(R.id.measureSleepingTime);
+
+        feeding.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                if (cur_Status == Run) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("수면시간 측정 중입니다");
+                    alert.setMessage("저장하지 않고 넘어가시겠습니까?");
+
+                    alert.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            fragmentTransaction.replace(R.id.time_fragment, new FeedTimeFragment()).commit();
+                            myTimer.removeMessages(0);
+                            cur_Status = Init;
+                        }
+                    });
+
+                    alert.setNegativeButton("취소",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    sleeping.setChecked(true);
+                                }
+                            });
+
+                    alert.show();
+                } else {
+                    fragmentTransaction.replace(R.id.time_fragment, new FeedTimeFragment()).commit();
+                }
+            }
+        });
+
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (cur_Status == Run) {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                        alert.setTitle("수면시간 측정 중입니다");
+                        alert.setMessage("기록을 저장하지 않고 종료하시겠습니까?");
+
+                        alert.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                getActivity().finish();
+                            }
+                        });
+
+                        alert.setNegativeButton("취소",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                    }
+                                });
+
+                        alert.show();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -133,7 +214,7 @@ public class SleepTimeFragment extends Fragment {
                     case Init:
                         myBaseTime = SystemClock.elapsedRealtime();
                         s_start = new Date();
-                        startTime = s_start.getTime()/1000;
+                        startTime = s_start.getTime() / 1000;
                         System.out.println(myBaseTime);
                         //myTimer이라는 핸들러를 빈 메세지를 보내서 호출
                         myTimer.sendEmptyMessage(0);
@@ -145,18 +226,18 @@ public class SleepTimeFragment extends Fragment {
                         myTimer.removeMessages(0); //핸들러 메세지 제거
                         myPauseTime = SystemClock.elapsedRealtime();
                         s_end = new Date();
-                        endTime = s_end.getTime() /1000;
+                        endTime = s_end.getTime() / 1000;
                         myToggle.setText("기록 시작");
                         cur_Status = Pause;
                         outTime = 0;
-                        String easy_outTime = String.format("%02d:%02d:%02d", outTime / 1000 / 3600 , (outTime / 1000 % 3600) / 60, (outTime / 1000 %3600 %60 ));
+                        String easy_outTime = String.format("%02d:%02d:%02d", outTime / 1000 / 3600, (outTime / 1000 % 3600) / 60, (outTime / 1000 % 3600 % 60));
                         myOutput.setText(easy_outTime);
                         writeDiary();
                         break;
                     case Pause:
                         myBaseTime = SystemClock.elapsedRealtime();
                         s_start = new Date();
-                        startTime = s_start.getTime()/1000;
+                        startTime = s_start.getTime() / 1000;
                         myTimer.sendEmptyMessage(0);
                         myToggle.setText("기록 중지");
                         cur_Status = Run;
@@ -190,30 +271,29 @@ public class SleepTimeFragment extends Fragment {
     }
 
 
-
-
     //현재시간을 계속 구해서 출력하는 메소드
     String getTimeOut() {
         long now = SystemClock.elapsedRealtime(); //애플리케이션이 실행되고나서 실제로 경과된 시간(??)^^;
         outTime = now - myBaseTime;
-        String easy_outTime = String.format("%02d:%02d:%02d", outTime / 1000 / 3600 , (outTime / 1000 % 3600) / 60, (outTime / 1000 %3600 %60 ));
+        String easy_outTime = String.format("%02d:%02d:%02d", outTime / 1000 / 3600, (outTime / 1000 % 3600) / 60, (outTime / 1000 % 3600 % 60));
         return easy_outTime;
     }
 
-    public static String getDayKor(){
+    public static String getDayKor() {
         Calendar cal = Calendar.getInstance();
         int cnt = cal.get(Calendar.DAY_OF_WEEK) - 1;
-        String[] week = { "일", "월", "화", "수", "목", "금", "토" };
+        String[] week = {"일", "월", "화", "수", "목", "금", "토"};
 
-        return "( "+week[cnt]+" )";
+        return "( " + week[cnt] + " )";
     }
+
     public void writeDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
         //params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        params.put("u_id" , user_id);
-        params.put("s_start" , dateFormat.format(s_start));
-        params.put("s_end" , dateFormat.format(s_end));
-        params.put("s_total" , endTime-startTime);
+        params.put("u_id", user_id);
+        params.put("s_start", dateFormat.format(s_start));
+        params.put("s_end", dateFormat.format(s_end));
+        params.put("s_total", endTime - startTime);
         aq.ajax("http://52.41.218.18:8080/addSleepTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
@@ -231,7 +311,7 @@ public class SleepTimeFragment extends Fragment {
 
     public void readSleep() {
         Map<String, Object> params = new HashMap<String, Object>();
-        SimpleDateFormat dateFormat2 = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
         params.put("u_id", user_id);
         params.put("s_start", dateFormat2.format(date));
         aq.ajax("http://52.41.218.18:8080/getSleepTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
@@ -245,11 +325,12 @@ public class SleepTimeFragment extends Fragment {
                         e.printStackTrace();
                     }
                 } else {
-                    Toast.makeText(getActivity(),"연결상태가 좋지않아 목록을 부를 수 없습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "연결상태가 좋지않아 목록을 부를 수 없습니다.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
+
     public void jsonArrayToSleepArray(JSONArray jsonArr) throws JSONException {
         for (int i = 0; i < jsonArr.length(); i++) {
             sleepDataList.add(new SleepVO(jsonArr.getJSONObject(i)));

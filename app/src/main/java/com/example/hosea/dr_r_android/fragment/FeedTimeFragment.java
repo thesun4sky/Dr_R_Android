@@ -1,10 +1,14 @@
 package com.example.hosea.dr_r_android.fragment;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v7.app.AlertDialog;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -125,6 +129,8 @@ public class FeedTimeFragment extends Fragment {
         final RelativeLayout powderLayout = (RelativeLayout) view.findViewById(R.id.powder);
 
         powderLayout.setVisibility(View.GONE);
+
+
         RadioButton.OnClickListener optionOnClickListener = new RadioButton.OnClickListener() {
             public void onClick(View v) {
                 if (right.isChecked()) {
@@ -170,8 +176,80 @@ public class FeedTimeFragment extends Fragment {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
+
+        if(getView() == null){
+            return;
+        }
+
+        final RadioButton feeding = (RadioButton) ((TimeActivity) getActivity()).findViewById(R.id.measureFeedingTime);
+        final RadioButton sleeping = (RadioButton) ((TimeActivity) getActivity()).findViewById(R.id.measureSleepingTime);
+
+        sleeping.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                if (cur_Status == Run) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("수유시간 측정 중입니다");
+                    alert.setMessage("저장하지 않고 넘어가시겠습니까?");
+
+                    alert.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            fragmentTransaction.replace(R.id.time_fragment, new SleepTimeFragment()).commit();
+                            myTimer.removeMessages(0);
+                            cur_Status = Init;
+                        }
+                    });
+
+                    alert.setNegativeButton("취소",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    feeding.setChecked(true);
+                                }
+                            });
+
+                    alert.show();
+                } else {
+                    fragmentTransaction.replace(R.id.time_fragment, new SleepTimeFragment()).commit();
+                }
+            }
+        });
+
+
+
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
+                    if(cur_Status == Run) {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                        alert.setTitle("수유시간 측정 중입니다");
+                        alert.setMessage("기록을 저장하지 않고 종료하시겠습니까?");
+
+                        alert.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                getActivity().finish();
+                            }
+                        });
+
+                        alert.setNegativeButton("취소",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                    }
+                                });
+
+                        alert.show();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     @Override

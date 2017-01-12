@@ -150,7 +150,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
 
     public void jsonArrayToSleepArray(JSONArray jsonArr) throws JSONException {
         final SimpleDateFormat curHourFormat = new SimpleDateFormat("HH", Locale.KOREA);
-        curHourFormat.setTimeZone(TimeZone.getTimeZone("GMT+9"));
+        curHourFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         final SimpleDateFormat curMinuteFormat = new SimpleDateFormat("mm", Locale.KOREA);
         final SimpleDateFormat curSecFormat = new SimpleDateFormat("ss", Locale.KOREA);
         for (int i = 0; i < jsonArr.length(); i++) {
@@ -176,7 +176,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
     //수유시간 리스트 받아오기
     public void jsonArrayToFeedArray(JSONArray jsonArr) throws JSONException {
         final SimpleDateFormat curHourFormat = new SimpleDateFormat("HH", Locale.KOREA);
-        curHourFormat.setTimeZone(TimeZone.getTimeZone("GMT+9"));
+        curHourFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         final SimpleDateFormat curMinuteFormat = new SimpleDateFormat("mm", Locale.KOREA);
         final SimpleDateFormat curSecFormat = new SimpleDateFormat("ss", Locale.KOREA);
         for (int i = 0; i < jsonArr.length(); i++) {
