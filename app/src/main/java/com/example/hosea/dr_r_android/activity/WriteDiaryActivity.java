@@ -310,7 +310,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
             increment =fromDate.getActualMaximum(Calendar.DAY_OF_MONTH);
         }
         System.out.println("increment"+increment);
-// DAY CALCULATION
+        //일 계산
         if (increment != 0) {
             day = (toDate.get(Calendar.DAY_OF_MONTH) + increment) - fromDate.get(Calendar.DAY_OF_MONTH);
             increment = 1;
@@ -318,7 +318,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
             day = toDate.get(Calendar.DAY_OF_MONTH) - fromDate.get(Calendar.DAY_OF_MONTH);
         }
 
-// MONTH CALCULATION
+        //월 계산
         if ((fromDate.get(Calendar.MONTH) + increment) > toDate.get(Calendar.MONTH)) {
             month = (toDate.get(Calendar.MONTH) + 12) - (fromDate.get(Calendar.MONTH) + increment);
             increment = 1;
@@ -327,7 +327,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
             increment = 0;
         }
 
-// YEAR CALCULATION
+        //년 계산
         year = toDate.get(Calendar.YEAR) - (fromDate.get(Calendar.YEAR) + increment);
         if(year < 0 ){
             return "태어난지" +day+"\t일 되었습니다.";
