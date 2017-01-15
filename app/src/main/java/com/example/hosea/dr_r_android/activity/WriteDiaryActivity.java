@@ -76,6 +76,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
     CheckBox fever, cough, diarrhea , cb_etc;
     TextView tv;
     TextView today;
+    TextView age;
     int result_year = 0, result_month = 0, result_day = 0;
     int next_year = 0, next_month = 0, next_day = 0;
     int start_year = 0, start_month = 0, start_day = 0;
@@ -96,6 +97,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
 
+        age = (TextView)findViewById(R.id.todayAge);
         tv = (TextView) findViewById(R.id.date);
         today = (TextView) findViewById(R.id.today);
         height = (EditText) findViewById(R.id.height);
@@ -225,7 +227,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
 
         readDiary();
-
+        getBornDate();
 
         submit = (Button) findViewById(R.id.submit);
         submit.setText("등록");
@@ -245,6 +247,24 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
     }
 
+    public void getBornDate(){
+        Map<String,Object> params = new HashMap<String,Object>();
+        params.put("u_id",previousIntent.getIntExtra("u_id",0));
+        aq.ajax("http://52.41.218.18:8080/getBornDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject html, AjaxStatus status) {
+                if (html != null) {
+                    try {
+                        calAge(html);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+
+                }
+            }
+        });
+    }
 
     public void readDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
@@ -262,6 +282,59 @@ public class WriteDiaryActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void calAge(JSONObject jsonObject) throws JSONException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd");
+        Date nowDate = new Date();
+        Long bornTime = Long.parseLong(jsonObject.getString("u_born"));
+        Date bornDate = new Date(bornTime);
+
+        age.setText(getDateDifferenceInDDMMYYYY(bornDate,nowDate));
+
+
+
+    }
+
+
+    public static String getDateDifferenceInDDMMYYYY(Date from, Date to) {
+        Calendar fromDate=Calendar.getInstance();
+        Calendar toDate=Calendar.getInstance();
+        fromDate.setTime(from);
+        toDate.setTime(to);
+        toDate.add(Calendar.DATE,-30);
+        int increment = 0;
+        int year,month,day;
+        System.out.println(fromDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+        if (fromDate.get(Calendar.DAY_OF_MONTH) > toDate.get(Calendar.DAY_OF_MONTH)) {
+            increment =fromDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+        }
+        System.out.println("increment"+increment);
+// DAY CALCULATION
+        if (increment != 0) {
+            day = (toDate.get(Calendar.DAY_OF_MONTH) + increment) - fromDate.get(Calendar.DAY_OF_MONTH);
+            increment = 1;
+        } else {
+            day = toDate.get(Calendar.DAY_OF_MONTH) - fromDate.get(Calendar.DAY_OF_MONTH);
+        }
+
+// MONTH CALCULATION
+        if ((fromDate.get(Calendar.MONTH) + increment) > toDate.get(Calendar.MONTH)) {
+            month = (toDate.get(Calendar.MONTH) + 12) - (fromDate.get(Calendar.MONTH) + increment);
+            increment = 1;
+        } else {
+            month = (toDate.get(Calendar.MONTH)) - (fromDate.get(Calendar.MONTH) + increment);
+            increment = 0;
+        }
+
+// YEAR CALCULATION
+        year = toDate.get(Calendar.YEAR) - (fromDate.get(Calendar.YEAR) + increment);
+        if(year < 0 ){
+            return "태어난지" +day+"\t일 되었습니다.";
+        }
+        else{
+            return   year+"\t년\t\t"+month+"\t월\t\t"+day+"\t일";
+        }
     }
 
     public void inputForNewData(){

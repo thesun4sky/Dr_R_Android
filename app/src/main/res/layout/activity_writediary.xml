@@ -36,13 +36,13 @@
         android:background="#FFFFFFDD">
 
         <TextView
-            android:id="@+id/todayAge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="오늘 교정 연령 : "
             android:textSize="15dp" />
 
         <TextView
+            android:id="@+id/todayAge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
