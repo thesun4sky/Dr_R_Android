@@ -43,6 +43,7 @@ public class GraphActivity extends AppCompatActivity {
     ImageView baby_height;
     ImageView baby_weight;
     Button btn_measure_height;
+    String sex = "";
     EditText et_baby_month;
     EditText et_baby_height;
     TextView tv_avg_height , tv_per_height, tv_my_height;
@@ -82,7 +83,7 @@ public class GraphActivity extends AppCompatActivity {
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
                     try {
-                        String sex = html.getString("u_sex");
+                        sex = html.getString("u_sex");
                         drawImageBySex(sex);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -125,7 +126,10 @@ public class GraphActivity extends AppCompatActivity {
         btn_measure_height.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                measure_height();
+                if(sex.equals("남자")){
+                    measure_height_boy();
+                }
+
             }
         });
     }
@@ -145,7 +149,7 @@ public class GraphActivity extends AppCompatActivity {
         }
 
     }
-    public void measure_height(){
+    public void measure_height_boy(){
         int month = Integer.parseInt(et_baby_month.getText().toString());
         double height = Double.parseDouble(et_baby_height.getText().toString());
         double result[] =new double[9];
