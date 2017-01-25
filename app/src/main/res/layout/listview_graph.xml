@@ -57,7 +57,7 @@
 
             <EditText
                 android:id="@+id/et_baby_height"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.2" />
@@ -93,7 +93,7 @@
                 android:layout_weight="1"
                 android:id="@+id/tv_per_height"
                 android:layout_gravity="center"
-                android:text="백분율"
+                android:text="백분위"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -140,8 +140,8 @@
             android:layout_weight="0.2" />
 
         <EditText
-            android:id="@+id/et_baby_height2"
-            android:inputType="number"
+            android:id="@+id/et_baby_weight"
+            android:inputType="numberDecimal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.2" />
@@ -162,7 +162,7 @@
             android:layout_weight="1"
             android:id="@+id/tv_avg_weight"
             android:layout_gravity="center"
-            android:text="평균 키"
+            android:text="평균 몸무게 "
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -170,14 +170,14 @@
             android:layout_weight="1"
             android:id="@+id/tv_my_weight"
             android:layout_gravity="center"
-            android:text="나의 키"
+            android:text="나의 몸무게"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:layout_weight="1"
             android:id="@+id/tv_per_weight"
             android:layout_gravity="center"
-            android:text="백분율"
+            android:text="백분위"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
