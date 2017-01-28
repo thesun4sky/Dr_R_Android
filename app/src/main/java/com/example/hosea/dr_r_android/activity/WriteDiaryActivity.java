@@ -57,14 +57,14 @@ public class WriteDiaryActivity extends AppCompatActivity {
     int year, month, day;
     final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
     private EditText weight, height;
-    EditText memo ,etc;
+    EditText memo, etc;
     Date diary_date;
     Spinner spinner_hospital;
     Spinner spinner_depart;
     Spinner spinner_shot;
     Date next_date;
     String date;
-    Object depart , hospital_depart , shot;
+    Object depart, hospital_depart, shot;
     String diary_date_string;
     String next_date_string;
     private Intent previousIntent;
@@ -73,7 +73,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
     boolean photo_has_changed;
     private Bitmap bitmapPhoto;
     String result;
-    CheckBox fever, cough, diarrhea , cb_etc;
+    CheckBox fever, cough, diarrhea, cb_etc;
     TextView tv;
     TextView today;
     TextView age;
@@ -97,7 +97,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        age = (TextView)findViewById(R.id.todayAge);
+        age = (TextView) findViewById(R.id.todayAge);
         tv = (TextView) findViewById(R.id.date);
         today = (TextView) findViewById(R.id.today);
         height = (EditText) findViewById(R.id.height);
@@ -106,17 +106,16 @@ public class WriteDiaryActivity extends AppCompatActivity {
         fever = (CheckBox) findViewById(R.id.fever);
         cough = (CheckBox) findViewById(R.id.cough);
         diarrhea = (CheckBox) findViewById(R.id.diarrhea);
-        cb_etc = (CheckBox)findViewById(R.id.cb_etc);
-        etc = (EditText)findViewById(R.id.et_etc);
+        cb_etc = (CheckBox) findViewById(R.id.cb_etc);
+        etc = (EditText) findViewById(R.id.et_etc);
         etc.setVisibility(View.GONE);
 
         cb_etc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(cb_etc.isChecked()){
+                if (cb_etc.isChecked()) {
                     etc.setVisibility(View.VISIBLE);
-                }
-                else if(!cb_etc.isChecked()){
+                } else if (!cb_etc.isChecked()) {
                     etc.setVisibility(View.GONE);
                     etc.setText("");
                 }
@@ -247,9 +246,9 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
     }
 
-    public void getBornDate(){
-        Map<String,Object> params = new HashMap<String,Object>();
-        params.put("u_id",previousIntent.getIntExtra("u_id",0));
+    public void getBornDate() {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("u_id", previousIntent.getIntExtra("u_id", 0));
         aq.ajax("http://52.41.218.18:8080/getBornDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
@@ -257,6 +256,8 @@ public class WriteDiaryActivity extends AppCompatActivity {
                     try {
                         calAge(html);
                     } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 } else {
@@ -284,32 +285,56 @@ public class WriteDiaryActivity extends AppCompatActivity {
         });
     }
 
-    public void calAge(JSONObject jsonObject) throws JSONException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd");
-        Date nowDate = new Date();
+    public void calAge(JSONObject jsonObject) throws JSONException, ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String nowString = simpleDateFormat.format(new Date());
+
+        Date nowDate = simpleDateFormat.parse(nowString);
+
+        String expectString = jsonObject.getString("u_b_year") + "-" + jsonObject.getString("u_b_month") + "-" + jsonObject.getString("u_b_date");
+        Date expectDate = simpleDateFormat.parse(expectString);
+
         Long bornTime = Long.parseLong(jsonObject.getString("u_born"));
         Date bornDate = new Date(bornTime);
 
-        age.setText(getDateDifferenceInDDMMYYYY(bornDate,nowDate));
+        int compare = 0;
+        compare = expectDate.compareTo(nowDate);
 
+        if (compare > 0) {            //예정일이 더 클경우
+            Calendar c1 = Calendar.getInstance();    //예정일
+            Calendar c2 = Calendar.getInstance();    //오늘
+
+            c1.setTime(expectDate);
+            c2.setTime(nowDate);
+
+            long d1, d2;
+            d1 = c1.getTime().getTime();        //예정일 -> ms
+            d2 = c2.getTime().getTime();        //오늘 ->ms
+
+            int days = (int) ((d1 - d2) / (1000 * 60 * 60 * 24));
+            measureDateLess(days);
+        } else if (compare < 0) {           //계산날짜가 예정일보다 큰 경우
+            age.setText(getDateDifferenceInDDMMYYYY(expectDate, nowDate));
+        } else {                           //예정일과 계산날짜가 같은 경우
+            age.setText("교정연령 :  " + 0 + "(오늘 태어났습니다.)");
+        }
 
 
     }
 
 
     public static String getDateDifferenceInDDMMYYYY(Date from, Date to) {
-        Calendar fromDate=Calendar.getInstance();
-        Calendar toDate=Calendar.getInstance();
+        Calendar fromDate = Calendar.getInstance();
+        Calendar toDate = Calendar.getInstance();
         fromDate.setTime(from);
         toDate.setTime(to);
-        toDate.add(Calendar.DATE,-30);
         int increment = 0;
-        int year,month,day;
+        int year, month, day;
         System.out.println(fromDate.getActualMaximum(Calendar.DAY_OF_MONTH));
         if (fromDate.get(Calendar.DAY_OF_MONTH) > toDate.get(Calendar.DAY_OF_MONTH)) {
-            increment =fromDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+            increment = fromDate.getActualMaximum(Calendar.DAY_OF_MONTH);
         }
-        System.out.println("increment"+increment);
+        System.out.println("increment" + increment);
         //일 계산
         if (increment != 0) {
             day = (toDate.get(Calendar.DAY_OF_MONTH) + increment) - fromDate.get(Calendar.DAY_OF_MONTH);
@@ -329,15 +354,30 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
         //년 계산
         year = toDate.get(Calendar.YEAR) - (fromDate.get(Calendar.YEAR) + increment);
-        if(year < 0 ){
-            return "태어난지" +day+"\t일 되었습니다.";
-        }
-        else{
-            return   year+"\t년\t\t"+month+"\t월\t\t"+day+"\t일";
+        return year + "\t년\t\t" + month + "\t월\t\t" + day + "\t일";
+
+    }
+
+    public void measureDateLess(int days) {
+        int Base = 280;
+
+        int week = 0;
+        int day = 0;
+        int total = Base - days;
+        if (total <= 6) {
+            age.setText("교정연령 : " + "0 주" + total + " 일");
+        } else {
+            while (total > 6) {
+                day = total % 7;
+                total = total - 7;
+                week += 1;
+
+            }
+            age.setText("교정연령 : " + week + " 주" + day + " 일");
         }
     }
 
-    public void inputForNewData(){
+    public void inputForNewData() {
         submit.setText("등록");
         weight.setText("");
         height.setText("");
@@ -349,9 +389,9 @@ public class WriteDiaryActivity extends AppCompatActivity {
         etc.setText("");
         etc.setVisibility(View.GONE);
         tv.setText("날짜 선택");
-        next_year=0;
-        next_month=0;
-        next_day=0;
+        next_year = 0;
+        next_month = 0;
+        next_day = 0;
         spinner_depart.setSelection(0);
         hospital_depart = spinner_depart.getItemAtPosition(0);
         spinner_hospital.setSelection(0);
@@ -380,7 +420,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
                 cough.setChecked(true);
             } else if (splitValue[i].equals("설사")) {
                 diarrhea.setChecked(true);
-            }else if(splitValue[i].contains("기타")){
+            } else if (splitValue[i].contains("기타")) {
                 cb_etc.setChecked(true);
                 etc.setVisibility(View.VISIBLE);
                 String[] splitValueForEtc = original_treat.split(":");
@@ -389,7 +429,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
         }
 
 
-        if(!diaryVO.getNext().equals("0")) {
+        if (!diaryVO.getNext().equals("0")) {
             Date next_date = new Date();
             try {
                 next_date = dateFormat.parse(diaryVO.getNext());
@@ -410,8 +450,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
             next_year = year;
             next_month = month;
             next_day = day;
-        }
-        else{
+        } else {
             tv.setText("날짜 선택");
             next_year = 0;
             next_month = 0;
@@ -425,36 +464,28 @@ public class WriteDiaryActivity extends AppCompatActivity {
         } else if (diaryVO.getHospital_name().equals("소아청소년과")) {
             spinner_depart.setSelection(1);
             hospital_depart = spinner_depart.getItemAtPosition(1);
-        }
-        else if (diaryVO.getHospital_name().equals("내과")) {
+        } else if (diaryVO.getHospital_name().equals("내과")) {
             spinner_depart.setSelection(2);
             hospital_depart = spinner_depart.getItemAtPosition(2);
-        }
-        else if (diaryVO.getHospital_name().equals("안과")) {
+        } else if (diaryVO.getHospital_name().equals("안과")) {
             spinner_depart.setSelection(3);
             hospital_depart = spinner_depart.getItemAtPosition(3);
-        }
-        else if (diaryVO.getHospital_name().equals("이비인후과")) {
+        } else if (diaryVO.getHospital_name().equals("이비인후과")) {
             spinner_depart.setSelection(4);
             hospital_depart = spinner_depart.getItemAtPosition(4);
-        }
-        else if (diaryVO.getHospital_name().equals("재활의학과")) {
+        } else if (diaryVO.getHospital_name().equals("재활의학과")) {
             spinner_depart.setSelection(5);
             hospital_depart = spinner_depart.getItemAtPosition(5);
-        }
-        else if (diaryVO.getHospital_name().equals("정형외과")) {
+        } else if (diaryVO.getHospital_name().equals("정형외과")) {
             spinner_depart.setSelection(6);
             hospital_depart = spinner_depart.getItemAtPosition(6);
-        }
-        else if (diaryVO.getHospital_name().equals("치과")) {
+        } else if (diaryVO.getHospital_name().equals("치과")) {
             spinner_depart.setSelection(7);
             hospital_depart = spinner_depart.getItemAtPosition(7);
-        }
-        else if (diaryVO.getHospital_name().equals("피부과")) {
+        } else if (diaryVO.getHospital_name().equals("피부과")) {
             spinner_depart.setSelection(8);
             hospital_depart = spinner_depart.getItemAtPosition(8);
-        }
-        else{
+        } else {
 
         }
 
@@ -465,105 +496,81 @@ public class WriteDiaryActivity extends AppCompatActivity {
         } else if (diaryVO.getDepart().equals("소아청소년과")) {
             spinner_hospital.setSelection(1);
             depart = spinner_hospital.getItemAtPosition(1);
-        }
-        else if (diaryVO.getDepart().equals("내과")) {
+        } else if (diaryVO.getDepart().equals("내과")) {
             spinner_hospital.setSelection(2);
             depart = spinner_hospital.getItemAtPosition(2);
-        }
-        else if (diaryVO.getDepart().equals("안과")) {
+        } else if (diaryVO.getDepart().equals("안과")) {
             spinner_hospital.setSelection(3);
             depart = spinner_hospital.getItemAtPosition(3);
-        }
-        else if (diaryVO.getDepart().equals("이비인후과")) {
+        } else if (diaryVO.getDepart().equals("이비인후과")) {
             spinner_hospital.setSelection(4);
             depart = spinner_hospital.getItemAtPosition(4);
-        }
-        else if (diaryVO.getDepart().equals("재활의학과")) {
+        } else if (diaryVO.getDepart().equals("재활의학과")) {
             spinner_hospital.setSelection(5);
             depart = spinner_hospital.getItemAtPosition(5);
-        }
-        else if (diaryVO.getDepart().equals("정형외과")) {
+        } else if (diaryVO.getDepart().equals("정형외과")) {
             spinner_hospital.setSelection(6);
             depart = spinner_hospital.getItemAtPosition(6);
-        }
-        else if (diaryVO.getDepart().equals("치과")) {
+        } else if (diaryVO.getDepart().equals("치과")) {
             spinner_hospital.setSelection(7);
             depart = spinner_hospital.getItemAtPosition(7);
-        }
-        else if (diaryVO.getDepart().equals("피부과")) {
+        } else if (diaryVO.getDepart().equals("피부과")) {
             spinner_hospital.setSelection(8);
             depart = spinner_hospital.getItemAtPosition(8);
-        }
-        else{
+        } else {
 
         }
 
         //접종 드롭다운
-        if(diaryVO.getShot().equals("")){
+        if (diaryVO.getShot().equals("")) {
             spinner_shot.setSelection(0);
             shot = spinner_shot.getItemAtPosition(0);
-        }
-        else if(diaryVO.getShot().equals("일본뇌염")){
+        } else if (diaryVO.getShot().equals("일본뇌염")) {
             spinner_shot.setSelection(1);
             shot = spinner_shot.getItemAtPosition(1);
-        }
-        else if(diaryVO.getShot().equals("수두")){
+        } else if (diaryVO.getShot().equals("수두")) {
             spinner_shot.setSelection(2);
             shot = spinner_shot.getItemAtPosition(2);
-        }
-        else if(diaryVO.getShot().equals("A형간염")){
+        } else if (diaryVO.getShot().equals("A형간염")) {
             spinner_shot.setSelection(3);
             shot = spinner_shot.getItemAtPosition(3);
-        }
-        else if(diaryVO.getShot().equals("B형간염")){
+        } else if (diaryVO.getShot().equals("B형간염")) {
             spinner_shot.setSelection(4);
             shot = spinner_shot.getItemAtPosition(4);
-        }
-        else if(diaryVO.getShot().equals("폴리오")){
+        } else if (diaryVO.getShot().equals("폴리오")) {
             spinner_shot.setSelection(5);
             shot = spinner_shot.getItemAtPosition(5);
-        }
-        else if(diaryVO.getShot().equals("BCG")){
+        } else if (diaryVO.getShot().equals("BCG")) {
             spinner_shot.setSelection(6);
             shot = spinner_shot.getItemAtPosition(6);
-        }
-        else if(diaryVO.getShot().equals("DTaP")){
+        } else if (diaryVO.getShot().equals("DTaP")) {
             spinner_shot.setSelection(7);
             shot = spinner_shot.getItemAtPosition(7);
-        }
-        else if(diaryVO.getShot().equals("Rotavirus")){
+        } else if (diaryVO.getShot().equals("Rotavirus")) {
             spinner_shot.setSelection(8);
             shot = spinner_shot.getItemAtPosition(8);
-        }
-        else if(diaryVO.getShot().equals("MMR")){
+        } else if (diaryVO.getShot().equals("MMR")) {
             spinner_shot.setSelection(9);
             shot = spinner_shot.getItemAtPosition(9);
-        }
-        else if(diaryVO.getShot().equals("PCV")){
+        } else if (diaryVO.getShot().equals("PCV")) {
             spinner_shot.setSelection(10);
             shot = spinner_shot.getItemAtPosition(10);
-        }
-        else if(diaryVO.getShot().equals("Hib")){
+        } else if (diaryVO.getShot().equals("Hib")) {
             spinner_shot.setSelection(11);
             shot = spinner_shot.getItemAtPosition(11);
-        }
-        else {
+        } else {
 
         }
 
 
-
-
-        if(!diaryVO.getC_img().equals(null) && !diaryVO.getC_img().equals("") && !diaryVO.getC_img().equals("null")  ) {
+        if (!diaryVO.getC_img().equals(null) && !diaryVO.getC_img().equals("") && !diaryVO.getC_img().equals("null")) {
             String IMG_URL = "http://52.41.218.18/storedimg/" + diaryVO.getC_img();
             aq.id(R.id.photo).image(IMG_URL);
             addPhoto.setVisibility(addPhoto.GONE);
-        }
-        else{
+        } else {
             ivImg.setImageDrawable(null);
             addPhoto.setVisibility(View.VISIBLE);
         }
-
 
 
     }
@@ -571,34 +578,30 @@ public class WriteDiaryActivity extends AppCompatActivity {
     public void writeDiary() throws ParseException {
         Map<String, Object> params = new HashMap<String, Object>();
         diary_date_string = result_year + "-" + result_month + "-" + result_day + " " + "00:00:00";
-        if(next_year != 0) {
+        if (next_year != 0) {
             next_date_string = next_year + "-" + next_month + "-" + next_day + " " + "00:00:00";
             next_date = dateFormat.parse(next_date_string);
             params.put("c_next", dateFormat.format(next_date));
-        }
-        else{
-            params.put("c_next",next_year);
+        } else {
+            params.put("c_next", next_year);
         }
         diary_date = dateFormat.parse(diary_date_string);
 
-        if(depart.toString().equals("선택")){
-            params.put("c_depart","");
-        }
-        else{
+        if (depart.toString().equals("선택")) {
+            params.put("c_depart", "");
+        } else {
             params.put("c_depart", depart.toString());
         }
 
-        if(hospital_depart.toString().equals("선택")){
-            params.put("c_hospital","");
-        }
-        else{
+        if (hospital_depart.toString().equals("선택")) {
+            params.put("c_hospital", "");
+        } else {
             params.put("c_hospital", hospital_depart.toString());
         }
 
-        if(shot.toString().equals("선택")){
-            params.put("c_shot","");
-        }
-        else{
+        if (shot.toString().equals("선택")) {
+            params.put("c_shot", "");
+        } else {
             params.put("c_shot", shot.toString());
         }
 
@@ -743,8 +746,8 @@ public class WriteDiaryActivity extends AppCompatActivity {
         if (diarrhea.isChecked()) {
             result += diarrhea.getText().toString() + ",";
         }
-        if(cb_etc.isChecked()){
-            result+=cb_etc.getText().toString()+":"+etc.getText();
+        if (cb_etc.isChecked()) {
+            result += cb_etc.getText().toString() + ":" + etc.getText();
         }
         return result;
     }

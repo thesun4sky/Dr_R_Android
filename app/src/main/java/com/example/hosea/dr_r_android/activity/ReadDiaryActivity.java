@@ -44,10 +44,11 @@ public class ReadDiaryActivity extends AppCompatActivity {
     private AQuery aq = new AQuery(this);
     long result_sleep = 0;
     long result_feed = 0;
+
     int start_year = 0, start_month = 0, start_day = 0;
     int year, month, day;
     String date;
-    TextView tv, today, sleepTotal, feedTotal;
+    TextView tv, today, sleepTotal, feedTotal , powderTotal;
     SimpleDateFormat dateFormat;
     DiaryAdapter diaryAdapter;
 
@@ -70,6 +71,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
         tv = (TextView) findViewById(R.id.date);
         sleepTotal = (TextView) findViewById(R.id.tv_sleepTotal);
         feedTotal = (TextView) findViewById(R.id.tv_feedTotal);
+        powderTotal = (TextView)findViewById(R.id.tv_powder);
         today = (TextView) findViewById(R.id.dateForList);
 
         date = year + "-" + (month + 1) + "-" + day + " ";
@@ -175,28 +177,34 @@ public class ReadDiaryActivity extends AppCompatActivity {
 
     //수유시간 리스트 받아오기
     public void jsonArrayToFeedArray(JSONArray jsonArr) throws JSONException {
+        long result_powder = 0;
         final SimpleDateFormat curHourFormat = new SimpleDateFormat("HH", Locale.KOREA);
         curHourFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         final SimpleDateFormat curMinuteFormat = new SimpleDateFormat("mm", Locale.KOREA);
         final SimpleDateFormat curSecFormat = new SimpleDateFormat("ss", Locale.KOREA);
         for (int i = 0; i < jsonArr.length(); i++) {
+            if(jsonArr.getJSONObject(i).getString("feed").equals("분유")){
+                result_powder += Long.parseLong(jsonArr.getJSONObject(i).getString("f_total"));
+            }
+            else {
+                long s_time = Long.parseLong(jsonArr.getJSONObject(i).getString("f_start"));
+                long e_time = Long.parseLong(jsonArr.getJSONObject(i).getString("f_end"));
+                result_feed += e_time - s_time;
+                Date start = new Date(s_time);
+                Date end = new Date(e_time);
+                int s_hour = Integer.parseInt(curHourFormat.format(start));
+                int s_min = Integer.parseInt(curMinuteFormat.format(start));
+                int s_sec = Integer.parseInt(curSecFormat.format(start));
+                int e_hour = Integer.parseInt(curHourFormat.format(end));
+                int e_min = Integer.parseInt(curMinuteFormat.format(end));
+                int e_sec = Integer.parseInt(curSecFormat.format(end));
 
-            long s_time = Long.parseLong(jsonArr.getJSONObject(i).getString("f_start"));
-            long e_time = Long.parseLong(jsonArr.getJSONObject(i).getString("f_end"));
-            result_feed += e_time - s_time;
-            Date start = new Date(s_time);
-            Date end = new Date(e_time);
-            int s_hour = Integer.parseInt(curHourFormat.format(start));
-            int s_min = Integer.parseInt(curMinuteFormat.format(start));
-            int s_sec = Integer.parseInt(curSecFormat.format(start));
-            int e_hour = Integer.parseInt(curHourFormat.format(end));
-            int e_min = Integer.parseInt(curMinuteFormat.format(end));
-            int e_sec = Integer.parseInt(curSecFormat.format(end));
-
-            clockPieHelperArrayListForFeed.add(new ClockPieHelper(s_hour, s_min, s_sec, e_hour, e_min, e_sec));
-            pieView2.setDate(clockPieHelperArrayListForFeed);
+                clockPieHelperArrayListForFeed.add(new ClockPieHelper(s_hour, s_min, s_sec, e_hour, e_min, e_sec));
+                pieView2.setDate(clockPieHelperArrayListForFeed);
+            }
         }
         feedTotal.setText(result_feed / 1000 / 3600 + " 시간 " + (result_feed / 1000 % 3600) / 60 + " 분 " + (result_feed / 1000 % 3600 % 60) + " 초 ");
+        powderTotal.setText(result_powder+"ml");
     }
 
     public void readDiary() {
