@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -230,7 +231,9 @@ public class SleepTimeFragment extends Fragment {
                         myToggle.setText("기록 시작");
                         cur_Status = Pause;
                         outTime = 0;
-                        String easy_outTime = String.format("%02d:%02d:%02d", outTime / 1000 / 3600, (outTime / 1000 % 3600) / 60, (outTime / 1000 % 3600 % 60));
+                        String easy_outTime = String.format(
+                                "%02d:%02d:%02d", outTime / 1000 / 3600, (outTime / 1000 % 3600) / 60
+                                , (outTime / 1000 % 3600 % 60));
                         myOutput.setText(easy_outTime);
                         writeDiary();
                         break;

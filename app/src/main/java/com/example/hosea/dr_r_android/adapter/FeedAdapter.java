@@ -67,25 +67,29 @@ public class FeedAdapter extends BaseAdapter {
 
 
         final LinearLayout ItemLayout = (LinearLayout) view.findViewById(R.id.tv_item_layout);
-        TextView feedTime = (TextView) view.findViewById(R.id.tv_item_feed_time);
+        TextView feedStart = (TextView) view.findViewById(R.id.tv_item_feed_start);
+        TextView feedEnd = (TextView) view.findViewById(R.id.tv_item_feed_end);
         TextView feedAmount = (TextView) view.findViewById(R.id.tv_item_feed_amount);
         TextView feedValue = (TextView) view.findViewById(R.id.tv_item_feed_value);
 
         if(feedVO.getFeed().equals("분유")){
             ItemLayout.setBackgroundColor(0x99FFDDDD);
-            feedTime.setText("분유 시간 : ");
+            feedStart.setText("입력 시간 : ");
+            feedEnd.setText("분유 끝 : ");
             feedAmount.setText("총 분유 량 : ");
             feedValue.setText("ml");
         }
         else{
             ItemLayout.setBackgroundColor(0x00B2CCFF);
-            feedTime.setText("수유 시간 : ");
+            feedStart.setText("수유 시간 : ");
+            feedStart.setText("수유 끝 : ");
             feedAmount.setText("총 수유 시간 : ");
-            feedValue.setText("초");
+            feedValue.setText("분");
         }
 
         // Set DayName
-        TextView startTime = (TextView) view.findViewById(R.id.tv_item_feed_start);
+        TextView feedStartTime = (TextView) view.findViewById(R.id.tv_item_feed_start_time);
+        TextView feedEndTime = (TextView) view.findViewById(R.id.tv_item_feed_end_time);
         TextView feed = (TextView) view.findViewById(R.id.tv_item_feed_feed);
         TextView total = (TextView) view.findViewById(R.id.tv_item_feed_total);
 
@@ -96,17 +100,26 @@ public class FeedAdapter extends BaseAdapter {
         final SimpleDateFormat curMinuteFormat = new SimpleDateFormat("mm", Locale.KOREA);
         final SimpleDateFormat curSecFormat = new SimpleDateFormat("ss", Locale.KOREA);
         Date feed_start = new Date(feedVO.getF_start().getTime());
+        Date feed_end = new Date(feedVO.getF_end().getTime());
 
 
         int s_hour = Integer.parseInt(curHourFormat.format(feed_start));
         int s_min = Integer.parseInt(curMinuteFormat.format(feed_start));
         int s_sec = Integer.parseInt(curSecFormat.format(feed_start));
 
+        int e_hour = Integer.parseInt(curHourFormat.format(feed_end));
+        int e_min = Integer.parseInt(curMinuteFormat.format(feed_end));
+        int e_sec = Integer.parseInt(curSecFormat.format(feed_end));
 
-        startTime.setText(s_hour+":"+s_min+":"+s_sec);
+
+        feedStartTime.setText(s_hour+":"+s_min/*+":"+s_sec*/);
+        feedEndTime.setText(e_hour+":"+e_min/*+":"+e_sec*/);
         feed.setText(feedVO.getFeed());
-//        endTime.setText(formatForTime.format(feedVO.getS_end()));
-        total.setText(""+feedVO.getF_total());
+        if (!feedVO.getFeed().equals("분유")) {
+            total.setText(""+(feedVO.getF_total()/60));
+        } else {
+            total.setText(""+(feedVO.getF_total()));
+        }
         return view;
     }
 

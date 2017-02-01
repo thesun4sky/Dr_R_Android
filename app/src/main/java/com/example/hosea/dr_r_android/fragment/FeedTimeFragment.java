@@ -3,6 +3,7 @@ package com.example.hosea.dr_r_android.fragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -26,6 +29,8 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.example.hosea.dr_r_android.R;
+import com.example.hosea.dr_r_android.activity.JoinActivity;
+import com.example.hosea.dr_r_android.activity.LoginActivity;
 import com.example.hosea.dr_r_android.activity.TimeActivity;
 import com.example.hosea.dr_r_android.adapter.FeedAdapter;
 import com.example.hosea.dr_r_android.adapter.SleepAdapter;
@@ -160,7 +165,59 @@ public class FeedTimeFragment extends Fragment {
         feedAdapter = new FeedAdapter(view.getContext(),R.layout.itemsforfeedlist, feedDataList);
         try {
             listView.setAdapter(feedAdapter); // uses the view to get the context instead of getActivity().
-        } catch (NullPointerException e) {
+            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                    if (feedDataList.get(position).getFeed().equals("분유")) {
+                        LayoutInflater inflater=getActivity().getLayoutInflater();
+                        final View dialogView= inflater.inflate(R.layout.dialog_change_feed, null);
+                        AlertDialog.Builder buider= new AlertDialog.Builder(getActivity()); //AlertDialog.Builder 객체 생성
+                        buider.setTitle("분유 량 변경"); //Dialog 제목
+                        buider.setView(dialogView); //위에서 inflater가 만든 dialogView 객체 세팅 (Customize)
+                        buider.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                EditText editText = (EditText) dialogView.findViewById(R.id.dialog_change_feed);
+
+                                if (!editText.getText().toString().equals("")) {
+
+                                    Map<String, Object> params = new HashMap<String, Object>();
+                                    params.put("u_id" , user_id);
+                                    params.put("f_start" , feedDataList.get(position).getF_start());
+                                    params.put("f_total", editText.getText().toString());
+                                    aq.ajax("http://52.41.218.18:8080/updateFeed", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                                        @Override
+                                        public void callback(String url, JSONObject html, AjaxStatus status) {
+                                            try {
+                                                if (html.getString("msg").equals("정상 작동")) {
+                                                    Toast.makeText(getActivity(), "변경 되었습니다.", Toast.LENGTH_SHORT).show();
+                                                    readFeed();
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                    Toast.makeText(getActivity(), "변경되었습니다.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getActivity(), "취소 되었습니다.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                        buider.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getActivity(), "약관을 동의 하셔야 가입이 가능합니다.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        AlertDialog dialog=buider.create();
+                        dialog.setCanceledOnTouchOutside(false);//없어지지 않도록 설정
+                        dialog.show();
+                    }
+                    return false;
+                }
+            });
+        } catch (NullPointerException ignored) {
 
         }
 

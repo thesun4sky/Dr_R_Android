@@ -57,8 +57,8 @@ public class SleepAdapter extends BaseAdapter {
         }
 
         // Set DayName
-        TextView startTime = (TextView) view.findViewById(R.id.tv_item_sleep_start);
-//        TextView endTime = (TextView) view.findViewById(R.id.tv_item_sleep_end);
+        TextView sleepStartTime = (TextView) view.findViewById(R.id.tv_item_sleep_start_time);
+        TextView sleepEndTime = (TextView) view.findViewById(R.id.tv_item_sleep_end_time);
         TextView total = (TextView) view.findViewById(R.id.tv_item_sleep_total);
 
         // Set Text 01
@@ -68,14 +68,17 @@ public class SleepAdapter extends BaseAdapter {
         final SimpleDateFormat curMinuteFormat = new SimpleDateFormat("mm", Locale.KOREA);
         final SimpleDateFormat curSecFormat = new SimpleDateFormat("ss", Locale.KOREA);
         Date sleep_start = new Date(sleepVO.getS_start().getTime());
+        Date sleep_end = new Date(sleepVO.getS_end().getTime());
 
         int s_hour = Integer.parseInt(curHourFormat.format(sleep_start));
         int s_min = Integer.parseInt(curMinuteFormat.format(sleep_start));
-        int s_sec = Integer.parseInt(curSecFormat.format(sleep_start));
 
-        startTime.setText(s_hour+":"+s_min+":"+s_sec);
-//        endTime.setText(formatForTime.format(sleepVO.getS_end()));
-        total.setText(""+sleepVO.getS_total());
+        int e_hour = Integer.parseInt(curHourFormat.format(sleep_end));
+        int e_min = Integer.parseInt(curMinuteFormat.format(sleep_end));
+
+        sleepStartTime.setText(s_hour+"시"+s_min+"분");
+        sleepEndTime.setText(e_hour+"시"+e_min+"분");
+        total.setText(""+(sleepVO.getS_total()/60) + "분");
 
         return view;
     }

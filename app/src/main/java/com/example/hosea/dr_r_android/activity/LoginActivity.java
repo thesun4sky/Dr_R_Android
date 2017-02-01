@@ -1,11 +1,14 @@
 package com.example.hosea.dr_r_android.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -45,7 +48,34 @@ public class LoginActivity extends AppCompatActivity {
         join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), JoinActivity.class));
+                LayoutInflater inflater=getLayoutInflater();
+                final View dialogView= inflater.inflate(R.layout.dialog_agreement, null);
+                AlertDialog.Builder buider= new AlertDialog.Builder(LoginActivity.this); //AlertDialog.Builder 객체 생성
+                buider.setTitle("개인정보 활용 동의서"); //Dialog 제목
+                buider.setView(dialogView); //위에서 inflater가 만든 dialogView 객체 세팅 (Customize)
+                buider.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        CheckBox checkBox1 = (CheckBox) dialogView.findViewById(R.id.dialog_agree1);
+                        CheckBox checkBox2 = (CheckBox) dialogView.findViewById(R.id.dialog_agree2);
+
+                        if (checkBox1.isChecked() && checkBox2.isChecked()) {
+                            Toast.makeText(getApplicationContext(), "약관에 동의했습니다.", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(), JoinActivity.class));
+                        } else {
+                            Toast.makeText(getApplicationContext(), "약관에 동의하세요.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                buider.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getApplicationContext(), "약관을 동의 하셔야 가입이 가능합니다.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                AlertDialog dialog=buider.create();
+                dialog.setCanceledOnTouchOutside(false);//없어지지 않도록 설정
+                dialog.show();
             }
         });
 

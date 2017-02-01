@@ -32,25 +32,25 @@ public class MainActivity extends AppCompatActivity {
 
         View button1 = findViewById(R.id.btn_main_1);
         button1.setOnClickListener(mClick);
-        correctedAge = (TextView)findViewById(R.id.tv_main_corrected_age);
-        joiningDate = (TextView)findViewById(R.id.tv_main_joining_date);
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        aq.ajax("http://52.41.218.18:8080/getBornDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject html, AjaxStatus status) {
-                if (html != null) {
-                    try {
-                        correctedAge.setText("" + html.getString("aafa"));
-                        joiningDate.setText("");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-
-                }
-            }
-        });
+//        correctedAge = (TextView)findViewById(R.id.tv_main_corrected_age);
+//        joiningDate = (TextView)findViewById(R.id.tv_main_joining_date);
+//        Map<String, Object> params = new HashMap<String, Object>();
+//        params.put("u_id", previousIntent.getIntExtra("u_id", 0));
+//        aq.ajax("http://52.41.218.18:8080/getBornDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+//            @Override
+//            public void callback(String url, JSONObject html, AjaxStatus status) {
+//                if (html != null) {
+//                    try {
+//                        correctedAge.setText("" + html.getString(1));
+//                        joiningDate.setText("");
+//                    } catch (JSONException | ParseException e) {
+//                        e.printStackTrace();
+//                    }
+//                } else {
+//
+//                }
+//            }
+//        });
 
         findViewById(R.id.btn_main_2).setOnClickListener(mClick);
 
