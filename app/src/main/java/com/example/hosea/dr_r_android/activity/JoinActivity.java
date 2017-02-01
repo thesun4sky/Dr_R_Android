@@ -52,7 +52,7 @@ public class JoinActivity extends AppCompatActivity {
     private EditText login_id, name, password1, password2;
     private Date born_date;
     private EditText a_week, a_date;
-    private EditText b_month, b_date;
+    private EditText b_month, b_date, b_year;
     private EditText b_weight, b_height;
     private boolean idChecked = false;
     int year = 0, month = 0, day = 0;
@@ -85,6 +85,7 @@ public class JoinActivity extends AppCompatActivity {
         a_date = (EditText) findViewById(R.id.a_date);
         b_month = (EditText) findViewById(R.id.b_month);
         b_date = (EditText) findViewById(R.id.b_date);
+        b_year = (EditText) findViewById(R.id.b_year);
         b_weight = (EditText) findViewById(R.id.b_weight);
         b_height = (EditText) findViewById(R.id.b_height);
         login_id = (EditText) findViewById(R.id.login_id);
@@ -178,7 +179,7 @@ public class JoinActivity extends AppCompatActivity {
                 } else if ((a_week.getText().toString().equals("")) || (a_date.getText().toString()==null)) {
                     Toast.makeText(getApplicationContext(), "출생 주 수를 입력하세요.", Toast.LENGTH_SHORT).show();
                     a_week.requestFocus();
-                } else if ((b_month.getText().toString().equals("")) || (b_date.getText().toString().equals(""))) {
+                } else if (b_year.getText().toString().equals("") || b_month.getText().toString().equals("") || b_date.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "예정일을 입력하세요.", Toast.LENGTH_SHORT).show();
                     b_month.requestFocus();
                 } else if (born_string.equals("")) {
@@ -203,6 +204,7 @@ public class JoinActivity extends AppCompatActivity {
                     params.put("u_name", name.getText().toString());
                     params.put("u_a_week", a_week.getText().toString());
                     params.put("u_a_date", a_date.getText().toString());
+                    params.put("u_b_year", b_year.getText().toString());
                     params.put("u_b_month", b_month.getText().toString());
                     params.put("u_b_date", b_date.getText().toString());
                     params.put("u_born", dateFormat.format(born_date));
