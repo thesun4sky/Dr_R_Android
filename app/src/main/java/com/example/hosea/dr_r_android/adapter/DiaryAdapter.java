@@ -92,6 +92,8 @@ public class DiaryAdapter extends BaseAdapter {
             weight.setText(diary.getWeight() + "(kg)");
             height.setText(diary.getHeight() + "(cm)");
             memo.setText(diary.getMemo());
+
+//            hospital.setBackgroundColor(0xFF00FF00);
             hospital.setText(diary.getHospital_name());
             treat.setText(diary.getTreat());
             shot.setText(diary.getShot());
