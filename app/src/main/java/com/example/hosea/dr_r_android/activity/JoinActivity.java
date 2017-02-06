@@ -51,14 +51,18 @@ public class JoinActivity extends AppCompatActivity {
     private AQuery aq = new AQuery(this);
     private EditText login_id, name, password1, password2;
     private Date born_date;
+    private Date ex_date;
     private EditText a_week, a_date;
-    private EditText b_month, b_date, b_year;
     private EditText b_weight, b_height;
     private boolean idChecked = false;
     int year = 0, month = 0, day = 0;
-    int result_year = 0, result_month = 0, result_day = 0;
+    int year2 = 0, month2 = 0, day2 = 0;
+    int result_year = 0, result_month = 0, result_day = 0;   // 출생일
+    int ex_year = 0, ex_month = 0, ex_day = 0;   //예정일
     private TextView u_born;
+    private TextView u_expected;
     private String born_string = "";
+    private String ex_string = "";
     private static final int MY_READ_PHONE_STATE = 0;
     private Button checkId, submit;
     private String array, deviceId;
@@ -72,9 +76,13 @@ public class JoinActivity extends AppCompatActivity {
         setContentView(R.layout.activity_join);
 
         GregorianCalendar calendar = new GregorianCalendar();
+        GregorianCalendar calendar2 = new GregorianCalendar();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
+        year2 = calendar2.get(Calendar.YEAR);
+        month2 = calendar2.get(Calendar.MONTH);
+        day2 = calendar2.get(Calendar.DAY_OF_MONTH);
         try {
             getUUID();
         } catch (Exception e) {
@@ -83,14 +91,12 @@ public class JoinActivity extends AppCompatActivity {
 
         a_week = (EditText) findViewById(R.id.a_week);
         a_date = (EditText) findViewById(R.id.a_date);
-        b_month = (EditText) findViewById(R.id.b_month);
-        b_date = (EditText) findViewById(R.id.b_date);
-        b_year = (EditText) findViewById(R.id.b_year);
         b_weight = (EditText) findViewById(R.id.b_weight);
         b_height = (EditText) findViewById(R.id.b_height);
         login_id = (EditText) findViewById(R.id.login_id);
         name = (EditText) findViewById(R.id.user_name);
         u_born = (TextView) findViewById(R.id.u_born);
+        u_expected = (TextView)findViewById(R.id.u_expected);
         password1 = (EditText) findViewById(R.id.password1);
         password2 = (EditText) findViewById(R.id.password2);
         checkId = (Button) findViewById(R.id.checkId);
@@ -149,14 +155,25 @@ public class JoinActivity extends AppCompatActivity {
             }
         });
 
+        u_expected.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // TODO Auto-generated method stub
+                DatePickerDialog datePickerDialog2 = new DatePickerDialog(JoinActivity.this, dateSetListener2, year2, month2, day2);
+                datePickerDialog2.show();
+            }
+        });
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int id = rg.getCheckedRadioButtonId();
                 RadioButton rb = (RadioButton) findViewById(id);
                 born_date = null;
+                ex_date = null;
                 try {
                     born_date = dateFormat.parse(born_string);
+                    ex_date = dateFormat.parse(ex_string);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -179,11 +196,11 @@ public class JoinActivity extends AppCompatActivity {
                 } else if ((a_week.getText().toString().equals("")) || (a_date.getText().toString()==null)) {
                     Toast.makeText(getApplicationContext(), "출생 주 수를 입력하세요.", Toast.LENGTH_SHORT).show();
                     a_week.requestFocus();
-                } else if (b_year.getText().toString().equals("") || b_month.getText().toString().equals("") || b_date.getText().toString().equals("")) {
-                    Toast.makeText(getApplicationContext(), "예정일을 입력하세요.", Toast.LENGTH_SHORT).show();
-                    b_month.requestFocus();
+                } else if (ex_string.equals("")) {
+                    Toast.makeText(getApplicationContext(), "출생 예정일을 입력하세요.", Toast.LENGTH_SHORT).show();
+                    u_expected.requestFocus();
                 } else if (born_string.equals("")) {
-                    Toast.makeText(getApplicationContext(), "출생 일을 입력하세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "출생일을 입력하세요.", Toast.LENGTH_SHORT).show();
                     u_born.requestFocus();
                 } else if (rb.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "성별을 입력하세요.", Toast.LENGTH_SHORT).show();
@@ -204,9 +221,7 @@ public class JoinActivity extends AppCompatActivity {
                     params.put("u_name", name.getText().toString());
                     params.put("u_a_week", a_week.getText().toString());
                     params.put("u_a_date", a_date.getText().toString());
-                    params.put("u_b_year", b_year.getText().toString());
-                    params.put("u_b_month", b_month.getText().toString());
-                    params.put("u_b_date", b_date.getText().toString());
+                    params.put("u_expected" , dateFormat.format(ex_date));
                     params.put("u_born", dateFormat.format(born_date));
                     params.put("u_w", b_weight.getText().toString());
                     params.put("u_h", b_height.getText().toString());
@@ -265,6 +280,21 @@ public class JoinActivity extends AppCompatActivity {
 
             u_born.setText(result_year+"년 "+ result_month+"월 "+result_day+"일");
             born_string = result_year + "-" + result_month + "-" + result_day + " " + "00:00:00";
+        }
+    };
+    private DatePickerDialog.OnDateSetListener dateSetListener2 = new DatePickerDialog.OnDateSetListener() {
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            // TODO Auto-generated method stub
+
+            ex_year = year;
+            ex_month = monthOfYear+1;
+            ex_day = dayOfMonth;
+
+            u_expected.setText(ex_year+"년 "+ ex_month+"월 "+ex_day+"일");
+            ex_string = ex_year + "-" + ex_month + "-" + ex_day + " " + "00:00:00";
         }
     };
 

@@ -226,7 +226,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
 
         readDiary();
-        getBornDate();
+        getExpectedDate();
 
         submit = (Button) findViewById(R.id.submit);
         submit.setText("등록");
@@ -246,10 +246,10 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
     }
 
-    public void getBornDate() {
+    public void getExpectedDate() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        aq.ajax("http://52.41.218.18:8080/getBornDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax("http://52.41.218.18:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
@@ -291,20 +291,18 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
         Date nowDate = simpleDateFormat.parse(nowString);
 
-        String expectString = jsonObject.getString("u_b_year") + "-" + jsonObject.getString("u_b_month") + "-" + jsonObject.getString("u_b_date");
-        Date expectDate = simpleDateFormat.parse(expectString);
 
-        Long bornTime = Long.parseLong(jsonObject.getString("u_born"));
-        Date bornDate = new Date(bornTime);
+        Long expectedTime = Long.parseLong(jsonObject.getString("u_expected"));
+        Date expectedDate = new Date(expectedTime);
 
         int compare = 0;
-        compare = expectDate.compareTo(nowDate);
+        compare = expectedDate.compareTo(nowDate);
 
         if (compare > 0) {            //예정일이 더 클경우
             Calendar c1 = Calendar.getInstance();    //예정일
             Calendar c2 = Calendar.getInstance();    //오늘
 
-            c1.setTime(expectDate);
+            c1.setTime(expectedDate);
             c2.setTime(nowDate);
 
             long d1, d2;
@@ -314,12 +312,10 @@ public class WriteDiaryActivity extends AppCompatActivity {
             int days = (int) ((d1 - d2) / (1000 * 60 * 60 * 24));
             measureDateLess(days);
         } else if (compare < 0) {           //계산날짜가 예정일보다 큰 경우
-            age.setText(getDateDifferenceInDDMMYYYY(expectDate, nowDate));
+            age.setText(getDateDifferenceInDDMMYYYY(expectedDate, nowDate));
         } else {                           //예정일과 계산날짜가 같은 경우
-            age.setText("교정연령 :  " + 0 + "(오늘 태어났습니다.)");
+            age.setText( 0 + "(오늘 태어났습니다.)");
         }
-
-
     }
 
 
@@ -354,7 +350,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
         //년 계산
         year = toDate.get(Calendar.YEAR) - (fromDate.get(Calendar.YEAR) + increment);
-        return year + "\t년\t\t" + month + "\t월\t\t" + day + "\t일";
+        return  year + "\t년\t\t" + month + "\t월\t\t" + day + "\t일";
 
     }
 
@@ -365,7 +361,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
         int day = 0;
         int total = Base - days;
         if (total <= 6) {
-            age.setText("교정연령 : " + "0 주" + total + " 일");
+            age.setText("0 주" + total + " 일");
         } else {
             while (total > 6) {
                 day = total % 7;
@@ -373,7 +369,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
                 week += 1;
 
             }
-            age.setText("교정연령 : " + week + " 주" + day + " 일");
+            age.setText( week + " 주" + day + " 일");
         }
     }
 
