@@ -180,10 +180,12 @@ public class FeedTimeFragment extends Fragment {
                                 EditText editText = (EditText) dialogView.findViewById(R.id.dialog_change_feed);
 
                                 if (!editText.getText().toString().equals("")) {
-
+                                    SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+                                    feedDataList.get(position).getF_start().getTime();
+                                    Date update_Date = new Date( feedDataList.get(position).getF_start().getTime()-32400000);
                                     Map<String, Object> params = new HashMap<String, Object>();
                                     params.put("u_id" , user_id);
-                                    params.put("f_start" , feedDataList.get(position).getF_start());
+                                    params.put("f_start" , dateFormat2.format(update_Date));
                                     params.put("f_total", editText.getText().toString());
                                     aq.ajax("http://52.41.218.18:8080/updateFeed", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                                         @Override
