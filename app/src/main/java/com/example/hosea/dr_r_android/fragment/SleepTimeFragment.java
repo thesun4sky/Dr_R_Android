@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -63,12 +64,14 @@ public class SleepTimeFragment extends Fragment {
     Date s_end;
 
     long outTime;
+    Boolean clicked_sleep;
+    Boolean clicked_feed;
     final static int Init = 0;
     final static int Run = 1;
     final static int Pause = 2;
     int cur_Status = Init; //현재의 상태를 저장할변수를 초기화함.
     long myBaseTime;
-    RadioButton feeding;
+
     long myPauseTime;
     final SimpleDateFormat curYearFormat = new SimpleDateFormat("yyyy", Locale.KOREA);
     final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);
@@ -83,8 +86,9 @@ public class SleepTimeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //inflate the layout for this fragment
+        clicked_sleep = true;
+        clicked_feed = false;
         final View view = inflater.inflate(R.layout.fragment_sleeptime, container, false);
-
         Bundle args = getActivity().getIntent().getExtras();
         user_id = args.getInt("u_id");
         myToday = (TextView) view.findViewById(R.id.today_sleep);
@@ -134,13 +138,20 @@ public class SleepTimeFragment extends Fragment {
             return;
         }
 
-        final RadioButton feeding = (RadioButton) ((TimeActivity) getActivity()).findViewById(R.id.measureFeedingTime);
-        final RadioButton sleeping = (RadioButton) ((TimeActivity) getActivity()).findViewById(R.id.measureSleepingTime);
+        final Button feeding = (Button) ((TimeActivity) getActivity()).findViewById(R.id.measureFeedingTime);
+        final Button sleeping = (Button) ((TimeActivity) getActivity()).findViewById(R.id.measureSleepingTime);
 
+
+        sleeping.setClickable(false);
+        feeding.setClickable(true);
+        feeding.setAlpha(0.3f);
+        sleeping.setAlpha(1);
         feeding.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+
+                clicked_feed = true;
+                clicked_sleep = false;
                 if (cur_Status == Run) {
                     AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
                     alert.setTitle("수면시간 측정 중입니다");
@@ -148,7 +159,7 @@ public class SleepTimeFragment extends Fragment {
 
                     alert.setPositiveButton("예", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            fragmentTransaction.replace(R.id.time_fragment, new FeedTimeFragment()).commit();
+                            getActivity().getFragmentManager().beginTransaction().replace(R.id.time_fragment, new FeedTimeFragment()).commit();
                             myTimer.removeMessages(0);
                             cur_Status = Init;
                         }
@@ -157,13 +168,14 @@ public class SleepTimeFragment extends Fragment {
                     alert.setNegativeButton("취소",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    sleeping.setChecked(true);
+                                    sleeping.setAlpha(1);
+                                    feeding.setAlpha(0.3f);
                                 }
                             });
 
                     alert.show();
-                } else {
-                    fragmentTransaction.replace(R.id.time_fragment, new FeedTimeFragment()).commit();
+                } else if(clicked_feed){
+                    getActivity().getFragmentManager().beginTransaction().replace(R.id.time_fragment, new FeedTimeFragment()).commit();
                 }
             }
         });

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -21,8 +22,11 @@ import com.example.hosea.dr_r_android.fragment.SleepTimeFragment;
 public class TimeActivity extends AppCompatActivity {
     private Intent previousIntent;
     private AQuery aq = new AQuery(this);
+    Button sleeping;
+    Button feeding;
     final SleepTimeFragment sleepTimeFragment = new SleepTimeFragment();
     final FeedTimeFragment feedTimeFragment = new FeedTimeFragment();
+    final FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
     public int u_id;
 
     //    FragmentManager fm = getFragmentManager();
@@ -51,24 +55,27 @@ public class TimeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_stopwatch);
         previousIntent = getIntent();
         u_id = previousIntent.getExtras().getInt("u_id",0);
-        final RadioButton sleeping = (RadioButton) findViewById(R.id.measureSleepingTime);
-        final RadioButton feeding = (RadioButton) findViewById(R.id.measureFeedingTime);
+         sleeping = (Button) findViewById(R.id.measureSleepingTime);
+          feeding = (Button) findViewById(R.id.measureFeedingTime);
 
-        RadioButton.OnClickListener optionOnClickListener = new RadioButton.OnClickListener() {
-            public void onClick(View v) {
-                final FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                if (feeding.isChecked()) {
-                    fragmentTransaction.replace(R.id.time_fragment, feedTimeFragment);
-                }
-                else {
-                    fragmentTransaction.replace(R.id.time_fragment, sleepTimeFragment);
-                }
-                fragmentTransaction.commit();
+
+        sleeping.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                fragmentTransaction.replace(R.id.time_fragment, sleepTimeFragment).commit();
             }
-        };
+        });
 
-        sleeping.setOnClickListener(optionOnClickListener);
-        feeding.setOnClickListener(optionOnClickListener);
+        feeding.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                fragmentTransaction.replace(R.id.time_fragment, feedTimeFragment).commit();
+            }
+        });
+        sleeping.setAlpha(1);
+        feeding.setAlpha(0.3f);
 //        myOutput = (TextView) findViewById(R.id.time_out);
 //        myToday = (TextView) findViewById(R.id.today_sleep);
 //        myToggle = (TextView) findViewById(R.id.sleep_toggle);

@@ -6,33 +6,59 @@
     android:background="#FFFFFF"
     tools:context="com.example.hosea.dr_r_android.activity.TimeActivity">
 
-    <RadioGroup
-        android:id="@+id/measureTimeGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#FFFFFF">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <RadioButton
+        <Button
             android:id="@+id/feed_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="좌" />
-
-        <RadioButton
+            android:text="좌"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <Button
             android:id="@+id/feed_right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="우" />
-
-        <RadioButton
+            android:text="우"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <Button
             android:id="@+id/feed_powder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="분유" />
+            android:text="분유"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
-    </RadioGroup>
+
+
+    <!--<RadioGroup-->
+        <!--android:id="@+id/measureTimeGroup"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:background="#FFFFFF">-->
+
+        <!--<RadioButton-->
+            <!--android:id="@+id/feed_left"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:checked="true"-->
+            <!--android:text="좌" />-->
+
+        <!--<RadioButton-->
+            <!--android:id="@+id/feed_right"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="우" />-->
+
+        <!--<RadioButton-->
+            <!--android:id="@+id/feed_powder"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="분유" />-->
+
+    <!--</RadioGroup>-->
     <RelativeLayout
         android:id="@+id/feed"
         android:layout_width="match_parent"

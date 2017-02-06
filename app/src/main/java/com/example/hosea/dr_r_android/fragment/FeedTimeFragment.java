@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -73,6 +74,8 @@ public class FeedTimeFragment extends Fragment {
     final static int Run = 1;
     final static int Pause = 2;
     int cur_Status = Init; //현재의 상태를 저장할변수를 초기화함.
+    Boolean clicked_sleep;
+    Boolean clicked_feed;
     long myBaseTime;
     long myPauseTime;
     final SimpleDateFormat curYearFormat = new SimpleDateFormat("yyyy", Locale.KOREA);
@@ -88,7 +91,8 @@ public class FeedTimeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //inflate the layout for this fragment
-
+        clicked_sleep = false;
+        clicked_feed = true;
         Bundle args = getActivity().getIntent().getExtras();
         user_id = args.getInt("u_id");
         feed = "좌";
@@ -127,36 +131,54 @@ public class FeedTimeFragment extends Fragment {
 
         powderAmount = (EditText) view.findViewById(R.id.powder_amount);
         final ListView listView = (ListView) view.findViewById(R.id.feed_listView);
-        final RadioButton right = (RadioButton) view.findViewById(R.id.feed_right);
-        final RadioButton left = (RadioButton) view.findViewById(R.id.feed_left);
-        final RadioButton powder = (RadioButton) view.findViewById(R.id.feed_powder);
+        final Button right = (Button) view.findViewById(R.id.feed_right);
+        final Button left = (Button) view.findViewById(R.id.feed_left);
+        final Button powder = (Button) view.findViewById(R.id.feed_powder);
         final RelativeLayout feedLayout = (RelativeLayout) view.findViewById(R.id.feed);
         final RelativeLayout powderLayout = (RelativeLayout) view.findViewById(R.id.powder);
 
         powderLayout.setVisibility(View.GONE);
 
-
-        RadioButton.OnClickListener optionOnClickListener = new RadioButton.OnClickListener() {
-            public void onClick(View v) {
-                if (right.isChecked()) {
-                    feed = "우";
-                    powderLayout.setVisibility(View.GONE);
-                    feedLayout.setVisibility(View.VISIBLE);
-                } else if (left.isChecked()) {
-                    feed = "좌";
-                    powderLayout.setVisibility(View.GONE);
-                    feedLayout.setVisibility(View.VISIBLE);
-                } else if (powder.isChecked()) {
-                    feed = "분유";
-                    feedLayout.setVisibility(View.GONE);
-                    powderLayout.setVisibility(View.VISIBLE);
-                }
+        right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                right.setAlpha(1);
+                left.setAlpha(0.3f);
+                powder.setAlpha(0.3f);
+                feed = "우";
+                powderLayout.setVisibility(View.GONE);
+                feedLayout.setVisibility(View.VISIBLE);
             }
-        };
+        });
 
-        right.setOnClickListener(optionOnClickListener);
-        left.setOnClickListener(optionOnClickListener);
-        powder.setOnClickListener(optionOnClickListener);
+        left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                right.setAlpha(0.3f);
+                left.setAlpha(1);
+                powder.setAlpha(0.3f);
+                feed = "좌";
+                powderLayout.setVisibility(View.GONE);
+                feedLayout.setVisibility(View.VISIBLE);
+            }
+        });
+        powder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                right.setAlpha(0.3f);
+                left.setAlpha(0.3f);
+                powder.setAlpha(1f);
+                feed = "분유";
+                feedLayout.setVisibility(View.GONE);
+                powderLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
+        //초기화
+        feed="좌";
+        right.setAlpha(0.3f);
+        left.setAlpha(1);
+        powder.setAlpha(0.3f);
         feedDataList = new ArrayList<>();
 //        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
 //        feedDataList.add(new FeedVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 3,"우"));
@@ -242,12 +264,19 @@ public class FeedTimeFragment extends Fragment {
             return;
         }
 
-        final RadioButton feeding = (RadioButton) ((TimeActivity) getActivity()).findViewById(R.id.measureFeedingTime);
-        final RadioButton sleeping = (RadioButton) ((TimeActivity) getActivity()).findViewById(R.id.measureSleepingTime);
+        final Button feeding = (Button) ((TimeActivity) getActivity()).findViewById(R.id.measureFeedingTime);
+        final Button sleeping = (Button) ((TimeActivity) getActivity()).findViewById(R.id.measureSleepingTime);
 
+
+        feeding.setAlpha(1);
+        sleeping.setAlpha(0.3f);
+        feeding.setClickable(false);
+        sleeping.setClickable(true);
         sleeping.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                clicked_feed = false;
+                clicked_sleep = true;
                 final FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 if (cur_Status == Run) {
                     AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
@@ -265,12 +294,13 @@ public class FeedTimeFragment extends Fragment {
                     alert.setNegativeButton("취소",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    feeding.setChecked(true);
+                                    feeding.setAlpha(1);
+                                    sleeping.setAlpha(0.3f);
                                 }
                             });
 
                     alert.show();
-                } else {
+                } else if (clicked_sleep){
                     fragmentTransaction.replace(R.id.time_fragment, new SleepTimeFragment()).commit();
                 }
             }
