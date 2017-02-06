@@ -9,16 +9,24 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.example.hosea.dr_r_android.R;
+import com.example.hosea.dr_r_android.activity.ReadDiaryActivity;
 import com.example.hosea.dr_r_android.dao.DiaryVO;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by Hosea on 2016-11-01.
@@ -28,10 +36,120 @@ public class DiaryAdapter extends BaseAdapter {
     final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
     private Context dContext;
     private int dResource;
+    private TextView age;
     private ArrayList<DiaryVO> dItems = new ArrayList<>();
     private static final String RED = "#FF0000";
     private static final String BLUE = "#0000FF";
     AQuery mAq;
+
+
+    public void getExpectedDate() {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("u_id", 3);
+        mAq.ajax("http://52.41.218.18:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject html, AjaxStatus status) {
+                if (html != null) {
+                    try {
+                        calAge(html);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+
+                }
+            }
+        });
+    }
+
+    public void calAge(JSONObject jsonObject) throws JSONException, ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String nowString = simpleDateFormat.format(new Date());
+
+        Date nowDate = simpleDateFormat.parse(nowString);
+
+
+        Long expectedTime = Long.parseLong(jsonObject.getString("u_expected"));
+        Date expectedDate = new Date(expectedTime);
+
+        int compare = 0;
+        compare = expectedDate.compareTo(nowDate);
+
+        if (compare > 0) {            //예정일이 더 클경우
+            Calendar c1 = Calendar.getInstance();    //예정일
+            Calendar c2 = Calendar.getInstance();    //오늘
+
+            c1.setTime(expectedDate);
+            c2.setTime(nowDate);
+
+            long d1, d2;
+            d1 = c1.getTime().getTime();        //예정일 -> ms
+            d2 = c2.getTime().getTime();        //오늘 ->ms
+
+            int days = (int) ((d1 - d2) / (1000 * 60 * 60 * 24));
+            measureDateLess(days);
+        } else if (compare < 0) {           //계산날짜가 예정일보다 큰 경우
+            age.setText(getDateDifferenceInDDMMYYYY(expectedDate, nowDate));
+        } else {                           //예정일과 계산날짜가 같은 경우
+            age.setText( 0 + "(오늘 태어났습니다.)");
+        }
+    }
+
+    public static String getDateDifferenceInDDMMYYYY(Date from, Date to) {
+        Calendar fromDate = Calendar.getInstance();
+        Calendar toDate = Calendar.getInstance();
+        fromDate.setTime(from);
+        toDate.setTime(to);
+        int increment = 0;
+        int year, month, day;
+        System.out.println(fromDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+        if (fromDate.get(Calendar.DAY_OF_MONTH) > toDate.get(Calendar.DAY_OF_MONTH)) {
+            increment = fromDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+        }
+        System.out.println("increment" + increment);
+        //일 계산
+        if (increment != 0) {
+            day = (toDate.get(Calendar.DAY_OF_MONTH) + increment) - fromDate.get(Calendar.DAY_OF_MONTH);
+            increment = 1;
+        } else {
+            day = toDate.get(Calendar.DAY_OF_MONTH) - fromDate.get(Calendar.DAY_OF_MONTH);
+        }
+
+        //월 계산
+        if ((fromDate.get(Calendar.MONTH) + increment) > toDate.get(Calendar.MONTH)) {
+            month = (toDate.get(Calendar.MONTH) + 12) - (fromDate.get(Calendar.MONTH) + increment);
+            increment = 1;
+        } else {
+            month = (toDate.get(Calendar.MONTH)) - (fromDate.get(Calendar.MONTH) + increment);
+            increment = 0;
+        }
+
+        //년 계산
+        year = toDate.get(Calendar.YEAR) - (fromDate.get(Calendar.YEAR) + increment);
+        return month + "\t개월\t\t" + day + "\t일";
+
+    }
+
+    public void measureDateLess(int days) {
+        int Base = 280;
+
+        int week = 0;
+        int day = 0;
+        int total = Base - days;
+        if (total <= 6) {
+            age.setText("0 주" + total + " 일");
+        } else {
+            while (total > 6) {
+                day = total % 7;
+                total = total - 7;
+                week += 1;
+
+            }
+            age.setText( week + " 주" + day + " 일");
+        }
+    }
 
     public DiaryAdapter(Context context, int resource, ArrayList<DiaryVO> items) {
         dContext = context;
@@ -71,7 +189,7 @@ public class DiaryAdapter extends BaseAdapter {
 //        TextView bloodPressure = (TextView) view.findViewById(R.id.diary_tv_bloodPressure);
 //        TextView drinking = (TextView) view.findViewById(R.id.diary_tv_drinking);
 
-        TextView age = (TextView) view.findViewById(R.id.diary_tv_age);
+        age = (TextView) view.findViewById(R.id.diary_tv_age);
         TextView weight = (TextView) view.findViewById(R.id.diary_tv_weight);
         TextView height = (TextView) view.findViewById(R.id.diary_tv_height);
         TextView memo = (TextView) view.findViewById(R.id.diary_tv_memo);
@@ -88,7 +206,7 @@ public class DiaryAdapter extends BaseAdapter {
             final SimpleDateFormat curYearFormat = new SimpleDateFormat("yyyy", Locale.KOREA);
             final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);
             final SimpleDateFormat curDayFormat = new SimpleDateFormat("dd", Locale.KOREA);
-            age.setText(diary.getAge() + "(세)");
+            getExpectedDate();
             weight.setText(diary.getWeight() + "(kg)");
             height.setText(diary.getHeight() + "(cm)");
             memo.setText(diary.getMemo());

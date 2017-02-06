@@ -267,6 +267,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
         });
     }
 
+
     public void readDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));

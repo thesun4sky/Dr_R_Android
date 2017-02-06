@@ -21,8 +21,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Date;
+import java.util.Date;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -98,6 +99,10 @@ public class ReadDiaryActivity extends AppCompatActivity {
         set();
         readDiary();
 
+    }
+
+    public int getUserId(){
+        return previousIntent.getIntExtra("u_id",0);
     }
 
     private void set() {
@@ -290,4 +295,6 @@ public class ReadDiaryActivity extends AppCompatActivity {
             today.setText(start_year + "년 " + (start_month) + "월 " + start_day + "일 " + getChangeDayKor());
         }
     };
+
+
 }
