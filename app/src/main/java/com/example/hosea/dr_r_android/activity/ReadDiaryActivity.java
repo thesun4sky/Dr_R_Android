@@ -185,6 +185,14 @@ public class ReadDiaryActivity extends AppCompatActivity {
         for (int i = 0; i < jsonArr.length(); i++) {
             if(jsonArr.getJSONObject(i).getString("feed").equals("분유")){
                 result_powder += Long.parseLong(jsonArr.getJSONObject(i).getString("f_total"));
+                long powder_time = Long.parseLong(jsonArr.getJSONObject(i).getString("f_start"));
+                Date powder_start = new Date(powder_time);
+                int s_hour = Integer.parseInt(curHourFormat.format(powder_start));
+                int s_min = Integer.parseInt(curMinuteFormat.format(powder_start));
+                int s_sec = Integer.parseInt(curSecFormat.format(powder_start));
+                clockPieHelperArrayListForFeed.add(new ClockPieHelper(s_hour, s_min, s_sec, s_hour, s_min+1, s_sec));
+                pieView2.setDate(clockPieHelperArrayListForFeed);
+
             }
             else {
                 long s_time = Long.parseLong(jsonArr.getJSONObject(i).getString("f_start"));
