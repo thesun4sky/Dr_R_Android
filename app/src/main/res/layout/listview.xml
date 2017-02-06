@@ -27,6 +27,7 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <LinearLayout
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
@@ -38,7 +39,16 @@
                     android:layout_height="wrap_content"
                     class="im.dacer.androidcharts.ClockPieView"
                     android:id="@+id/clock_pie_view" />
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_marginRight="1dp"
+                android:background="#FFDDDD"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent" />
             </LinearLayout>
             <LinearLayout
                 android:layout_marginLeft="5dp"
