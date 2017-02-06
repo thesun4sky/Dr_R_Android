@@ -71,16 +71,18 @@ public class FeedAdapter extends BaseAdapter {
         TextView feedEnd = (TextView) view.findViewById(R.id.tv_item_feed_end);
         TextView feedAmount = (TextView) view.findViewById(R.id.tv_item_feed_amount);
         TextView feedValue = (TextView) view.findViewById(R.id.tv_item_feed_value);
-
+        View linear = view.findViewById(R.id.set_feed_list_color);
         if(feedVO.getFeed().equals("분유")){
-            ItemLayout.setBackgroundColor(0x99FFDDDD);
+            linear.setBackgroundColor(0xFFFFDDDD);
+//            ItemLayout.setBackgroundColor(0x99FFDDDD);
             feedStart.setText("입력 시간 : ");
             feedEnd.setText("분유 끝 : ");
             feedAmount.setText("총 분유 량 : ");
             feedValue.setText("ml");
         }
         else{
-            ItemLayout.setBackgroundColor(0x00B2CCFF);
+            linear.setBackgroundColor(0xFFB2CCFF);
+//            ItemLayout.setBackgroundColor(0x00B2CCFF);
             feedStart.setText("수유 시간 : ");
             feedStart.setText("수유 끝 : ");
             feedAmount.setText("총 수유 시간 : ");
