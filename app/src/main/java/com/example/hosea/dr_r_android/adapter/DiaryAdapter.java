@@ -36,6 +36,7 @@ public class DiaryAdapter extends BaseAdapter {
     final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
     private Context dContext;
     private int dResource;
+    private int dU_id;
     private TextView age;
     private ArrayList<DiaryVO> dItems = new ArrayList<>();
     private static final String RED = "#FF0000";
@@ -45,7 +46,7 @@ public class DiaryAdapter extends BaseAdapter {
 
     public void getExpectedDate() {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id", 3);
+        params.put("u_id", dU_id);
         mAq.ajax("http://52.41.218.18:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
@@ -151,10 +152,11 @@ public class DiaryAdapter extends BaseAdapter {
         }
     }
 
-    public DiaryAdapter(Context context, int resource, ArrayList<DiaryVO> items) {
+    public DiaryAdapter(Context context, int resource, ArrayList<DiaryVO> items , int u_id) {
         dContext = context;
         dResource = resource;
         dItems = items;
+        dU_id = u_id;
     }
 
     @Override
