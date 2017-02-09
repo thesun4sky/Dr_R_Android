@@ -23,7 +23,7 @@
             android:text="아이디" />
 
         <EditText
-            android:id="@+id/login_id"
+            android:id="@+id/login_login_id"
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

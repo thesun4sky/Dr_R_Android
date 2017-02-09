@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         previousIntent = getIntent();
 
-        id = (EditText) findViewById(R.id.login_id);
+        id = (EditText) findViewById(R.id.login_login_id);
         password = (EditText) findViewById(R.id.login_password);
         login = (Button) findViewById(R.id.request_login);
         join = (Button) findViewById(R.id.request_join);
