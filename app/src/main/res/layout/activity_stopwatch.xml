@@ -57,7 +57,7 @@
         android:layout_weight="1"
         android:background="@color/colorAccent">
         <fragment
-            android:name="com.example.hosea.dr_r_android.fragment.SleepTimeFragment"
+            android:name="com.coawesome.hosea.dr_r.fragment.SleepTimeFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </FrameLayout>
