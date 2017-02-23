@@ -76,7 +76,7 @@ public class FeedAdapter extends BaseAdapter {
             linear.setBackgroundColor(0xFFFFDDDD);
 //            ItemLayout.setBackgroundColor(0x99FFDDDD);
             feedStart.setText("입력 시간 : ");
-            feedEnd.setText("분유 끝 : ");
+            feedEnd.setVisibility(View.INVISIBLE);
             feedAmount.setText("총 분유 량 : ");
             feedValue.setText("ml");
         }
@@ -84,7 +84,8 @@ public class FeedAdapter extends BaseAdapter {
             linear.setBackgroundColor(0xFFB2CCFF);
 //            ItemLayout.setBackgroundColor(0x00B2CCFF);
             feedStart.setText("수유 시간 : ");
-            feedStart.setText("수유 끝 : ");
+            feedEnd.setVisibility(View.VISIBLE);
+            feedEnd.setText("수유 끝 : ");
             feedAmount.setText("총 수유 시간 : ");
             feedValue.setText("분");
         }
@@ -115,12 +116,14 @@ public class FeedAdapter extends BaseAdapter {
 
 
         feedStartTime.setText(s_hour+":"+s_min/*+":"+s_sec*/);
-        feedEndTime.setText(e_hour+":"+e_min/*+":"+e_sec*/);
         feed.setText(feedVO.getFeed());
         if (!feedVO.getFeed().equals("분유")) {
             total.setText(""+(feedVO.getF_total()/60));
+            feedEndTime.setText(e_hour+":"+e_min/*+":"+e_sec*/);
         } else {
+            feedEndTime.setText("");
             total.setText(""+(feedVO.getF_total()));
+
         }
         return view;
     }
