@@ -74,6 +74,7 @@ public class FeedAdapter extends BaseAdapter {
             feedValue.setText("ml");
         }
         else{
+            //사용자 입력이 분유가 아닐 경우(모유)
             linear.setBackgroundColor(0xFFB2CCFF);
 //            ItemLayout.setBackgroundColor(0x00B2CCFF);
             feedStart.setText("수유 시간 : ");
