@@ -19,9 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SlideActivity extends AppCompatActivity {
-    List<Integer> galleryId = new ArrayList<>();
+
+    /*List<Integer> galleryId = new ArrayList<>();
     GestureDetector mGestureDetector;
-    AdapterViewFlipper avf;
+    AdapterViewFlipper avf;*/
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +30,7 @@ public class SlideActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_slide);
 
-        for (int i = 1; i < 6; i++) {
+        /*for (int i = 1; i < 6; i++) {
             galleryId.add(getResources().getIdentifier("t" + i, "drawable", this.getPackageName()));
         }
 
@@ -50,7 +51,7 @@ public class SlideActivity extends AppCompatActivity {
                 }
                 return false;
             }
-        });
+        });*/
     }
 
     @Override
@@ -58,7 +59,7 @@ public class SlideActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    public boolean dispatchTouchEvent(MotionEvent ev) {
+    /*public boolean dispatchTouchEvent(MotionEvent ev) {
 
         if(mGestureDetector.onTouchEvent(ev)){
             return true;
@@ -102,7 +103,7 @@ public class SlideActivity extends AppCompatActivity {
             imageView.setImageResource(galleryId.get(position));
             return convertView;
         }
-    }
+    }*/
 
 
 }
