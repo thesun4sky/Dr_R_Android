@@ -148,6 +148,15 @@
             </LinearLayout>
 
         </LinearLayout>
+        <Button
+            android:text="도움말"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/help"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:background="#FFEECC"
+            />
 
         <Button
             android:text="로그 아웃"

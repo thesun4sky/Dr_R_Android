@@ -26,6 +26,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.coawesome.hosea.dr_r.activity.LoginActivity"/>
+        <activity android:name="com.coawesome.hosea.dr_r.activity.SlideActivity"/>
         <activity android:name="com.coawesome.hosea.dr_r.activity.ApplicationQnaActivity" />
         <activity android:name="com.coawesome.hosea.dr_r.activity.GraphActivity" />
         <activity android:name="com.coawesome.hosea.dr_r.activity.JoinActivity" />
