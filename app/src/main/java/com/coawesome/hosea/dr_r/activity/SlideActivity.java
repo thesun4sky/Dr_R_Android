@@ -29,7 +29,7 @@ public class SlideActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_slide);
 
-        for (int i = 1; i < 7; i++) {
+        for (int i = 1; i < 6; i++) {
             galleryId.add(getResources().getIdentifier("t" + i, "drawable", this.getPackageName()));
         }
 
