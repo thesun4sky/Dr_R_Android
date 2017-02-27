@@ -1,57 +1,63 @@
 package com.coawesome.hosea.dr_r.activity;
 
-import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.GestureDetector;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterViewFlipper;
-import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.coawesome.hosea.dr_r.R;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class SlideActivity extends AppCompatActivity {
 
-    /*List<Integer> galleryId = new ArrayList<>();
-    GestureDetector mGestureDetector;
-    AdapterViewFlipper avf;*/
+    List<Integer> galleryId = new ArrayList<>();
+    int currentImageNum;
+    ImageView ivNow;
+    Button btnPre, btnNext;
+    TextView tv;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.activity_slide);
 
-        /*for (int i = 1; i < 6; i++) {
+        currentImageNum = 1;
+        for (int i = 1; i < 7; i++) {
             galleryId.add(getResources().getIdentifier("t" + i, "drawable", this.getPackageName()));
         }
 
-        avf = (AdapterViewFlipper) findViewById(R.id.adapterViewFlipper);
-        avf.setAdapter(new GalleryAdapter(this));
+        tv = (TextView) findViewById(R.id.tv_help_now);
+        tv.setText(currentImageNum + " / " + galleryId.size());
 
+        ivNow = (ImageView) findViewById(R.id.iv_help);
+        btnNext = (Button) findViewById(R.id.btn_help_next);
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!(currentImageNum > galleryId.size()-1)) {
+                    currentImageNum ++;
+                    ivNow.setImageResource(galleryId.get(currentImageNum-1));
+                    tv.setText(currentImageNum + " / " + galleryId.size());
 
-        mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener(){
-            public boolean onFling(MotionEvent e1, MotionEvent e2,
-                                   float velocityX, float velocityY) {
-                if(Math.abs(velocityX) > 1000 && Math.abs(velocityY) < 500){
-
-                    if(velocityX < 0){
-                        avf.showNext();
-                    } else if(velocityX > 0){
-                        avf.showPrevious();
-                    }
                 }
-                return false;
             }
-        });*/
+        });
+
+        btnPre = (Button) findViewById(R.id.btn_help_previous);
+        btnPre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!(currentImageNum-1 < 1)) {
+                    currentImageNum --;
+                    ivNow.setImageResource(galleryId.get(currentImageNum-1));
+                    tv.setText(currentImageNum + " / " + galleryId.size());
+                }
+            }
+        });
     }
 
     @Override
