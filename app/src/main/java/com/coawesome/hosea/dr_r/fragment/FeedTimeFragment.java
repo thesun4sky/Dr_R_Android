@@ -198,7 +198,7 @@ public class FeedTimeFragment extends Fragment {
                                     params.put("u_id" , user_id);
                                     params.put("f_start" , dateFormat2.format(update_Date));
                                     params.put("f_total", editText.getText().toString());
-                                    aq.ajax("http://52.41.218.18:8080/updateFeed", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                                    aq.ajax("http://52.205.170.152:8080/updateFeed", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                                         @Override
                                         public void callback(String url, JSONObject html, AjaxStatus status) {
                                             try {
@@ -427,7 +427,7 @@ public class FeedTimeFragment extends Fragment {
         params.put("f_end" , dateFormat.format(s_end));
         params.put("f_total" , endTime-startTime);
         params.put("feed", feed);
-        aq.ajax("http://52.41.218.18:8080/addFeedTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax("http://52.205.170.152:8080/addFeedTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 try {
@@ -447,7 +447,7 @@ public class FeedTimeFragment extends Fragment {
         SimpleDateFormat dateFormat2 = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
         params.put("u_id", user_id);
         params.put("f_start", dateFormat2.format(date));
-        aq.ajax("http://52.41.218.18:8080/getFeedTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
+        aq.ajax("http://52.205.170.152:8080/getFeedTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
             public void callback(String url, JSONArray html, AjaxStatus status) {
                 if (html != null) {
@@ -471,7 +471,7 @@ public class FeedTimeFragment extends Fragment {
         params.put("f_end" , dateFormat.format(today));
         params.put("f_total" , amount);
         params.put("feed", feed);
-        aq.ajax("http://52.41.218.18:8080/addFeedTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax("http://52.205.170.152:8080/addFeedTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 try {

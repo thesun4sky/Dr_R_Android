@@ -301,7 +301,7 @@ public class SleepTimeFragment extends Fragment {
         params.put("s_start", dateFormat.format(s_start));
         params.put("s_end", dateFormat.format(s_end));
         params.put("s_total", endTime - startTime);
-        aq.ajax("http://52.41.218.18:8080/addSleepTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax("http://52.205.170.152:8080/addSleepTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 try {
@@ -321,7 +321,7 @@ public class SleepTimeFragment extends Fragment {
         SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
         params.put("u_id", user_id);
         params.put("s_start", dateFormat2.format(date));
-        aq.ajax("http://52.41.218.18:8080/getSleepTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
+        aq.ajax("http://52.205.170.152:8080/getSleepTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
             public void callback(String url, JSONArray html, AjaxStatus status) {
                 if (html != null) {

@@ -239,7 +239,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
     public void getExpectedDate() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        aq.ajax("http://52.41.218.18:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax("http://52.205.170.152:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
@@ -262,7 +262,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
         params.put("c_date", date + "00:00:00");
-        aq.ajax("http://52.41.218.18:8080/getDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax("http://52.205.170.152:8080/getDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
@@ -551,7 +551,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
 
         if (!diaryVO.getC_img().equals(null) && !diaryVO.getC_img().equals("") && !diaryVO.getC_img().equals("null")) {
-            String IMG_URL = "http://52.41.218.18/storedimg/" + diaryVO.getC_img();
+            String IMG_URL = "http://52.205.170.152/storedimg/" + diaryVO.getC_img();
             aq.id(R.id.photo).image(IMG_URL);
             addPhoto.setVisibility(addPhoto.GONE);
         } else {
@@ -611,7 +611,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
             byteArray = stream.toByteArray();
             params.put("file", byteArray);
             params.put("c_img", fileName);
-            aq.ajax("http://52.41.218.18:8080/writeDiaryWithImg", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+            aq.ajax("http://52.205.170.152:8080/writeDiaryWithImg", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                 @Override
                 public void callback(String url, JSONObject html, AjaxStatus status) {
                     if (html != null) {
@@ -623,7 +623,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
                 }
             });
         } catch (NullPointerException ignored) {
-            aq.ajax("http://52.41.218.18:8080/writeDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+            aq.ajax("http://52.205.170.152:8080/writeDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                 @Override
                 public void callback(String url, JSONObject html, AjaxStatus status) {
                     if (html != null) {

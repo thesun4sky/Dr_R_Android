@@ -42,7 +42,7 @@ public class MakeQuestionActivity extends AppCompatActivity {
                     params.put("u_name", previousIntent.getStringExtra("u_name"));
                     params.put("qna_title", title.getText());
                     params.put("qna_content", content.getText());
-                    aq.ajax("http://52.41.218.18:8080/makeQuestion", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                    aq.ajax("http://52.205.170.152:8080/makeQuestion", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                         @Override
                         public void callback(String url, JSONObject html, AjaxStatus status) {
                             if (html != null) {

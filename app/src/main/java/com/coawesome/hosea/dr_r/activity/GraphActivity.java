@@ -101,7 +101,7 @@ public class GraphActivity extends AppCompatActivity {
         tv_my_weight = (TextView) findViewById(R.id.tv_my_weight);
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        aq.ajax("http://52.41.218.18:8080/getSex", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax("http://52.205.170.152:8080/getSex", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
@@ -117,7 +117,7 @@ public class GraphActivity extends AppCompatActivity {
         });
 //        Map<String, Object> params = new HashMap<String, Object>();
 //        params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-//        aq.ajax("http://52.41.218.18:8080/getDateSleepTime", params, JSONArray.class, new AjaxCallback<JSONArray>() {
+//        aq.ajax("http://52.205.170.152:8080/getDateSleepTime", params, JSONArray.class, new AjaxCallback<JSONArray>() {
 //            @Override
 //            public void callback(String url, JSONArray html, AjaxStatus status) {
 //                if (html != null) {
@@ -132,7 +132,7 @@ public class GraphActivity extends AppCompatActivity {
 //            }
 //        });
 //
-//        aq.ajax("http://52.41.218.18:8080/getDateFeedTime", params, JSONArray.class, new AjaxCallback<JSONArray>() {
+//        aq.ajax("http://52.205.170.152:8080/getDateFeedTime", params, JSONArray.class, new AjaxCallback<JSONArray>() {
 //            @Override
 //            public void callback(String url, JSONArray html, AjaxStatus status) {
 //                if (html != null) {

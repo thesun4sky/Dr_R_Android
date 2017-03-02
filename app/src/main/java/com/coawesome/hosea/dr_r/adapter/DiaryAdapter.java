@@ -44,7 +44,7 @@ public class DiaryAdapter extends BaseAdapter {
     public void getExpectedDate() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", dU_id);
-        mAq.ajax("http://52.41.218.18:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        mAq.ajax("http://52.205.170.152:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
@@ -230,7 +230,7 @@ public class DiaryAdapter extends BaseAdapter {
                 next.setText(year + "-" + month + "-" + day);
             }
             depart.setText(diary.getDepart());
-            String IMG_URL = "http://52.41.218.18/storedimg/" + diary.getC_img();
+            String IMG_URL = "http://52.205.170.152/storedimg/" + diary.getC_img();
             mAq.id(R.id.diary_iv_photo).image(IMG_URL);
         } else {
             age.setText("");

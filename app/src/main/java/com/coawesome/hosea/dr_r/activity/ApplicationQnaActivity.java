@@ -53,7 +53,7 @@ public class ApplicationQnaActivity extends AppCompatActivity {
     }
 
     public void listingQna() {
-        aq.ajax("http://52.41.218.18:8080/getQnaList", JSONArray.class, new AjaxCallback<JSONArray>() {
+        aq.ajax("http://52.205.170.152:8080/getQnaList", JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
             public void callback(String url, JSONArray html, AjaxStatus status) {
                 if (html != null) {
