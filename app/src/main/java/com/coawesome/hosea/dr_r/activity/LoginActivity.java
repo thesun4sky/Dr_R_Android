@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private AQuery aq = new AQuery(this);
     private Intent previousIntent;
     private EditText id, password;
-    private Button join, login;
+    private Button join, login, help;
     private String u_name;
     private int u_id;
 
@@ -44,6 +44,16 @@ public class LoginActivity extends AppCompatActivity {
         password = (EditText) findViewById(R.id.login_password);
         login = (Button) findViewById(R.id.request_login);
         join = (Button) findViewById(R.id.request_join);
+
+        //help 버튼
+        help = (Button)findViewById(R.id.btn_help_login);
+        help.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent helpIntent = new Intent(getApplicationContext(),SlideActivity.class);
+                startActivity(helpIntent);
+            }
+        });
 
         join.setOnClickListener(new View.OnClickListener() {
             @Override
