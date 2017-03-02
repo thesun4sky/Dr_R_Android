@@ -26,7 +26,7 @@ public class SlideActivity extends AppCompatActivity {
         setContentView(R.layout.activity_slide);
 
         currentImageNum = 1;
-        for (int i = 1; i < 7; i++) {
+        for (int i = 1; i < 13; i++) {
             galleryId.add(getResources().getIdentifier("t" + i, "drawable", this.getPackageName()));
         }
 
