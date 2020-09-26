@@ -76,11 +76,13 @@ public class JoinActivity extends AppCompatActivity {
         year2 = calendar2.get(Calendar.YEAR);
         month2 = calendar2.get(Calendar.MONTH);
         day2 = calendar2.get(Calendar.DAY_OF_MONTH);
+
+        /* API 29이상 버전에서는 READ_PRIVILEGED_PHONE_STATE 권한 미지원...
         try {
             getUUID();
         } catch (Exception e) {
             checkPermission();
-        }
+        }*/
 
         a_week = (EditText) findViewById(R.id.a_week);
         a_date = (EditText) findViewById(R.id.a_date);
@@ -219,7 +221,7 @@ public class JoinActivity extends AppCompatActivity {
                     params.put("u_w", b_weight.getText().toString());
                     params.put("u_h", b_height.getText().toString());
                     params.put("u_sex", rb.getText().toString());
-                    params.put("u_device", deviceId);
+                    //params.put("u_device", deviceId);
 
                     aq.ajax("http://52.205.170.152:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                         @Override
