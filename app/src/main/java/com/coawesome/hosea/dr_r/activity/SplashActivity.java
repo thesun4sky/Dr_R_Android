@@ -140,8 +140,10 @@ public class SplashActivity extends Activity {
         final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
 
         final String tmDevice, tmSerial, androidId;
-        tmDevice = "" + tm.getDeviceId();
-        tmSerial = "" + tm.getSimSerialNumber();
+
+        //API 29이상 버전에서는 READ_PRIVILEGED_PHONE_STATE 권한 미지원...
+        tmDevice = "";// + tm.getDeviceId();
+        tmSerial = "";// + tm.getSimSerialNumber();
         androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
 
         UUID deviceUuid = new UUID(androidId.hashCode(), ((long) tmDevice.hashCode() << 32) | tmSerial.hashCode());
@@ -152,7 +154,12 @@ public class SplashActivity extends Activity {
         mHandler = new Handler();
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_device", deviceId);
-        aq.ajax("http://52.205.170.152:8080/checkUserDevice", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+        intent.putExtra("u_device", deviceId);
+        startActivity(intent);
+        SplashActivity.this.finish();
+
+       /* aq.ajax("http://52.205.170.152:8080/checkUserDevice", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
@@ -172,6 +179,6 @@ public class SplashActivity extends Activity {
                     }, 2500);
                 }
             }
-        });
+        });*/
     }
 }
