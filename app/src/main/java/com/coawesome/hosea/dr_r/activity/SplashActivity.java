@@ -14,7 +14,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.amplifyframework.AmplifyException;
+import com.amplifyframework.api.aws.AWSApiPlugin;
+import com.amplifyframework.auth.AuthUserAttributeKey;
+import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
+import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
+import com.amplifyframework.datastore.AWSDataStorePlugin;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -46,11 +51,42 @@ public class SplashActivity extends Activity {
         u_id = 0;
 
         try {
+
+            //AWS Cognito 연동
+            Amplify.addPlugin(new AWSCognitoAuthPlugin());
+
+            //AWS Lambda REST 연동
+            Amplify.addPlugin(new AWSApiPlugin());
+
+            //AWS IAM등 기본 설정값 연동
             Amplify.configure(getApplicationContext());
             Log.i("MyAmplifyApp", "Initialized Amplify");
+
         } catch (AmplifyException error) {
             Log.e("MyAmplifyApp", "Could not initialize Amplify", error);
         }
+
+        Amplify.Auth.fetchAuthSession(
+                result -> Log.i("AmplifyQuickstart", result.toString()),
+                error -> Log.e("AmplifyQuickstart", error.toString())
+        );
+
+        //TODO 모바일 값 추가필요 - 회원가입
+        Amplify.Auth.signUp(
+                "username",
+                "Kts794613!",
+                AuthSignUpOptions.builder().userAttribute(AuthUserAttributeKey.email(), "my@email.com").build(),
+                result -> Log.i("AuthQuickStart", "Result: " + result.toString()),
+                error -> Log.e("AuthQuickStart", "Sign up failed", error)
+        );
+
+        // - 회원가입 확정
+        Amplify.Auth.confirmSignUp(
+                "username",
+                "the code you received via email",
+                result -> Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete"),
+                error -> Log.e("AuthQuickstart", error.toString())
+        );
 
         try {
             getUUID();
