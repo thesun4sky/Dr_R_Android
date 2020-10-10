@@ -48,26 +48,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="아이디" />
-d
-                    <LinearLayout
+
+                    <EditText
+                        android:id="@+id/login_id"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <EditText
-                            android:id="@+id/login_id"
-                            android:layout_width="0px"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-
-                        <Button
-                            android:id="@+id/checkId"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="#6CD9DC"
-                            android:text="Check"
-                            android:textColor="#FFF" />
-                    </LinearLayout>
-
+                        android:layout_height="wrap_content"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -91,6 +76,39 @@ d
                         android:layout_height="wrap_content"
                         android:inputType="textPassword" />
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="이메일" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/email"
+                            android:layout_width="0px"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <Button
+                            android:id="@+id/sendCode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="#6CD9DC"
+                            android:text="SendCode"
+                            android:textColor="#FFF" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="이메일 인증 코드" />
+
+                    <EditText
+                        android:id="@+id/confrimCode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
                     <TextView
                         android:layout_width="wrap_content"

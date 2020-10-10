@@ -71,23 +71,6 @@ public class SplashActivity extends Activity {
                 error -> Log.e("AmplifyQuickstart", error.toString())
         );
 
-        //TODO 모바일 값 추가필요 - 회원가입
-        Amplify.Auth.signUp(
-                "username",
-                "Kts794613!",
-                AuthSignUpOptions.builder().userAttribute(AuthUserAttributeKey.email(), "my@email.com").build(),
-                result -> Log.i("AuthQuickStart", "Result: " + result.toString()),
-                error -> Log.e("AuthQuickStart", "Sign up failed", error)
-        );
-
-        // - 회원가입 확정
-        Amplify.Auth.confirmSignUp(
-                "username",
-                "the code you received via email",
-                result -> Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete"),
-                error -> Log.e("AuthQuickstart", error.toString())
-        );
-
         try {
             getUUID();
         } catch (Exception e) {

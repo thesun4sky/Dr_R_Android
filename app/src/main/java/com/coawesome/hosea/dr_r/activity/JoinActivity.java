@@ -9,9 +9,12 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Looper;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -21,6 +24,10 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amplifyframework.auth.AuthException;
+import com.amplifyframework.auth.AuthUserAttributeKey;
+import com.amplifyframework.auth.options.AuthSignUpOptions;
+import com.amplifyframework.core.Amplify;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -37,7 +44,11 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class JoinActivity extends AppCompatActivity {
 
@@ -47,7 +58,7 @@ public class JoinActivity extends AppCompatActivity {
     private Date ex_date;
     private EditText a_week, a_date;
     private EditText b_weight, b_height;
-    private boolean idChecked = false;
+    private EditText email, confrimCode;
     int year = 0, month = 0, day = 0;
     int year2 = 0, month2 = 0, day2 = 0;
     int result_year = 0, result_month = 0, result_day = 0;   // 출생일
@@ -57,9 +68,8 @@ public class JoinActivity extends AppCompatActivity {
     private String born_string = "";
     private String ex_string = "";
     private static final int MY_READ_PHONE_STATE = 0;
-    private Button checkId, submit;
+    private Button checkId, submit, sendCode;
     private String array, deviceId;
-    private String[] string;
     final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
 
 
@@ -94,49 +104,43 @@ public class JoinActivity extends AppCompatActivity {
         u_expected = (TextView)findViewById(R.id.u_expected);
         password1 = (EditText) findViewById(R.id.password1);
         password2 = (EditText) findViewById(R.id.password2);
-        checkId = (Button) findViewById(R.id.checkId);
         submit = (Button) findViewById(R.id.joinSubmit);
 
-        login_id.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                idChecked = false;
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                idChecked = false;
-            }
-        });
+        email = (EditText) findViewById(R.id.email);
+        sendCode = (Button) findViewById(R.id.sendCode);
+        confrimCode = (EditText) findViewById(R.id.confrimCode);
 
         final RadioGroup rg = (RadioGroup) findViewById(R.id.radioForSex);
 
-
-        checkId.setOnClickListener(new View.OnClickListener() {
+        sendCode.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Map<String, Object> params = new HashMap<String, Object>();
-                params.put("login_id", login_id.getText().toString());
-                aq.ajax("http://52.205.170.152:8080/checkLoginId", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-                    @Override
-                    public void callback(String url, JSONObject html, AjaxStatus status) {
-                        try {
-                            Toast.makeText(getApplicationContext(), html.getString("msg"), Toast.LENGTH_SHORT).show();
-                            if (html.getString("msg").startsWith("사용가능한")) {
-                                idChecked = true;
-                            } else {
-                                idChecked = false;
+            public void onClick(View v) {
+
+                if (!isValidEmail(email.getText().toString())) {
+                    Toast.makeText(getApplicationContext(), "이메일을 체크하세요", Toast.LENGTH_SHORT).show();
+                    email.requestFocus();
+                } else if (!password1.getText().toString().equals(password2.getText().toString()) || password1.getText().toString().length() < 5) {
+                    Toast.makeText(getApplicationContext(), "비밀번호를 입력하세요. (5자 이상)", Toast.LENGTH_SHORT).show();
+                    password1.requestFocus();
+                } else {
+                    Amplify.Auth.signUp(
+                            login_id.getText().toString(),
+                            password1.getText().toString(),
+                            AuthSignUpOptions.builder().userAttribute(AuthUserAttributeKey.email(), email.getText().toString()).build(),
+                            result -> {
+                                Log.i("AuthQuickStart", "Result: " + result.toString());
+                                Looper.prepare();
+                                Toast.makeText(getApplicationContext(), email.getText().toString()+"로 인증코드가 전송되었습니다.", Toast.LENGTH_SHORT).show();
+                                Looper.loop();
+                            },
+                            error -> {
+                                Log.e("AuthQuickStart", "Sign up failed", error);
+                                Looper.prepare();
+                                Toast.makeText(getApplicationContext(), getAWSErrorMessage(error), Toast.LENGTH_SHORT).show();
+                                Looper.loop();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                    );
+                }
             }
         });
 
@@ -173,13 +177,10 @@ public class JoinActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                //비밀번호 테스트
+                //유효성 테스트
                 if ((login_id.getText().toString().equals("")) || login_id.getText().toString().length() < 5) {
                     Toast.makeText(getApplicationContext(), "id를 다시 입력하세요. (5자 이상)", Toast.LENGTH_SHORT).show();
                     login_id.setText("");
-                    login_id.requestFocus();
-                } else if (!idChecked) {
-                    Toast.makeText(getApplicationContext(), "아이디를 체크하세요", Toast.LENGTH_SHORT).show();
                     login_id.requestFocus();
                 } else if (!password1.getText().toString().equals(password2.getText().toString()) || password1.getText().toString().length() < 5) {
                     Toast.makeText(getApplicationContext(), "비밀번호를 입력하세요. (5자 이상)", Toast.LENGTH_SHORT).show();
@@ -208,7 +209,11 @@ public class JoinActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "출생 키를 입력하세요.", Toast.LENGTH_SHORT).show();
                     b_height.setText("");
                     b_height.requestFocus();
-                }  else {
+                }  else if (checkConfrimCode(login_id.getText().toString(),confrimCode.getText().toString())) {
+                    Toast.makeText(getApplicationContext(), "이메일 인증코드를 확인하세요.", Toast.LENGTH_SHORT).show();
+                    confrimCode.setText("");
+                    confrimCode.requestFocus();
+                } else {
                     submit.setEnabled(false);
                     Map<String, Object> params = new HashMap<String, Object>();
                     params.put("login_id", login_id.getText().toString());
@@ -223,7 +228,13 @@ public class JoinActivity extends AppCompatActivity {
                     params.put("u_sex", rb.getText().toString());
                     //params.put("u_device", deviceId);
 
-                    aq.ajax("http://52.205.170.152:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                    Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(JoinActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    JoinActivity.this.finish();
+
+                    //TODO 회원가입정보 DynamoDB 저장
+                   /* aq.ajax("http://52.205.170.152:8080/joinUser", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                         @Override
                         public void callback(String url, JSONObject html, AjaxStatus status) {
                             if (html != null) {
@@ -243,10 +254,56 @@ public class JoinActivity extends AppCompatActivity {
                                 submit.setEnabled(true);
                             }
                         }
-                    });
+                    });*/
                 }
             }
         });
+    }
+
+    /**
+     * check email confirm code
+     * @param username
+     * @param code
+     * @return check result
+     */
+    private boolean checkConfrimCode(String username, String code) {
+        AtomicBoolean ret = new AtomicBoolean(false);
+
+        // - 회원가입 확정
+        Amplify.Auth.confirmSignUp(
+                username,
+                code,
+                result -> {
+                    Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete");
+                    ret.set(true);
+                },
+                error -> Log.e("AuthQuickstart", error.toString())
+        );
+
+        return ret.get();
+    }
+
+    /** * Comment : 정상적인 이메일 인지 검증. */
+    public static boolean isValidEmail(String email) {
+        boolean err = false;
+        String regex = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(email);
+        if(m.matches()) {
+            err = true;
+        }
+        return err;
+    }
+
+    private String getAWSErrorMessage(AuthException error){
+
+        if(error.getCause().getMessage().contains("Password not long enough")){
+            return "패스워드 길이가 짧습니다.(8자 이상)";
+        }else if(error.getCause().getMessage().contains("User already exists")){
+            return "이미 존재하는 아이디 입니다.";
+        }
+
+        return error.getMessage();
     }
 
     private void getUUID() {   //디바이스 정보 받아오기
