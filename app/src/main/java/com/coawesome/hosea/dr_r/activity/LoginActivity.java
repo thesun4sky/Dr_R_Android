@@ -6,6 +6,9 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.amplifyframework.core.Amplify;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -97,36 +101,28 @@ public class LoginActivity extends AppCompatActivity {
                 params.put("login_id", id.getText().toString());
                 params.put("u_password", password.getText().toString());
                 params.put("u_device" ,previousIntent.getStringExtra("u_device"));
-                aq.ajax("http://52.205.170.152:8080/login", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-                    @Override
-                    public void callback(String url, JSONObject jsonObject, AjaxStatus status) {
-                        if (jsonObject != null) {
-                            try {
-                                u_id = jsonObject.getInt("num");
-                                u_name = jsonObject.getString("msg");
 
-                                if (u_id > 0) {
-                                    Toast.makeText(getApplicationContext(), u_name + "님 환영합니다.", Toast.LENGTH_SHORT).show();
-                                    Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                                    mainIntent.putExtra("u_id", u_id);
-                                    mainIntent.putExtra("u_name", u_name);
-                                    mainIntent.putExtra("u_device", previousIntent.getStringExtra("u_device"));
-                                    startActivity(mainIntent);
-                                    LoginActivity.this.finish();
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "아이디 또는 비밀번호를 확인하세요", Toast.LENGTH_SHORT).show();
-                                    id.setText("");
-                                    id.requestFocus();
-                                    password.setText("");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                Amplify.Auth.signIn(
+                        id.getText().toString(),
+                        password.getText().toString(),
+                        result -> {
+                            Log.i("AuthQuickstart", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete");
+                            Looper.prepare();
+                            Toast.makeText(getApplicationContext(), id.getText().toString() + "님 환영합니다.", Toast.LENGTH_SHORT).show();
+                            Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                            mainIntent.putExtra("u_id", id.getText().toString());
+                            startActivity(mainIntent);
+                            LoginActivity.this.finish();
+                            Looper.loop();
+                        },
+                        error -> {
+                            Log.e("AuthQuickstart", error.toString());
+                            Looper.prepare();
+                            Toast.makeText(getApplicationContext(), "아이디 또는 비밀번호를 확인하세요", Toast.LENGTH_SHORT).show();
+                            password.requestFocus();
+                            Looper.loop();
                         }
-
-
-                    }
-                });
+                );
 
             }
         });
