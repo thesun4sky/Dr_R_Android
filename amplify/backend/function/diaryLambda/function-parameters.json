@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "auth": {
+      "drrb272d830": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}
