@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.json.JSONException;
@@ -41,22 +42,15 @@ public class MainActivity extends AppCompatActivity {
         button1.setOnClickListener(mClick);
         correctedAge = (TextView)findViewById(R.id.tv_main_corrected_age);
         joiningDate = (TextView)findViewById(R.id.tv_main_joining_date);
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id", previousIntent.getStringExtra("u_id"));
+        String userId = previousIntent.getStringExtra("u_id");
         //TODO User정보 받아오기
-        /*aq.ajax("http://52.205.170.152:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject html, AjaxStatus status) {
-                if (html != null) {
-                    try {
-                        try {
-                            setDate(html);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-User?userId="+userId)
+                .get()
+                .showLoading()
+                .response((response, error) -> {
+                    JsonParser ps = new JsonParser();
+                    JsonObject obj = ps.parse(response).getAsJsonObject();
+                    //setDate(obj);
                 });
 
         findViewById(R.id.btn_main_2).setOnClickListener(mClick);
@@ -132,23 +126,23 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void setDate(JSONObject jsonObject) throws JSONException, ParseException {
+    public void setDate(JsonObject jsonObject) throws JSONException, ParseException {
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy년 M월 d일", Locale.KOREA);
-        Long join_time = Long.parseLong(jsonObject.getString("u_join_date"));
+        Long join_time = Long.parseLong(jsonObject.get("u_join_date").getAsString());
 
         calAge(jsonObject);
         Date joinDate = new Date(join_time);
         joiningDate.setText("가입일 : " + dateFormat.format(joinDate));
     }
 
-    public void calAge(JSONObject jsonObject) throws JSONException, ParseException {
+    public void calAge(JsonObject jsonObject) throws JSONException, ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String nowString = simpleDateFormat.format(new Date());
 
         Date nowDate = simpleDateFormat.parse(nowString);
 
 
-        Long expectedTime = Long.parseLong(jsonObject.getString("u_expected"));
+        Long expectedTime = Long.parseLong(jsonObject.get("u_expected").getAsString());
         Date expectedDate = new Date(expectedTime);
 
         int compare = 0;
