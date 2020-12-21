@@ -213,42 +213,32 @@ public class JoinActivity extends AppCompatActivity {
                     confrimCode.requestFocus();
                 } else {
                     submit.setEnabled(false);
-                    Map<String, Object> params = new HashMap<String, Object>();
-                    params.put("httpMethod", "POST");
-
-                    Map<String, Object> body = new HashMap<String, Object>();
-                    body.put("user", login_id.getText().toString());
-                    body.put("u_name", name.getText().toString());
-                    body.put("u_a_week", a_week.getText().toString());
-                    body.put("u_a_date", a_date.getText().toString());
-                    body.put("u_expected" , dateFormat.format(ex_date));
-                    body.put("u_born", dateFormat.format(born_date));
-                    body.put("u_w", b_weight.getText().toString());
-                    body.put("u_h", b_height.getText().toString());
-                    body.put("u_sex", rb.getText().toString());
-                    params.put("body", body);
-
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("user", login_id.getText().toString());
+                    params.put("u_name", name.getText().toString());
+                    params.put("u_a_week", a_week.getText().toString());
+                    params.put("u_a_date", a_date.getText().toString());
+                    params.put("u_expected" , dateFormat.format(ex_date));
+                    params.put("u_born", dateFormat.format(born_date));
+                    params.put("u_w", b_weight.getText().toString());
+                    params.put("u_h", b_height.getText().toString());
+                    params.put("u_sex", rb.getText().toString());
 
                     //회원가입정보 DynamoDB 저장
-                   aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-User", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-                        @Override
-                        public void callback(String url, JSONObject html, AjaxStatus status) {
-                            if (html != null) {
-                                try {
-                                    Toast.makeText(getApplicationContext(), html.getString("msg"), Toast.LENGTH_SHORT).show();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(JoinActivity.this, LoginActivity.class);
-                                startActivity(intent);
-                                JoinActivity.this.finish();
-                            } else {
-                                Toast.makeText(getApplicationContext(), "연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
-                                submit.setEnabled(true);
-                            }
-                        }
-                    });
+                   aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-User")
+                           .post(params)
+                           .showLoading()
+                           .response((response, error) -> {
+                                   if (response != null) {
+                                       Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                                       Intent intent = new Intent(JoinActivity.this, LoginActivity.class);
+                                       startActivity(intent);
+                                       JoinActivity.this.finish();
+                                   } else {
+                                       Toast.makeText(getApplicationContext(), "연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
+                                       submit.setEnabled(true);
+                                   }
+                               });
                 }
             }
         });
