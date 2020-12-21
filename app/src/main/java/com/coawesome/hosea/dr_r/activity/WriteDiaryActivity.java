@@ -21,9 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
+import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.dao.DiaryVO;
 
@@ -43,7 +41,7 @@ import java.util.Map;
 
 public class WriteDiaryActivity extends AppCompatActivity {
 
-    private AQuery aq = new AQuery(this);
+    private AQuery aq;
     int year, month, day;
     final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
     private EditText weight, height;
@@ -82,6 +80,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_writediary);
         photo_has_changed = false;
         previousIntent = getIntent();
+        aq = new AQuery(this);
         GregorianCalendar calendar = new GregorianCalendar();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
@@ -239,7 +238,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
     public void getExpectedDate() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        aq.ajax("http://52.205.170.152:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        /*aq.ajax("http://52.205.170.152:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
@@ -254,7 +253,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
                 }
             }
-        });
+        });*/
     }
 
 
@@ -262,7 +261,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
         params.put("c_date", date + "00:00:00");
-        aq.ajax("http://52.205.170.152:8080/getDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        /*aq.ajax("http://52.205.170.152:8080/getDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
@@ -273,7 +272,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
                 }
             }
-        });
+        });*/
     }
 
     public void calAge(JSONObject jsonObject) throws JSONException, ParseException {
@@ -611,7 +610,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
             byteArray = stream.toByteArray();
             params.put("file", byteArray);
             params.put("c_img", fileName);
-            aq.ajax("http://52.205.170.152:8080/writeDiaryWithImg", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+            /*aq.ajax("http://52.205.170.152:8080/writeDiaryWithImg", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                 @Override
                 public void callback(String url, JSONObject html, AjaxStatus status) {
                     if (html != null) {
@@ -621,9 +620,9 @@ public class WriteDiaryActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "네트워크 연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
                     }
                 }
-            });
+            });*/
         } catch (NullPointerException ignored) {
-            aq.ajax("http://52.205.170.152:8080/writeDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+            /*aq.ajax("http://52.205.170.152:8080/writeDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                 @Override
                 public void callback(String url, JSONObject html, AjaxStatus status) {
                     if (html != null) {
@@ -633,7 +632,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "네트워크 연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
                     }
                 }
-            });
+            });*/
         }
     }
 
@@ -641,6 +640,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_FROM_ALBUM) {
             if (data != null) {
                 addPhoto.setVisibility(addPhoto.GONE);

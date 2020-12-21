@@ -9,9 +9,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
+import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.adapter.QnaAdapter;
 import com.coawesome.hosea.dr_r.dao.QnaVO;
@@ -25,7 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ApplicationQnaActivity extends AppCompatActivity {
     private Intent previousIntent;
-    private AQuery aq = new AQuery(this);
+    private AQuery aq;
     TextView tv;
     ListView lv;
     Button btn;
@@ -35,6 +33,7 @@ public class ApplicationQnaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview_qna);
         previousIntent = getIntent();
+        aq = new AQuery(this);
 
         //이름 설정
         tv = (TextView) findViewById(R.id.tv_listView_title);
@@ -54,7 +53,7 @@ public class ApplicationQnaActivity extends AppCompatActivity {
     }
 
     public void listingQna() {
-        aq.ajax("http://52.205.170.152:8080/getQnaList", JSONArray.class, new AjaxCallback<JSONArray>() {
+       /* aq.ajax("http://52.205.170.152:8080/getQnaList", JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
             public void callback(String url, JSONArray html, AjaxStatus status) {
                 if (html != null) {
@@ -72,7 +71,7 @@ public class ApplicationQnaActivity extends AppCompatActivity {
                     linkToAdapter(arrayList);
                 }
             }
-        });
+        });*/
     }
 
     public void jsonArrayToArrayList(JSONArray jsonArr) {

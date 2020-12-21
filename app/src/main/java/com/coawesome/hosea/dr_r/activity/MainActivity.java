@@ -6,11 +6,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
+import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,14 +27,15 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     private Intent previousIntent, intent;
     private TextView correctedAge, joiningDate;
-    private AQuery aq = new AQuery(this);
-
+    private AQuery aq;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         previousIntent = getIntent();
+        aq = new AQuery(this);
+        Gson gs = new Gson();
 
         View button1 = findViewById(R.id.btn_main_1);
         button1.setOnClickListener(mClick);
@@ -55,9 +57,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
-            }
-        });*/
+                });
 
         findViewById(R.id.btn_main_2).setOnClickListener(mClick);
 

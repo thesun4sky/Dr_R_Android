@@ -17,9 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.amplifyframework.core.Amplify;
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
+import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 
 import org.json.JSONException;
@@ -32,7 +30,7 @@ import java.util.Map;
  * Created by LeeMoonSeong on 2016-11-10.
  */
 public class LoginActivity extends AppCompatActivity {
-    private AQuery aq = new AQuery(this);
+    private AQuery aq;
     private Intent previousIntent;
     private EditText id, password;
     private Button join, login, help;
@@ -44,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         previousIntent = getIntent();
+        aq = new AQuery(this);
 
         id = (EditText) findViewById(R.id.login_login_id);
         password = (EditText) findViewById(R.id.login_password);

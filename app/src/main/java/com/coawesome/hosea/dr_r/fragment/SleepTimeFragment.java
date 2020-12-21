@@ -19,9 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
+import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.activity.TimeActivity;
 import com.coawesome.hosea.dr_r.adapter.SleepAdapter;
@@ -301,7 +299,7 @@ public class SleepTimeFragment extends Fragment {
         params.put("s_start", dateFormat.format(s_start));
         params.put("s_end", dateFormat.format(s_end));
         params.put("s_total", endTime - startTime);
-        aq.ajax("http://52.205.170.152:8080/addSleepTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        /*aq.ajax("http://52.205.170.152:8080/addSleepTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 try {
@@ -313,7 +311,7 @@ public class SleepTimeFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
     }
 
     public void readSleep() {
@@ -321,7 +319,7 @@ public class SleepTimeFragment extends Fragment {
         SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
         params.put("u_id", user_id);
         params.put("s_start", dateFormat2.format(date));
-        aq.ajax("http://52.205.170.152:8080/getSleepTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
+        /*aq.ajax("http://52.205.170.152:8080/getSleepTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
             public void callback(String url, JSONArray html, AjaxStatus status) {
                 if (html != null) {
@@ -335,7 +333,7 @@ public class SleepTimeFragment extends Fragment {
                     Toast.makeText(getActivity(), "연결상태가 좋지않아 목록을 부를 수 없습니다.", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        });*/
     }
 
     public void jsonArrayToSleepArray(JSONArray jsonArr) throws JSONException {

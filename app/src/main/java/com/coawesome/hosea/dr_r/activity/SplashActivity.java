@@ -20,9 +20,7 @@ import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.AWSDataStorePlugin;
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
+import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 
 import org.json.JSONException;
@@ -36,7 +34,6 @@ import java.util.UUID;
  * Created by LeeMoonSeong on 2016-11-04.
  */
 public class SplashActivity extends Activity {
-    private AQuery aq = new AQuery(this);
     private static final int MY_READ_PHONE_STATE = 0;
     private String deviceId, u_name;
     private Handler mHandler;

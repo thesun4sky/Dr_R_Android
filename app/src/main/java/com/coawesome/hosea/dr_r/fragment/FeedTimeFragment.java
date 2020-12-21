@@ -23,9 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
+import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.activity.TimeActivity;
 import com.coawesome.hosea.dr_r.adapter.FeedAdapter;
@@ -198,7 +196,7 @@ public class FeedTimeFragment extends Fragment {
                                     params.put("u_id" , user_id);
                                     params.put("f_start" , dateFormat2.format(update_Date));
                                     params.put("f_total", editText.getText().toString());
-                                    aq.ajax("http://52.205.170.152:8080/updateFeed", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                                   /* aq.ajax("http://52.205.170.152:8080/updateFeed", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                                         @Override
                                         public void callback(String url, JSONObject html, AjaxStatus status) {
                                             try {
@@ -210,7 +208,7 @@ public class FeedTimeFragment extends Fragment {
                                                 e.printStackTrace();
                                             }
                                         }
-                                    });
+                                    });*/
                                     Toast.makeText(getActivity(), "변경되었습니다.", Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(getActivity(), "취소 되었습니다.", Toast.LENGTH_SHORT).show();
@@ -427,7 +425,7 @@ public class FeedTimeFragment extends Fragment {
         params.put("f_end" , dateFormat.format(s_end));
         params.put("f_total" , endTime-startTime);
         params.put("feed", feed);
-        aq.ajax("http://52.205.170.152:8080/addFeedTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        /*aq.ajax("http://52.205.170.152:8080/addFeedTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 try {
@@ -439,7 +437,7 @@ public class FeedTimeFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
 
     }
     public void readFeed() {
@@ -447,7 +445,7 @@ public class FeedTimeFragment extends Fragment {
         SimpleDateFormat dateFormat2 = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
         params.put("u_id", user_id);
         params.put("f_start", dateFormat2.format(date));
-        aq.ajax("http://52.205.170.152:8080/getFeedTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
+        /*aq.ajax("http://52.205.170.152:8080/getFeedTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
             public void callback(String url, JSONArray html, AjaxStatus status) {
                 if (html != null) {
@@ -461,7 +459,7 @@ public class FeedTimeFragment extends Fragment {
                     Toast.makeText(getActivity(),"연결상태가 좋지않아 목록을 부를 수 없습니다.", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        });*/
     }
     public void writePowder(int amount) {
         today = new Date();
@@ -471,7 +469,7 @@ public class FeedTimeFragment extends Fragment {
         params.put("f_end" , dateFormat.format(today));
         params.put("f_total" , amount);
         params.put("feed", feed);
-        aq.ajax("http://52.205.170.152:8080/addFeedTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+       /* aq.ajax("http://52.205.170.152:8080/addFeedTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 try {
@@ -484,7 +482,7 @@ public class FeedTimeFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
 
     }
     public void jsonArrayToSleepArray(JSONArray jsonArr) throws JSONException {

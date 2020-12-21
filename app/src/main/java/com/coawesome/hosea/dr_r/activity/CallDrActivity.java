@@ -7,9 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
+import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 
 import org.json.JSONException;
@@ -22,7 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class CallDrActivity extends AppCompatActivity {
     private Intent previousIntent;
-    private AQuery aq = new AQuery(this);
+    private AQuery aq;
     String uri, phoneNum;
     JSONObject jsonObject;
     TextView tv;
@@ -34,6 +32,7 @@ public class CallDrActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calldoctor);
         previousIntent = getIntent();
+        aq = new AQuery(this);
 
         tv = (TextView) findViewById(R.id.tv_doctor_phone_num);
         /*iv = (ImageView) findViewById(R.id.doctor_img);
@@ -42,7 +41,7 @@ public class CallDrActivity extends AppCompatActivity {
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        aq.ajax("http://52.205.170.152:8080/getDocPhone", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        /*aq.ajax("http://52.205.170.152:8080/getDocPhone", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
@@ -65,6 +64,6 @@ public class CallDrActivity extends AppCompatActivity {
                     tv.setText("연결상태가 좋지 않습니다.");
                 }
             }
-        });
+        });*/
     }
 }

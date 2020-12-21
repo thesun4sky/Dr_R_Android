@@ -32,6 +32,7 @@
         <activity android:name="com.coawesome.hosea.dr_r.activity.ApplicationQnaActivity" />
         <activity android:name="com.coawesome.hosea.dr_r.activity.GraphActivity" />
         <activity android:name="com.coawesome.hosea.dr_r.activity.JoinActivity" />
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
         <activity android:name="com.coawesome.hosea.dr_r.activity.CallDrActivity">
             <intent-filter>
                 <action android:name="android.intent.action.DIAL" />

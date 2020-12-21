@@ -10,9 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
+import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.adapter.DiaryAdapter;
 import com.coawesome.hosea.dr_r.dao.DiaryVO;
@@ -40,7 +38,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
     ClockPieView pieView;
     ClockPieView pieView2;
     private Intent previousIntent;
-    private AQuery aq = new AQuery(this);
+    private AQuery aq;
     long result_sleep = 0;
     long result_feed = 0;
 
@@ -56,6 +54,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview);
         previousIntent = getIntent();
+        aq = new AQuery(this);
         dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
         clockPieHelperArrayListForSleep = new ArrayList<ClockPieHelper>();
         clockPieHelperArrayListForFeed = new ArrayList<ClockPieHelper>();
@@ -113,7 +112,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id",0));
         params.put("s_start", date + "00:00:00");
-        aq.ajax("http://52.205.170.152:8080/getSleepTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
+        /*aq.ajax("http://52.205.170.152:8080/getSleepTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
             public void callback(String url, JSONArray html, AjaxStatus status) {
                 if (html != null) {
@@ -127,7 +126,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
                     tv.setText("해당하는 데이터가 없습니다.");
                 }
             }
-        });
+        });*/
     }
 
     public void readFeed() {
@@ -135,7 +134,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id",0));
         params.put("f_start", date + "00:00:00");
-        aq.ajax("http://52.205.170.152:8080/getFeedTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
+        /*aq.ajax("http://52.205.170.152:8080/getFeedTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
             public void callback(String url, JSONArray html, AjaxStatus status) {
                 if (html != null) {
@@ -150,7 +149,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
                     tv.setText("해당하는 데이터가 없습니다.");
                 }
             }
-        });
+        });*/
     }
 
     public void jsonArrayToSleepArray(JSONArray jsonArr) throws JSONException {
@@ -222,7 +221,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
         params.put("c_date", date + "00:00:00");
-        aq.ajax("http://52.205.170.152:8080/getDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        /*aq.ajax("http://52.205.170.152:8080/getDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
@@ -232,7 +231,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
                     jsonArrayToArrayListNoData();
                 }
             }
-        });
+        });*/
     }
 
     public void jsonArrayToArrayList(JSONObject jsonObject) {

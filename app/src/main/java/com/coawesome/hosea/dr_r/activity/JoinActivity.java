@@ -28,9 +28,7 @@ import com.amplifyframework.auth.AuthException;
 import com.amplifyframework.auth.AuthUserAttributeKey;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
+import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 
 import org.json.JSONException;
@@ -52,7 +50,7 @@ import java.util.regex.Pattern;
 
 public class JoinActivity extends AppCompatActivity {
 
-    private AQuery aq = new AQuery(this);
+    private AQuery aq;
     private EditText login_id, name, password1, password2;
     private Date born_date;
     private Date ex_date;
@@ -77,7 +75,7 @@ public class JoinActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join);
-
+        aq = new AQuery(this);
         GregorianCalendar calendar = new GregorianCalendar();
         GregorianCalendar calendar2 = new GregorianCalendar();
         year = calendar.get(Calendar.YEAR);
@@ -209,7 +207,7 @@ public class JoinActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "출생 키를 입력하세요.", Toast.LENGTH_SHORT).show();
                     b_height.setText("");
                     b_height.requestFocus();
-                }  else if (checkConfrimCode(login_id.getText().toString(),confrimCode.getText().toString())) {
+                } else if (!checkConfrimCode(login_id.getText().toString(),confrimCode.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "이메일 인증코드를 확인하세요.", Toast.LENGTH_SHORT).show();
                     confrimCode.setText("");
                     confrimCode.requestFocus();

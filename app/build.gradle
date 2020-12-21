@@ -30,7 +30,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.jakewharton:butterknife:10.2.3'
     implementation 'im.dacer:AndroidCharts:1.0.2'
-    implementation 'com.googlecode.android-query:android-query:0.25.9'
+    implementation 'com.github.ar-android:AQuery:1.0.3'
     implementation files('lib/GraphView-4.2.1.jar')
     // Amplify core dependency
     implementation 'com.amplifyframework:core:1.4.0'
@@ -42,4 +42,7 @@ dependencies {
     implementation 'com.amplifyframework:aws-datastore:1.4.0'
     // Support for Java 8 features
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
+    implementation 'com.github.bumptech.glide:glide:4.6.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.7.2'
+    implementation 'com.squareup.okhttp3:okhttp:4.7.2'
 }

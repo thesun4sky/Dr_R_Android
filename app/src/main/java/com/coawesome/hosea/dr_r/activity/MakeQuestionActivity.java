@@ -8,9 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
+import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 
 import org.json.JSONObject;
@@ -19,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MakeQuestionActivity extends AppCompatActivity {
-    private AQuery aq = new AQuery(this);
+    private AQuery aq;
     private Intent previousIntent;
     EditText title, content;
     Button submit;
@@ -29,6 +27,7 @@ public class MakeQuestionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_makequestion);
         previousIntent = getIntent();
+        aq = new AQuery(this);
 
         title = (EditText) findViewById(R.id.et_makeQuestion_title);
         content = (EditText) findViewById(R.id.et_makeQuestion_content);
@@ -42,7 +41,7 @@ public class MakeQuestionActivity extends AppCompatActivity {
                     params.put("u_name", previousIntent.getStringExtra("u_name"));
                     params.put("qna_title", title.getText());
                     params.put("qna_content", content.getText());
-                    aq.ajax("http://52.205.170.152:8080/makeQuestion", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+                    /*aq.ajax("http://52.205.170.152:8080/makeQuestion", params, JSONObject.class, new AjaxCallback<JSONObject>() {
                         @Override
                         public void callback(String url, JSONObject html, AjaxStatus status) {
                             if (html != null) {
@@ -52,7 +51,7 @@ public class MakeQuestionActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    });
+                    });*/
                 } else {
                     Toast.makeText(getApplicationContext(), "내용을 입력하세요", Toast.LENGTH_SHORT).show();
                     if (title.getText().toString().equals("")) {

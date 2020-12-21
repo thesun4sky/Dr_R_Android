@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import com.androidquery.AQuery;
+import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.fragment.FeedTimeFragment;
 import com.coawesome.hosea.dr_r.fragment.SleepTimeFragment;
@@ -19,7 +19,7 @@ import com.coawesome.hosea.dr_r.fragment.SleepTimeFragment;
 
 public class TimeActivity extends AppCompatActivity {
     private Intent previousIntent;
-    private AQuery aq = new AQuery(this);
+    private AQuery aq;
     Button sleeping;
     Button feeding;
     final SleepTimeFragment sleepTimeFragment = new SleepTimeFragment();
@@ -52,6 +52,7 @@ public class TimeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stopwatch);
         previousIntent = getIntent();
+        aq = new AQuery(this);
         u_id = previousIntent.getExtras().getInt("u_id",0);
          sleeping = (Button) findViewById(R.id.measureSleepingTime);
           feeding = (Button) findViewById(R.id.measureFeedingTime);

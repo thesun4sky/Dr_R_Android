@@ -7,9 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
+import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.dao.DiaryVO;
 
@@ -44,7 +42,7 @@ public class DiaryAdapter extends BaseAdapter {
     public void getExpectedDate() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", dU_id);
-        mAq.ajax("http://52.205.170.152:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        /*mAq.ajax("http://52.205.170.152:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
@@ -59,7 +57,7 @@ public class DiaryAdapter extends BaseAdapter {
 
                 }
             }
-        });
+        });*/
     }
 
     public void calAge(JSONObject jsonObject) throws JSONException, ParseException {
@@ -178,7 +176,7 @@ public class DiaryAdapter extends BaseAdapter {
                     (LayoutInflater) dContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(dResource, viewGroup, false);
         }
-        mAq = new AQuery(view);
+      //  mAq = new AQuery(view);
 //        TextView breakfast = (TextView) view.findViewById(R.id.diary_tv_breakfast);
 //        TextView lunch = (TextView) view.findViewById(R.id.diary_tv_lunch);
 //        TextView dinner = (TextView) view.findViewById(R.id.diary_tv_dinner);

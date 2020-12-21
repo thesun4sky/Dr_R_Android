@@ -11,9 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
+import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 
 import org.json.JSONException;
@@ -24,7 +22,7 @@ import java.util.Map;
 
 public class GraphActivity extends AppCompatActivity {
     private Intent previousIntent;
-    private AQuery aq = new AQuery(this);
+    private AQuery aq;
     ImageView baby_height;
     ImageView baby_weight;
     Button btn_measure_height;
@@ -84,6 +82,7 @@ public class GraphActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview_graph);
         previousIntent = getIntent();
+        aq = new AQuery(this);
 
         baby_height = (ImageView) findViewById(R.id.iv_baby_height);
         baby_weight = (ImageView) findViewById(R.id.iv_baby_weight);
@@ -101,7 +100,7 @@ public class GraphActivity extends AppCompatActivity {
         tv_my_weight = (TextView) findViewById(R.id.tv_my_weight);
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        aq.ajax("http://52.205.170.152:8080/getSex", params, JSONObject.class, new AjaxCallback<JSONObject>() {
+        /*aq.ajax("http://52.205.170.152:8080/getSex", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
                 if (html != null) {
@@ -114,7 +113,7 @@ public class GraphActivity extends AppCompatActivity {
 
                 }
             }
-        });
+        });*/
 //        Map<String, Object> params = new HashMap<String, Object>();
 //        params.put("u_id", previousIntent.getIntExtra("u_id", 0));
 //        aq.ajax("http://52.205.170.152:8080/getDateSleepTime", params, JSONArray.class, new AjaxCallback<JSONArray>() {
