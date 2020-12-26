@@ -66,8 +66,9 @@ public class JoinActivity extends AppCompatActivity {
     private String born_string = "";
     private String ex_string = "";
     private static final int MY_READ_PHONE_STATE = 0;
-    private Button checkId, submit, sendCode;
-    private String array, deviceId;
+    private Button checkId, submit, sendCode, checkCode;
+    private boolean checkCodeFlag = false;
+    private String emailStr = "";
     final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
 
 
@@ -107,6 +108,7 @@ public class JoinActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.email);
         sendCode = (Button) findViewById(R.id.sendCode);
         confrimCode = (EditText) findViewById(R.id.confrimCode);
+        checkCode = (Button) findViewById(R.id.checkCode);
 
         final RadioGroup rg = (RadioGroup) findViewById(R.id.radioForSex);
 
@@ -142,6 +144,23 @@ public class JoinActivity extends AppCompatActivity {
             }
         });
 
+        checkCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (!isValidEmail(email.getText().toString())) {
+                    Toast.makeText(getApplicationContext(), "이메일을 체크하세요", Toast.LENGTH_SHORT).show();
+                    email.requestFocus();
+                } else if (!password1.getText().toString().equals(password2.getText().toString()) || password1.getText().toString().length() < 5) {
+                    Toast.makeText(getApplicationContext(), "비밀번호를 입력하세요. (5자 이상)", Toast.LENGTH_SHORT).show();
+                    password1.requestFocus();
+                } else if (checkCodeFlag && emailStr.equals(email.getText().toString())) {
+                    Toast.makeText(getApplicationContext(), "이메일 인증이 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                }else{
+                    checkConfrimCode(login_id.getText().toString(),confrimCode.getText().toString());
+                }
+            }
+        });
         u_born.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -207,14 +226,15 @@ public class JoinActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "출생 키를 입력하세요.", Toast.LENGTH_SHORT).show();
                     b_height.setText("");
                     b_height.requestFocus();
-                } else if (!checkConfrimCode(login_id.getText().toString(),confrimCode.getText().toString())) {
+                } else if (!checkCodeFlag || !emailStr.equals(email.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "이메일 인증코드를 확인하세요.", Toast.LENGTH_SHORT).show();
+                    emailStr = ""; checkCodeFlag = false;
                     confrimCode.setText("");
                     confrimCode.requestFocus();
                 } else {
                     submit.setEnabled(false);
                     Map<String, String> params = new HashMap<String, String>();
-                    params.put("user", login_id.getText().toString());
+                    params.put("userId", login_id.getText().toString());
                     params.put("u_name", name.getText().toString());
                     params.put("u_a_week", a_week.getText().toString());
                     params.put("u_a_date", a_date.getText().toString());
@@ -250,21 +270,29 @@ public class JoinActivity extends AppCompatActivity {
      * @param code
      * @return check result
      */
-    private boolean checkConfrimCode(String username, String code) {
-        AtomicBoolean ret = new AtomicBoolean(false);
-
+    private void checkConfrimCode(String username, String code) {
+        checkCodeFlag = false;
+        emailStr = "";
         // - 회원가입 확정
         Amplify.Auth.confirmSignUp(
                 username,
                 code,
                 result -> {
                     Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete");
-                    ret.set(result.isSignUpComplete());
+                    checkCodeFlag = result.isSignUpComplete();
+                    emailStr = email.getText().toString();
+                    Looper.prepare();
+                    Toast.makeText(getApplicationContext(), "이메일 인증이 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
                 },
-                error -> Log.e("AuthQuickstart", error.toString())
+                error -> {
+                    Log.e("AuthQuickstart", error.toString());
+                    Looper.prepare();
+                    Toast.makeText(getApplicationContext(), "인증코드가 알맞지 않습니다.", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
+                }
         );
 
-        return ret.get();
     }
 
     /** * Comment : 정상적인 이메일 인지 검증. */
@@ -299,7 +327,7 @@ public class JoinActivity extends AppCompatActivity {
         androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
 
         UUID deviceUuid = new UUID(androidId.hashCode(), ((long) tmDevice.hashCode() << 32) | tmSerial.hashCode());
-        deviceId = deviceUuid.toString();
+        //deviceId = deviceUuid.toString();
 
     }
 
@@ -335,28 +363,5 @@ public class JoinActivity extends AppCompatActivity {
     };
 
 
-    @TargetApi(Build.VERSION_CODES.M)
-    private void checkPermission() {    //사용자에게 디바이스 정보 받아오는거 확인
-        if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE)) {
-                // Explain to the user why we need to write the permission.
-                Toast.makeText(this, "Read/Write external storage", Toast.LENGTH_SHORT).show();
-            }
-
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    MY_READ_PHONE_STATE);
-
-            // MY_PERMISSION_REQUEST_STORAGE is an
-            // app-defined int constant
-
-        } else {
-            // 다음 부분은 항상 허용일 경우에 해당이 됩니다.
-            getUUID();
-        }
-
-    }
 
 }
