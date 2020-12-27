@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
+import com.coawesome.hosea.dr_r.dao.DiaryInfoVO;
 import com.coawesome.hosea.dr_r.dao.DiaryVO;
 
 import org.json.JSONException;
@@ -33,7 +34,7 @@ public class DiaryAdapter extends BaseAdapter {
     private int dResource;
     private int dU_id;
     private TextView age;
-    private ArrayList<DiaryVO> dItems = new ArrayList<>();
+    private ArrayList<DiaryInfoVO> dItems = new ArrayList<>();
     private static final String RED = "#FF0000";
     private static final String BLUE = "#0000FF";
     AQuery mAq;
@@ -150,7 +151,7 @@ public class DiaryAdapter extends BaseAdapter {
     public DiaryAdapter(Context context, int resource, ArrayList<DiaryVO> items , int u_id) {
         dContext = context;
         dResource = resource;
-        dItems = items;
+        //dItems = items;
         dU_id = u_id;
     }
 
@@ -198,7 +199,7 @@ public class DiaryAdapter extends BaseAdapter {
 
 
         if (dItems != null) {
-            DiaryVO diary = dItems.get(i);
+            DiaryInfoVO diary = dItems.get(i);
 
             final SimpleDateFormat curYearFormat = new SimpleDateFormat("yyyy", Locale.KOREA);
             final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);
@@ -209,7 +210,7 @@ public class DiaryAdapter extends BaseAdapter {
             memo.setText(diary.getMemo());
 
 //            hospital.setBackgroundColor(0xFF00FF00);
-            hospital.setText(diary.getHospital_name());
+            hospital.setText(diary.getHospital());
             treat.setText(diary.getTreat());
             shot.setText(diary.getShot());
             Date next_date = new Date();
@@ -228,7 +229,7 @@ public class DiaryAdapter extends BaseAdapter {
                 next.setText(year + "-" + month + "-" + day);
             }
             depart.setText(diary.getDepart());
-            String IMG_URL = "http://52.205.170.152/storedimg/" + diary.getC_img();
+            String IMG_URL = "http://52.205.170.152/storedimg/";// + diary.getC_img();
             mAq.id(R.id.diary_iv_photo).image(IMG_URL);
         } else {
             age.setText("");

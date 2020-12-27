@@ -110,7 +110,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
     public void readSleep() {
         result_sleep = 0;
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id", previousIntent.getIntExtra("u_id",0));
+        params.put("userId", previousIntent.getIntExtra("userId",0));
         params.put("s_start", date + "00:00:00");
         /*aq.ajax("http://52.205.170.152:8080/getSleepTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
@@ -219,8 +219,8 @@ public class ReadDiaryActivity extends AppCompatActivity {
 
     public void readDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        params.put("c_date", date + "00:00:00");
+        params.put("userId", previousIntent.getIntExtra("userId", 0));
+        params.put("wDate", date);
         /*aq.ajax("http://52.205.170.152:8080/getDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
@@ -234,7 +234,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
         });*/
     }
 
-    public void jsonArrayToArrayList(JSONObject jsonObject) {
+    /*public void jsonArrayToArrayList(JSONObject jsonObject) {
         ArrayList<DiaryVO> arrayList = new ArrayList<>();
         arrayList.add(new DiaryVO(jsonObject));
         linktoAdapter(arrayList);
@@ -243,7 +243,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
     public void jsonArrayToArrayListNoData( ) {
         ArrayList<DiaryVO> arrayList = new ArrayList<>();
         linktoAdapter(arrayList);
-    }
+    }*/
 
 
     public void linktoAdapter(ArrayList<DiaryVO> list) {
