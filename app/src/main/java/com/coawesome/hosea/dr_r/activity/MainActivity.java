@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
+import com.coawesome.hosea.dr_r.dao.ResponseVO;
+import com.coawesome.hosea.dr_r.dao.UserVO;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Intent previousIntent, intent;
     private TextView correctedAge, joiningDate;
     private AQuery aq;
+    private UserVO userVO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,21 +39,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         previousIntent = getIntent();
         aq = new AQuery(this);
-        Gson gs = new Gson();
 
         View button1 = findViewById(R.id.btn_main_1);
         button1.setOnClickListener(mClick);
         correctedAge = (TextView)findViewById(R.id.tv_main_corrected_age);
         joiningDate = (TextView)findViewById(R.id.tv_main_joining_date);
-        String userId = previousIntent.getStringExtra("u_id");
-        //TODO User정보 받아오기
+        String userId = previousIntent.getStringExtra("userId");
+        //User정보 받아오기
         aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-User?userId="+userId)
                 .get()
                 .showLoading()
                 .response((response, error) -> {
-                    JsonParser ps = new JsonParser();
-                    JsonObject obj = ps.parse(response).getAsJsonObject();
-                    //setDate(obj);
+                    Gson gson = new Gson();
+                    ResponseVO resVO = gson.fromJson(response, ResponseVO.class);
+                    String json = gson.toJson(resVO.getItems()[0]);
+                    this.userVO = gson.fromJson(json, UserVO.class);
+                    joiningDate.setText("가입일 : " + userVO.getDate().substring(0,10));
+                    correctedAge.setText("");
+                    //setDate(obj); TODO 교정연령 계산 보정개발
                 });
 
         findViewById(R.id.btn_main_2).setOnClickListener(mClick);
@@ -65,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view){
                 Intent logoutIntent = new Intent(getApplicationContext(),LoginActivity.class);
-                logoutIntent.putExtra("u_device", previousIntent.getStringExtra("u_device"));
+                //logoutIntent.putExtra("u_device", previousIntent.getStringExtra("u_device"));
                 startActivity(logoutIntent);
                 MainActivity.this.finish();
             }
@@ -88,26 +94,26 @@ public class MainActivity extends AppCompatActivity {
             switch (view.getId()) {
                 case R.id.btn_main_1:
                     intent = new Intent(getApplicationContext(), TimeActivity.class);
-                    intent.putExtra("u_id", previousIntent.getIntExtra("u_id", 0))
-                            .putExtra("u_name", previousIntent.getStringExtra("u_name"));
+                    intent.putExtra("userId", previousIntent.getStringExtra("userId"))
+                            .putExtra("uName", userVO.getuName());
                     startActivity(intent);
                     break;
                 case R.id.btn_main_2:
                     intent = new Intent(getApplicationContext(), WriteDiaryActivity.class);
-                    intent.putExtra("u_id", previousIntent.getIntExtra("u_id", 0))
-                            .putExtra("u_name", previousIntent.getStringExtra("u_name"));
+                    intent.putExtra("userId", previousIntent.getStringExtra("userId"))
+                            .putExtra("uName", userVO.getuName());
                     startActivity(intent);
                     break;
                 case R.id.btn_main_3:
                     intent = new Intent(getApplicationContext(), GraphActivity.class);
-                    intent.putExtra("u_id", previousIntent.getIntExtra("u_id", 0))
-                            .putExtra("u_name", previousIntent.getStringExtra("u_name"));
+                    intent.putExtra("userId", previousIntent.getStringExtra("userId"))
+                            .putExtra("uName", userVO.getuName());
                     startActivity(intent);
                     break;
                 case R.id.btn_main_4:
                     intent = new Intent(getApplicationContext(), ReadDiaryActivity.class);
-                    intent.putExtra("u_id", previousIntent.getIntExtra("u_id", 0))
-                            .putExtra("u_name", previousIntent.getStringExtra("u_name"));
+                    intent.putExtra("userId", previousIntent.getStringExtra("userId"))
+                            .putExtra("uName", userVO.getuName());
                     startActivity(intent);
                     break;
                 //TODO shere버튼 생성 예정

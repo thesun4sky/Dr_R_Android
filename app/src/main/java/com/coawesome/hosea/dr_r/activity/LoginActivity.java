@@ -96,10 +96,6 @@ public class LoginActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Map<String, Object> params = new HashMap<String, Object>();
-                params.put("login_id", id.getText().toString());
-                params.put("u_password", password.getText().toString());
-                params.put("u_device" ,previousIntent.getStringExtra("u_device"));
 
                 Amplify.Auth.signIn(
                         id.getText().toString(),
@@ -109,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
                             Looper.prepare();
                             Toast.makeText(getApplicationContext(), id.getText().toString() + "님 환영합니다.", Toast.LENGTH_SHORT).show();
                             Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                            mainIntent.putExtra("u_id", id.getText().toString());
+                            mainIntent.putExtra("userId", id.getText().toString());
                             startActivity(mainIntent);
                             LoginActivity.this.finish();
                             Looper.loop();

@@ -5,70 +5,107 @@ package com.coawesome.hosea.dr_r.dao;
  */
 
 public class UserVO {
-    private int u_id;
-    private String login_id;
-    private String u_name;
-    private String u_phone;
-    private String u_password;
-    private String u_disease;
-    private String u_device;
-    private String u_hospital;
+    private String date;
+    private String userId;
+    private String uExpectedDate;
+    private String uBornDate;
+    private String uName;
+    private String uWeek;
+    private String uSex;
+    private String uDate;
+    private String uWeight;
+    private String uHeight;
 
-    public int getU_id() {
-        return u_id;
+    public UserVO(String date, String userId, String uExpectedDate, String uBornDate, String uName, String uWeek, String uSex, String uDate, String uWeight, String uHeight) {
+        this.date = date;
+        this.userId = userId;
+        this.uExpectedDate = uExpectedDate;
+        this.uBornDate = uBornDate;
+        this.uName = uName;
+        this.uWeek = uWeek;
+        this.uSex = uSex;
+        this.uDate = uDate;
+        this.uWeight = uWeight;
+        this.uHeight = uHeight;
     }
 
-    public void setU_id(int u_id) {
-        this.u_id = u_id;
+    public String getDate() {
+        return date;
     }
 
-    public String getLogin_id() {
-        return login_id;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public void setLogin_id(String login_id) {
-        this.login_id = login_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public String getU_name() {
-        return u_name;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public void setU_name(String u_name) {
-        this.u_name = u_name;
+    public String getuExpectedDate() {
+        return uExpectedDate;
     }
 
-    public String getU_phone() {
-        return u_phone;
+    public void setuExpectedDate(String uExpected) {
+        this.uExpectedDate = uExpected;
     }
 
-    public void setU_phone(String u_phone) {
-        this.u_phone = u_phone;
+    public String getuBornDate() {
+        return uBornDate;
     }
 
-    public String geU_password() {
-        return u_password;
+    public void setuBornDate(String uBornDate) {
+        this.uBornDate = uBornDate;
     }
 
-    public void setU_password(String u_password) {
-        this.u_password = u_password;
+    public String getuName() {
+        return uName;
     }
 
-    public String getU_disease() {
-        return u_disease;
+    public void setuName(String uName) {
+        this.uName = uName;
     }
 
-    public void setU_disease(String u_disease) {
-        this.u_disease = u_disease;
+    public String getuWeek() {
+        return uWeek;
     }
 
-    public String getU_hospital() {
-        return u_hospital;
+    public void setuWeek(String uWeek) {
+        this.uWeek = uWeek;
     }
-    public void setU_hospital(String u_hospital) {
-        this.u_hospital = u_hospital;
-    }
-    public String getU_device(){return u_device;}
 
-    public void setU_device(String u_device){this.u_device = u_device;}
+    public String getuSex() {
+        return uSex;
+    }
+
+    public void setuSex(String uSex) {
+        this.uSex = uSex;
+    }
+
+    public String getuDate() {
+        return uDate;
+    }
+
+    public void setuDate(String uDate) {
+        this.uDate = uDate;
+    }
+
+    public String getuWeight() {
+        return uWeight;
+    }
+
+    public void setuWeight(String uWeight) {
+        this.uWeight = uWeight;
+    }
+
+    public String getuHeight() {
+        return uHeight;
+    }
+
+    public void setuHeight(String uHeight) {
+        this.uHeight = uHeight;
+    }
 }
