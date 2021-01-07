@@ -13,14 +13,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.amplifyframework.AmplifyException;
-import com.amplifyframework.api.aws.AWSApiPlugin;
-import com.amplifyframework.auth.AuthUserAttributeKey;
-import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
-import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
-import com.amplifyframework.datastore.AWSDataStorePlugin;
-import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 
 import org.json.JSONException;
@@ -47,21 +40,6 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.activity_splash);
         u_id = 0;
 
-        try {
-
-            //AWS Cognito 연동
-            Amplify.addPlugin(new AWSCognitoAuthPlugin());
-
-            //AWS Lambda REST 연동
-            Amplify.addPlugin(new AWSApiPlugin());
-
-            //AWS IAM등 기본 설정값 연동
-            Amplify.configure(getApplicationContext());
-            Log.i("MyAmplifyApp", "Initialized Amplify");
-
-        } catch (AmplifyException error) {
-            Log.e("MyAmplifyApp", "Could not initialize Amplify", error);
-        }
 
         Amplify.Auth.fetchAuthSession(
                 result -> Log.i("AmplifyQuickstart", result.toString()),

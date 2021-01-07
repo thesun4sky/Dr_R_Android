@@ -4,11 +4,12 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
-import androidx.appcompat.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,20 +22,26 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amplifyframework.core.Amplify;
 import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.dao.DiaryInfoVO;
 import com.coawesome.hosea.dr_r.dao.DiaryVO;
 import com.coawesome.hosea.dr_r.dao.ResponseVO;
-import com.coawesome.hosea.dr_r.dao.UserVO;
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -43,6 +50,9 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class WriteDiaryActivity extends AppCompatActivity {
 
@@ -65,6 +75,9 @@ public class WriteDiaryActivity extends AppCompatActivity {
     private ImageView ivImg;
     boolean photo_has_changed;
     private Bitmap bitmapPhoto;
+    String img_path;
+    private Intent requestFileIntent;
+    private ParcelFileDescriptor inputPFD;
     String result;
     CheckBox fever, cough, diarrhea, cb_etc;
     TextView tv;
@@ -620,6 +633,8 @@ public class WriteDiaryActivity extends AppCompatActivity {
         params.put("wDiary", obj.toString());
 
         try {
+            //S3 Bucket에 이미지 업로드
+            uploadFile(new File(img_path));
 
             submit.setEnabled(false);
             aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Diary")
@@ -669,6 +684,25 @@ public class WriteDiaryActivity extends AppCompatActivity {
         }
     }
 
+    private void uploadFile(File file) {
+
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            writer.append("Example file contents");
+            writer.close();
+        } catch (Exception exception) {
+            Log.e("MyAmplifyApp", "Upload failed", exception);
+        }
+
+        Amplify.Storage.uploadFile(
+                file.getName(),
+                file,
+                result -> Log.i("MyAmplifyApp", "Successfully uploaded: " + result.getKey()),
+                storageFailure -> Log.e("MyAmplifyApp", "Upload failed", storageFailure)
+        );
+    }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -688,6 +722,8 @@ public class WriteDiaryActivity extends AppCompatActivity {
                     if (bitmapPhoto != null) {
                         ivImg.setImageBitmap(bitmapPhoto);
                         photo_has_changed = true;
+                        img_path = saveBitmapToJpg(bitmapPhoto, fileName);
+                        uploadFile(new File(img_path));
                     }
 
                 } catch (IOException e) {
@@ -696,6 +732,114 @@ public class WriteDiaryActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+    public String saveBitmapToJpg(Bitmap bitmap , String name) {
+        /**
+         * 캐시 디렉토리에 비트맵을 이미지파일로 저장하는 코드입니다.
+         *
+         * @version target API 29 ★ API30이상은 테스트 하지않았습니다.★
+         * @param Bitmap bitmap - 저장하고자 하는 이미지의 비트맵
+         * @param String fileName - 저장하고자 하는 이미지의 비트맵
+         *
+         * File storage = 저장이 될 저장소 위치
+         *
+         * return = 저장된 이미지의 경로
+         *
+         * 비트맵에 사용될 스토리지와 이름을 지정하고 이미지파일을 생성합니다.
+         * FileOutputStream으로 이미지파일에 비트맵을 추가해줍니다.
+         */
+
+        File storage = getCacheDir(); //  path = /data/user/0/YOUR_PACKAGE_NAME/cache
+        String fileName = name;
+        File imgFile = new File(storage, fileName);
+        try {
+            imgFile.createNewFile();
+            FileOutputStream out = new FileOutputStream(imgFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 10, out); //썸네일로 사용하므로 퀄리티를 낮게설정
+            out.close();
+        } catch (FileNotFoundException e) {
+            Log.e("saveBitmapToJpg","FileNotFoundException : " + e.getMessage());
+        } catch (IOException e) {
+            Log.e("saveBitmapToJpg","IOException : " + e.getMessage());
+        }
+        Log.d("imgPath" , getCacheDir() + "/" +fileName);
+        return getCacheDir() + "/" +fileName;
+    }
+
+    /** 비트맵을 파일캐시에 저장하는 함수 **/
+    private void SaveBitmapToFileCache(Bitmap bitmap, String strFilePath) {
+        File fileCacheItem = new File(strFilePath);
+        OutputStream out = null;
+        try {
+            fileCacheItem.createNewFile();
+            out = new FileOutputStream(fileCacheItem);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out); }
+        catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    /** Uri에서 Cursor로 경로가져오는 함수 **/
+    private String getPath(Uri uri)
+    {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
+
+
+    /** Uri에서 파일가져오는 함수 **/
+    private byte[] getFile(Uri uri){
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(); // ByteArray  소환
+
+        BitmapFactory.Options options = new BitmapFactory.Options(); // BitmapFactory
+
+        options.inSampleSize = 3;  // 이건 다 알 것 같지만 설명한번 하고 갑니다.
+
+        // inSampleSize는 사이즈 축소라고 생각하시면 됩니다. 1은 100%, 3은 3개의 픽셀을 하나로 합친다고 생각하면 됩니다.
+
+        // 그렇게 되면 숫자가 높을 수록 화질이 형편없겠지요. 저는 3정도로 주었습니다.
+
+        Bitmap bitmap = null;
+
+        try {
+            /*
+             * Get the content resolver instance for this context, and use it
+             * to get a ParcelFileDescriptor for the file.
+             */
+            inputPFD = getContentResolver().openFileDescriptor(uri, "r");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.e("MainActivity", "File not found.");
+            return null;
+        }
+        // Get a regular file descriptor for the file
+        FileDescriptor fd = inputPFD.getFileDescriptor();
+
+        bitmap = BitmapFactory.decodeFileDescriptor(fd, null, options);
+
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);   // 압축을 합니다.
+
+        byte[] imageBytes = baos.toByteArray();   // ByteArray로 받아서.
+
+        //arrayImage.add(imageBytes);   // 저장을 할 건데. 저는 ArrayList<byte[]> 로 받았습니다.
+
+        bitmap.recycle();
+
+        bitmap = null;
+
+        return imageBytes;
     }
 
     private DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
