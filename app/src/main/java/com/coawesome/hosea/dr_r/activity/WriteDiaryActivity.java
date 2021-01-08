@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.amplifyframework.core.Amplify;
 import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
+import com.coawesome.hosea.dr_r.async.AsyncTaskLoadImage;
 import com.coawesome.hosea.dr_r.dao.DiaryInfoVO;
 import com.coawesome.hosea.dr_r.dao.DiaryVO;
 import com.coawesome.hosea.dr_r.dao.ResponseVO;
@@ -33,15 +34,11 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -50,11 +47,12 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class WriteDiaryActivity extends AppCompatActivity {
+
+    private String AWS_S3_BUCKET_URL = "https://drrbucket162721-dev.s3.amazonaws.com/public/";
 
     private AQuery aq;
     int year, month, day;
@@ -90,8 +88,10 @@ public class WriteDiaryActivity extends AppCompatActivity {
     TextView start;
     TextView end;
     private byte[] byteArray;
-    private String fileName;
+    private String fileName = "";
+    private String originFileName = "";
     private DiaryVO diaryVO;
+    private Uri mImageCaptureUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -228,9 +228,11 @@ public class WriteDiaryActivity extends AppCompatActivity {
         //아무 선택없을때 db에 보낼 Date;
         result_year = year;
         result_month = month + 1;
+        String monStr = (result_month<10)? "0"+result_month : ""+result_month;
         result_day = day;
+        String dayStr = (result_day<10)? "0"+result_day : ""+result_day;
 
-        date = result_year + "-" + result_month + "-" + result_day + " ";
+        date = result_year + "-" + monStr + "-" + dayStr + " ";
 
 
         readDiary();
@@ -402,6 +404,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
         next_year = 0;
         next_month = 0;
         next_day = 0;
+        img_path = "";
         spinner_depart.setSelection(0);
         hospital_depart = spinner_depart.getItemAtPosition(0);
         spinner_hospital.setSelection(0);
@@ -420,6 +423,18 @@ public class WriteDiaryActivity extends AppCompatActivity {
         weight.setText(infoVO.getWeight() + "");
         height.setText(infoVO.getHeight() + "");
         memo.setText(infoVO.getMemo());
+
+        //이미지 출력
+        try {
+            originFileName = infoVO.getFileName();
+            fileName = infoVO.getFileName();
+            String imageUrl = AWS_S3_BUCKET_URL + fileName;
+            new AsyncTaskLoadImage(ivImg).execute(imageUrl);
+            addPhoto.setVisibility(addPhoto.GONE);
+        }catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "이미지 불러오기 실패", Toast.LENGTH_SHORT).show();
+        }
 
         //질병 체크 박스
         String original_treat = infoVO.getTreat();
@@ -579,24 +594,15 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
         }
 
-
-        /*if (!diaryVO.getC_img().equals(null) && !diaryVO.getC_img().equals("") && !diaryVO.getC_img().equals("null")) {
-            String IMG_URL = "http://52.205.170.152/storedimg/" + diaryVO.getC_img();
-            aq.id(R.id.photo).image(IMG_URL);
-            addPhoto.setVisibility(addPhoto.GONE);
-        } else {
-            ivImg.setImageDrawable(null);
-            addPhoto.setVisibility(View.VISIBLE);
-        }*/
-
-
     }
 
     public void writeDiary() throws ParseException, JSONException {
         JSONObject obj = new JSONObject();
-        diary_date_string = result_year + "-" + result_month + "-" + result_day;
+        String monStr = (result_month<10)? "0"+result_month : ""+result_month;
+        String dayStr = (result_day<10)? "0"+result_day : ""+result_day;
+        diary_date_string = result_year + "-" + monStr + "-" + dayStr;
         if (next_year != 0) {
-            next_date_string = next_year + "-" + next_month + "-" + next_day;
+            next_date_string = next_year + "-" + monStr + "-" + dayStr;
             obj.put("next", next_date_string);
         } else {
             obj.put("next", 0);
@@ -620,21 +626,33 @@ public class WriteDiaryActivity extends AppCompatActivity {
         } else {
             obj.put("shot", shot.toString());
         }
+        double weightNum = Double.parseDouble(weight.getText().toString());
+        double heightNum = Double.parseDouble(height.getText().toString());
+        if(weightNum < 1 || heightNum < 1) {
+            Toast.makeText(getApplicationContext(), "키와 몸무게는 필수 입력입니다.", Toast.LENGTH_SHORT).show();
+        }
 
-        obj.put("userId", previousIntent.getStringExtra("userId"));
+        String userStr = previousIntent.getStringExtra("userId");
+        String dateStr = dateFormat.format(diary_date);
+        fileName = userStr + "_" + dateStr + fileName;
+        obj.put("userId", userStr);
         obj.put("memo", memo.getText().toString());
-        obj.put("weight", Double.parseDouble(weight.getText().toString()));
-        obj.put("height", Double.parseDouble(height.getText().toString()));
+        obj.put("weight", weightNum);
+        obj.put("height", heightNum);
         obj.put("treat", printdisease());
+        obj.put("fileName", fileName);
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put("userId", previousIntent.getStringExtra("userId"));
-        params.put("wDate", dateFormat.format(diary_date));
+        params.put("userId", userStr);
+        params.put("wDate", dateStr);
         params.put("wDiary", obj.toString());
 
         try {
-            //S3 Bucket에 이미지 업로드
-            uploadFile(new File(img_path));
+            if(photo_has_changed && !originFileName.equals(fileName)){
+                //S3 Bucket에 이미지 업로드
+                File file = createFileFromUri(mImageCaptureUri,fileName);
+                uploadFile(file);
+            }
 
             submit.setEnabled(false);
             aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Diary")
@@ -650,49 +668,14 @@ public class WriteDiaryActivity extends AppCompatActivity {
                         }
                     });
 
-            //TODO 이미지 저장처리
-            //ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            //bitmapPhoto = ((BitmapDrawable) ivImg.getDrawable()).getBitmap();
-            //bitmapPhoto.compress(Bitmap.CompressFormat.PNG, 50, stream);
-            //byteArray = stream.toByteArray();
-            //obj.put("file", byteArray);
-            //obj.put("c_img", fileName);
-            /*aq.ajax("http://52.205.170.152:8080/writeDiaryWithImg", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-                @Override
-                public void callback(String url, JSONObject html, AjaxStatus status) {
-                    if (html != null) {
-                        Toast.makeText(getApplicationContext(), "등록 완료", Toast.LENGTH_SHORT).show();
-                        WriteDiaryActivity.this.finish();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "네트워크 연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });*/
 
-        } catch (NullPointerException ignored) {
-            /*aq.ajax("http://52.205.170.152:8080/writeDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-                @Override
-                public void callback(String url, JSONObject html, AjaxStatus status) {
-                    if (html != null) {
-                        Toast.makeText(getApplicationContext(), "등록 완료", Toast.LENGTH_SHORT).show();
-                        WriteDiaryActivity.this.finish();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "네트워크 연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });*/
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "업로드에 실패 했습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void uploadFile(File file) {
-
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            writer.append("Example file contents");
-            writer.close();
-        } catch (Exception exception) {
-            Log.e("MyAmplifyApp", "Upload failed", exception);
-        }
 
         Amplify.Storage.uploadFile(
                 file.getName(),
@@ -711,7 +694,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
         if (requestCode == PICK_FROM_ALBUM) {
             if (data != null) {
                 addPhoto.setVisibility(addPhoto.GONE);
-                Uri mImageCaptureUri = data.getData();
+                mImageCaptureUri = data.getData();
                 bitmapPhoto = null;
                 try {
                     bitmapPhoto = MediaStore.Images.Media.getBitmap(getContentResolver(), mImageCaptureUri);
@@ -722,8 +705,6 @@ public class WriteDiaryActivity extends AppCompatActivity {
                     if (bitmapPhoto != null) {
                         ivImg.setImageBitmap(bitmapPhoto);
                         photo_has_changed = true;
-                        img_path = saveBitmapToJpg(bitmapPhoto, fileName);
-                        uploadFile(new File(img_path));
                     }
 
                 } catch (IOException e) {
@@ -734,112 +715,19 @@ public class WriteDiaryActivity extends AppCompatActivity {
         }
     }
 
-    public String saveBitmapToJpg(Bitmap bitmap , String name) {
-        /**
-         * 캐시 디렉토리에 비트맵을 이미지파일로 저장하는 코드입니다.
-         *
-         * @version target API 29 ★ API30이상은 테스트 하지않았습니다.★
-         * @param Bitmap bitmap - 저장하고자 하는 이미지의 비트맵
-         * @param String fileName - 저장하고자 하는 이미지의 비트맵
-         *
-         * File storage = 저장이 될 저장소 위치
-         *
-         * return = 저장된 이미지의 경로
-         *
-         * 비트맵에 사용될 스토리지와 이름을 지정하고 이미지파일을 생성합니다.
-         * FileOutputStream으로 이미지파일에 비트맵을 추가해줍니다.
-         */
-
-        File storage = getCacheDir(); //  path = /data/user/0/YOUR_PACKAGE_NAME/cache
-        String fileName = name;
-        File imgFile = new File(storage, fileName);
-        try {
-            imgFile.createNewFile();
-            FileOutputStream out = new FileOutputStream(imgFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 10, out); //썸네일로 사용하므로 퀄리티를 낮게설정
-            out.close();
-        } catch (FileNotFoundException e) {
-            Log.e("saveBitmapToJpg","FileNotFoundException : " + e.getMessage());
-        } catch (IOException e) {
-            Log.e("saveBitmapToJpg","IOException : " + e.getMessage());
+    File createFileFromUri(Uri uri, String objectKey) throws IOException {
+        InputStream is = getContentResolver().openInputStream(uri);
+        File file = new File(getCacheDir(), objectKey);
+        file.createNewFile();
+        FileOutputStream fos = new FileOutputStream(file);
+        byte[] buf = new byte[2046];
+        int read = -1;
+        while ((read = is.read(buf)) != -1) {
+            fos.write(buf, 0, read);
         }
-        Log.d("imgPath" , getCacheDir() + "/" +fileName);
-        return getCacheDir() + "/" +fileName;
-    }
-
-    /** 비트맵을 파일캐시에 저장하는 함수 **/
-    private void SaveBitmapToFileCache(Bitmap bitmap, String strFilePath) {
-        File fileCacheItem = new File(strFilePath);
-        OutputStream out = null;
-        try {
-            fileCacheItem.createNewFile();
-            out = new FileOutputStream(fileCacheItem);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out); }
-        catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    /** Uri에서 Cursor로 경로가져오는 함수 **/
-    private String getPath(Uri uri)
-    {
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
-    }
-
-
-    /** Uri에서 파일가져오는 함수 **/
-    private byte[] getFile(Uri uri){
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(); // ByteArray  소환
-
-        BitmapFactory.Options options = new BitmapFactory.Options(); // BitmapFactory
-
-        options.inSampleSize = 3;  // 이건 다 알 것 같지만 설명한번 하고 갑니다.
-
-        // inSampleSize는 사이즈 축소라고 생각하시면 됩니다. 1은 100%, 3은 3개의 픽셀을 하나로 합친다고 생각하면 됩니다.
-
-        // 그렇게 되면 숫자가 높을 수록 화질이 형편없겠지요. 저는 3정도로 주었습니다.
-
-        Bitmap bitmap = null;
-
-        try {
-            /*
-             * Get the content resolver instance for this context, and use it
-             * to get a ParcelFileDescriptor for the file.
-             */
-            inputPFD = getContentResolver().openFileDescriptor(uri, "r");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Log.e("MainActivity", "File not found.");
-            return null;
-        }
-        // Get a regular file descriptor for the file
-        FileDescriptor fd = inputPFD.getFileDescriptor();
-
-        bitmap = BitmapFactory.decodeFileDescriptor(fd, null, options);
-
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);   // 압축을 합니다.
-
-        byte[] imageBytes = baos.toByteArray();   // ByteArray로 받아서.
-
-        //arrayImage.add(imageBytes);   // 저장을 할 건데. 저는 ArrayList<byte[]> 로 받았습니다.
-
-        bitmap.recycle();
-
-        bitmap = null;
-
-        return imageBytes;
+        fos.flush();
+        fos.close();
+        return file;
     }
 
     private DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -873,9 +761,11 @@ public class WriteDiaryActivity extends AppCompatActivity {
             //날짜 선택후  db에 보탤 Date;
             result_year = start_year;
             result_month = start_month;
+            String monStr = (result_month<10)? "0"+result_month : ""+result_month;
             result_day = start_day;
+            String dayStr = (result_day<10)? "0"+result_day : ""+result_day;
 
-            date = result_year + "-" + result_month + "-" + result_day;
+            date = result_year + "-" + monStr + "-" + dayStr;
             readDiary();
         }
     };

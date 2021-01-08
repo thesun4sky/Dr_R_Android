@@ -4,16 +4,17 @@ package com.coawesome.hosea.dr_r.dao;
  * Created by thesun.kim on 2020-12-26.
  */
 public class DiaryInfoVO {
-    private String weight;
-    private String height;
-    private String memo;
-    private String treat;
-    private String next;
-    private String hospital;
-    private String depart;
-    private String shot;
+    private String weight = "";
+    private String height = "";
+    private String memo = "";
+    private String treat = "";
+    private String next = "";
+    private String hospital = "";
+    private String depart = "";
+    private String shot = "";
+    private String fileName = "";
 
-    public DiaryInfoVO(String weight, String height, String memo, String treat, String next, String hospital, String depart, String shot) {
+    public DiaryInfoVO(String weight, String height, String memo, String treat, String next, String hospital, String depart, String shot, String fileName) {
         this.weight = weight;
         this.height = height;
         this.memo = memo;
@@ -22,6 +23,7 @@ public class DiaryInfoVO {
         this.hospital = hospital;
         this.depart = depart;
         this.shot = shot;
+        this.fileName = fileName;
     }
 
     public String getWeight() {
@@ -86,5 +88,13 @@ public class DiaryInfoVO {
 
     public void setShot(String shot) {
         this.shot = shot;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }
