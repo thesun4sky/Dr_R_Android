@@ -1,0 +1,18 @@
+{
+  "auth": {
+    "drrb272d830": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  },
+  "function": {},
+  "api": {},
+  "storage": {
+    "drrbucket": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation"
+    }
+  }
+}

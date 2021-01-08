@@ -1,0 +1,56 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-drr-dev-162721-authRole",
+      "UnauthRoleArn": "arn:aws:iam::714082142085:role/amplify-drr-dev-162721-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::714082142085:role/amplify-drr-dev-162721-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-drr-dev-162721-deployment",
+      "UnauthRoleName": "amplify-drr-dev-162721-unauthRole",
+      "StackName": "amplify-drr-dev-162721",
+      "StackId": "arn:aws:cloudformation:us-east-1:714082142085:stack/amplify-drr-dev-162721/b973b9e0-ffc9-11ea-9bc5-0e4c53e0aefd",
+      "AmplifyAppId": "d2sv18m1jk0zw6"
+    }
+  },
+  "auth": {
+    "drrb272d830": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false,
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-drr-dev-162721-deployment/amplify-cfn-templates/auth/drrb272d830-cloudformation-template.yml",
+        "logicalId": "authdrrb272d830"
+      },
+      "lastPushTimeStamp": "2021-01-07T14:49:27.604Z",
+      "output": {
+        "AppClientSecret": "18gltd0pc7toh19euj5epctbggrg16s4dbcln7nd4fftrdbi2veg",
+        "UserPoolId": "us-east-1_dQ0pbDiGH",
+        "AppClientIDWeb": "rcckcdu2dd5j8m6rhlabe9jfd",
+        "AppClientID": "33oieu96kvoq33hld2q0i7iok3",
+        "IdentityPoolId": "us-east-1:a75e5cd2-4395-4ab9-9769-2c91df75d7cb",
+        "IdentityPoolName": "drrb272d830_identitypool_b272d830__dev",
+        "UserPoolName": "drrb272d830_userpool_b272d830"
+      },
+      "lastPushDirHash": "jQ+mHr1E0XeJSMEiZtgvGoKPEkE="
+    }
+  },
+  "function": {},
+  "api": {},
+  "storage": {
+    "drrbucket": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-drr-dev-162721-deployment/amplify-cfn-templates/storage/s3-cloudformation-template.json",
+        "logicalId": "storagedrrbucket"
+      },
+      "lastPushTimeStamp": "2021-01-07T14:49:27.604Z",
+      "output": {
+        "BucketName": "drrbucket162721-dev",
+        "Region": "us-east-1"
+      },
+      "lastPushDirHash": "hD8EnyD2DFJwyMbS4qqQWm6FXR4="
+    }
+  }
+}
