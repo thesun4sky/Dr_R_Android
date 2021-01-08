@@ -97,6 +97,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                if(id.getText().toString().length() < 5 || password.getText().toString().length() < 5){
+                    Toast.makeText(getApplicationContext(), "아이디 또는 비밀번호를 확인하세요", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Amplify.Auth.signIn(
                         id.getText().toString(),
                         password.getText().toString(),

@@ -93,10 +93,11 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.btn_main_1:
-                    intent = new Intent(getApplicationContext(), TimeActivity.class);
+                    /*intent = new Intent(getApplicationContext(), TimeActivity.class);
                     intent.putExtra("userId", previousIntent.getStringExtra("userId"))
                             .putExtra("uName", userVO.getuName());
-                    startActivity(intent);
+                    startActivity(intent);*/
+                    Toast.makeText(getApplicationContext(), "해당 기능은 패치 전 입니다.", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.btn_main_2:
                     intent = new Intent(getApplicationContext(), WriteDiaryActivity.class);
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                             .putExtra("uName", userVO.getuName());
                     startActivity(intent);
                     break;
-                //TODO shere버튼 생성 예정
+                //TODO share버튼 생성 예정
 //                    case R.id.share:
 //                        Intent msg = new Intent(Intent.ACTION_SEND);
 //                        msg.addCategory(Intent.CATEGORY_DEFAULT);
