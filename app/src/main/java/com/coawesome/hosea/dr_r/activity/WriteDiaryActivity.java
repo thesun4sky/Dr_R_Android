@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -33,11 +32,9 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -398,6 +395,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
         img_path = "";
         fileName = "";
         originFileName = "";
+        bitmapPhoto = null;
         spinner_depart.setSelection(0);
         hospital_depart = spinner_depart.getItemAtPosition(0);
         spinner_hospital.setSelection(0);
@@ -652,9 +650,9 @@ public class WriteDiaryActivity extends AppCompatActivity {
         params.put("wDiary", obj.toString());
 
         try {
-            if(photo_has_changed && !originFileName.equals(fileName)){
+            if(photo_has_changed && !originFileName.equals(fileName) && bitmapPhoto != null){
                 //S3 Bucket에 이미지 업로드
-                File file = createFileFromUri(mImageCaptureUri,fileName);
+                File file = createFileFromFileName(fileName);
                 uploadFile(file);
             }
 
@@ -689,14 +687,6 @@ public class WriteDiaryActivity extends AppCompatActivity {
         );
     }
 
-    private Bitmap compressBitmap(Bitmap bitmap){
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,40, stream);
-        byte[] byteArray = stream.toByteArray();
-        Bitmap compressedBitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
-        return compressedBitmap;
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -725,8 +715,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
         }
     }
 
-    File createFileFromUri(Uri uri, String objectKey) throws IOException {
-        InputStream is = getContentResolver().openInputStream(uri);
+    File createFileFromFileName(String objectKey) throws IOException {
         File file = new File(getCacheDir(), objectKey);
         file.createNewFile();
         FileOutputStream fos = new FileOutputStream(file);
