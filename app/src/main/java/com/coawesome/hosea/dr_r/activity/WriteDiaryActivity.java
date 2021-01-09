@@ -25,7 +25,6 @@ import android.widget.Toast;
 import com.amplifyframework.core.Amplify;
 import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
-import com.coawesome.hosea.dr_r.async.AsyncTaskLoadImage;
 import com.coawesome.hosea.dr_r.dao.DiaryInfoVO;
 import com.coawesome.hosea.dr_r.dao.DiaryVO;
 import com.coawesome.hosea.dr_r.dao.ResponseVO;
@@ -34,11 +33,11 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -52,8 +51,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class WriteDiaryActivity extends AppCompatActivity {
 
-    private String AWS_S3_BUCKET_URL = "https://drrbucket162721-dev.s3.amazonaws.com/public/";
-
     private AQuery aq;
     int year, month, day;
     final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
@@ -63,7 +60,6 @@ public class WriteDiaryActivity extends AppCompatActivity {
     Spinner spinner_hospital;
     Spinner spinner_depart;
     Spinner spinner_shot;
-    Date next_date;
     String date;
     Object depart, hospital_depart, shot;
     String diary_date_string;
@@ -74,8 +70,6 @@ public class WriteDiaryActivity extends AppCompatActivity {
     boolean photo_has_changed;
     private Bitmap bitmapPhoto;
     String img_path;
-    private Intent requestFileIntent;
-    private ParcelFileDescriptor inputPFD;
     String result;
     CheckBox fever, cough, diarrhea, cb_etc;
     TextView tv;
@@ -85,9 +79,6 @@ public class WriteDiaryActivity extends AppCompatActivity {
     int next_year = 0, next_month = 0, next_day = 0;
     int start_year = 0, start_month = 0, start_day = 0;
     private final int PICK_FROM_ALBUM = 1;
-    TextView start;
-    TextView end;
-    private byte[] byteArray;
     private String fileName = "";
     private String originFileName = "";
     private DiaryVO diaryVO;
@@ -405,6 +396,8 @@ public class WriteDiaryActivity extends AppCompatActivity {
         next_month = 0;
         next_day = 0;
         img_path = "";
+        fileName = "";
+        originFileName = "";
         spinner_depart.setSelection(0);
         hospital_depart = spinner_depart.getItemAtPosition(0);
         spinner_hospital.setSelection(0);
@@ -425,17 +418,26 @@ public class WriteDiaryActivity extends AppCompatActivity {
         memo.setText(infoVO.getMemo());
 
         //이미지 출력
-        try {
-            originFileName = infoVO.getFileName();
-            fileName = infoVO.getFileName();
-            String imageUrl = AWS_S3_BUCKET_URL + fileName;
-            new AsyncTaskLoadImage(ivImg).execute(imageUrl);
-            addPhoto.setVisibility(addPhoto.GONE);
-        }catch (Exception e){
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "이미지 불러오기 실패", Toast.LENGTH_SHORT).show();
+        if(infoVO.getFileName().length()>0) {
+            Amplify.Storage.downloadFile(
+                    infoVO.getFileName(),
+                    new File(getApplicationContext().getFilesDir() + infoVO.getFileName()),
+                    result -> {
+                        originFileName = infoVO.getFileName();
+                        fileName = infoVO.getFileName();
+                        File imgFile = result.getFile();
+                        String filePath = imgFile.getPath();
+                        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+                        ivImg.setImageBitmap(bitmap);
+                        addPhoto.setVisibility(addPhoto.GONE);
+                        Log.i("MyAmplifyApp", "Successfully downloaded: " + imgFile.getName());
+                    },
+                    error -> {
+                        Log.e("MyAmplifyApp", "Download Failure", error);
+                        Toast.makeText(getApplicationContext(), "이미지 불러오기 실패", Toast.LENGTH_SHORT).show();
+                    }
+            );
         }
-
         //질병 체크 박스
         String original_treat = infoVO.getTreat();
         String[] splitValue = original_treat.split(",");
@@ -634,7 +636,9 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
         String userStr = previousIntent.getStringExtra("userId");
         String dateStr = dateFormat.format(diary_date);
-        fileName = userStr + "_" + dateStr + fileName;
+        if(!fileName.contains(userStr+"_"+dateStr)) {
+            fileName = userStr + "_" + dateStr + fileName;
+        }
         obj.put("userId", userStr);
         obj.put("memo", memo.getText().toString());
         obj.put("weight", weightNum);
@@ -685,7 +689,13 @@ public class WriteDiaryActivity extends AppCompatActivity {
         );
     }
 
-
+    private Bitmap compressBitmap(Bitmap bitmap){
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,40, stream);
+        byte[] byteArray = stream.toByteArray();
+        Bitmap compressedBitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
+        return compressedBitmap;
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -720,11 +730,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
         File file = new File(getCacheDir(), objectKey);
         file.createNewFile();
         FileOutputStream fos = new FileOutputStream(file);
-        byte[] buf = new byte[2046];
-        int read = -1;
-        while ((read = is.read(buf)) != -1) {
-            fos.write(buf, 0, read);
-        }
+        bitmapPhoto.compress(Bitmap.CompressFormat.JPEG, 30, fos);
         fos.flush();
         fos.close();
         return file;
