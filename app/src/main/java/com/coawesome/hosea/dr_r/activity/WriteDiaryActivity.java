@@ -612,7 +612,9 @@ public class WriteDiaryActivity extends AppCompatActivity {
         String dayStr = (result_day<10)? "0"+result_day : ""+result_day;
         diary_date_string = result_year + "-" + monStr + "-" + dayStr;
         if (next_year != 0) {
-            next_date_string = next_year + "-" + monStr + "-" + dayStr;
+            String nMonStr = (next_month<10)? "0"+next_month : ""+next_month;
+            String nDayStr = (next_day<10)? "0"+next_day : ""+next_day;
+            next_date_string = next_year + "-" + nMonStr + "-" + nDayStr;
             obj.put("next", next_date_string);
         } else {
             obj.put("next", 0);
@@ -741,14 +743,11 @@ public class WriteDiaryActivity extends AppCompatActivity {
         public void onDateSet(DatePicker view, int year, int monthOfYear,
                               int dayOfMonth) {
             // TODO Auto-generated method stub
-            start_year = year;
-            start_month = monthOfYear + 1;
-            start_day = dayOfMonth;
+            next_year = year;
+            next_month = monthOfYear + 1;
+            next_day = dayOfMonth;
 
-            tv.setText(start_year + "/" + start_month + "/" + start_day);
-            next_year = start_year;
-            next_month = start_month;
-            next_day = start_day;
+            tv.setText(next_year + "/" + next_month + "/" + next_day);
 
         }
     };

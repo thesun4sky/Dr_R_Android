@@ -301,6 +301,7 @@ public class SleepTimeFragment extends Fragment {
         Map<String, String> params = new HashMap<String, String>();
         params.put("userId", user_id);
         params.put("sStart", dateFormat.format(s_start));
+        params.put("sStartTime", String.valueOf(s_start.getTime()));
         params.put("sEnd", dateFormat.format(s_end));
         params.put("sTotal", String.valueOf(endTime - startTime));
         aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Sleep")
@@ -322,9 +323,7 @@ public class SleepTimeFragment extends Fragment {
         month = Integer.parseInt(curMonthFormat.format(date));
         day = Integer.parseInt(curDayFormat.format(date));
         Date rStart = new Date(year+"/"+month+"/"+day+"/00:00:00");
-        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Sleep?userId=" + user_id + "&sStart=" + transFormat.format(rStart))
+        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Sleep?userId=" + user_id + "&sStartTime=" + rStart.getTime())
                 .get()
                 .showLoading()
                 .response((response, error) -> {
@@ -338,7 +337,6 @@ public class SleepTimeFragment extends Fragment {
                             e.printStackTrace();
                         }
                     } else {
-                        Toast.makeText(getActivity(), "네트워크 연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

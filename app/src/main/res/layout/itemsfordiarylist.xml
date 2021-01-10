@@ -112,7 +112,7 @@
             <!--증상 사진 -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
@@ -121,11 +121,27 @@
                     android:layout_height="wrap_content"
                     android:text="사진 : " />
 
-                <ImageView
-                    android:id="@+id/diary_iv_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="82dp"
-                    android:layout_margin="10dp" />
+                <RelativeLayout
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_width="100dp">
+                    <ImageView
+                        android:id="@+id/diary_iv_photo"
+                        android:layout_width="match_parent"
+                        android:layout_height="82dp"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1" />
+
+                    <ProgressBar
+                        android:id="@+id/img_progressBar"
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:visibility="invisible" />
+                </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
 

@@ -120,12 +120,10 @@ public class ReadDiaryActivity extends AppCompatActivity {
         result_sleep = 0;
         clockPieHelperArrayListForSleep.clear();
         sleepTotal.setText("수면 데이터 읽어오는 중...");
-        Map<String, Object> params = new HashMap<String, Object>();
         String userId = previousIntent.getStringExtra("userId");
         int real_month = start_month + 1;
         Date rStart = new Date(start_year+"/"+real_month+"/"+start_day+"/00:00:00");
-        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Sleep?userId=" + userId + "&sStart=" + transFormat.format(rStart))
+        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Sleep?userId=" + userId + "&sStartTime=" + rStart.getTime())
                 .get()
                 .showLoading()
                 .response((response, error) -> {
