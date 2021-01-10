@@ -17,6 +17,9 @@ public class DiaryVO {
         this.wDiary = wDiary;
     }
 
+    public DiaryVO(JSONObject jsonObject) {
+    }
+
     public String getUserId() {
         return userId;
     }

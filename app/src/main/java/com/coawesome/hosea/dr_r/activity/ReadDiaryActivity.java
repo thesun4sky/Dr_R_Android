@@ -14,11 +14,15 @@ import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.adapter.DiaryAdapter;
 import com.coawesome.hosea.dr_r.dao.DiaryVO;
+import com.coawesome.hosea.dr_r.dao.ResponseVO;
+import com.coawesome.hosea.dr_r.dao.SleepVO;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +31,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import im.dacer.androidcharts.ClockPieHelper;
@@ -110,8 +115,29 @@ public class ReadDiaryActivity extends AppCompatActivity {
     public void readSleep() {
         result_sleep = 0;
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("userId", previousIntent.getIntExtra("userId",0));
-        params.put("s_start", date + "00:00:00");
+        String userId = previousIntent.getStringExtra("userId");
+        int real_month = month + 1;
+        Date rStart = new Date(year+"/"+real_month+"/"+day+"/00:00:00");
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Sleep?userId=" + userId + "&sStart=" + transFormat.format(rStart))
+                .get()
+                .showLoading()
+                .response((response, error) -> {
+                    Gson gson = new Gson();
+                    ResponseVO resVO = gson.fromJson(response, ResponseVO.class);
+                    if(resVO.getItems().length>0){
+                        clockPieHelperArrayListForSleep.clear();
+                        try {
+                            jsonArrayToSleepArray(resVO.getItems());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        tv.setText("해당하는 데이터가 없습니다.");
+                    }
+                });
         /*aq.ajax("http://52.205.170.152:8080/getSleepTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
             @Override
             public void callback(String url, JSONArray html, AjaxStatus status) {
@@ -152,24 +178,25 @@ public class ReadDiaryActivity extends AppCompatActivity {
         });*/
     }
 
-    public void jsonArrayToSleepArray(JSONArray jsonArr) throws JSONException {
-        final SimpleDateFormat curHourFormat = new SimpleDateFormat("HH", Locale.KOREA);
+    public void jsonArrayToSleepArray(Object[] jsonArr) throws JSONException, ParseException {
+        Gson gson = new Gson();
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final SimpleDateFormat curHourFormat = new SimpleDateFormat("HH");
         curHourFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        final SimpleDateFormat curMinuteFormat = new SimpleDateFormat("mm", Locale.KOREA);
-        final SimpleDateFormat curSecFormat = new SimpleDateFormat("ss", Locale.KOREA);
-        for (int i = 0; i < jsonArr.length(); i++) {
-
-            long s_time = Long.parseLong(jsonArr.getJSONObject(i).getString("s_start"));
-            long e_time = Long.parseLong(jsonArr.getJSONObject(i).getString("s_end"));
+        for (int i = 0; i < jsonArr.length; i++) {
+            String json = gson.toJson(jsonArr[i]);
+            SleepVO vo = gson.fromJson(json, SleepVO.class);
+            long s_time = Objects.requireNonNull(transFormat.parse(vo.getsStart())).getTime();
+            long e_time = Objects.requireNonNull(transFormat.parse(vo.getsEnd())).getTime();
             result_sleep += e_time - s_time;
-            Date start = new Date(s_time);
-            Date end = new Date(e_time);
-            int s_hour = Integer.parseInt(curHourFormat.format(start));
-            int s_min = Integer.parseInt(curMinuteFormat.format(start));
-            int s_sec = Integer.parseInt(curSecFormat.format(start));
-            int e_hour = Integer.parseInt(curHourFormat.format(end));
-            int e_min = Integer.parseInt(curMinuteFormat.format(end));
-            int e_sec = Integer.parseInt(curSecFormat.format(end));
+            Date start = transFormat.parse(vo.getsStart());
+            Date end = transFormat.parse(vo.getsEnd());
+            int s_hour = start.getHours();
+            int s_min = start.getMinutes();
+            int s_sec = start.getSeconds();
+            int e_hour = end.getHours();
+            int e_min = end.getMinutes();
+            int e_sec = end.getSeconds();
 
             clockPieHelperArrayListForSleep.add(new ClockPieHelper(s_hour, s_min, s_sec, e_hour, e_min, e_sec));
             pieView.setDate(clockPieHelperArrayListForSleep);
@@ -234,12 +261,12 @@ public class ReadDiaryActivity extends AppCompatActivity {
         });*/
     }
 
-    /*public void jsonArrayToArrayList(JSONObject jsonObject) {
+    public void jsonArrayToArrayList(JSONObject jsonObject) {
         ArrayList<DiaryVO> arrayList = new ArrayList<>();
         arrayList.add(new DiaryVO(jsonObject));
         linktoAdapter(arrayList);
     }
-
+    /*
     public void jsonArrayToArrayListNoData( ) {
         ArrayList<DiaryVO> arrayList = new ArrayList<>();
         linktoAdapter(arrayList);
@@ -248,7 +275,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
 
     public void linktoAdapter(ArrayList<DiaryVO> list) {
         //어댑터 생성
-        DiaryAdapter diaryAdapter = new DiaryAdapter(this, R.layout.itemsfordiarylist, list , previousIntent.getIntExtra("u_id",0));
+        DiaryAdapter diaryAdapter = new DiaryAdapter(this, R.layout.itemsfordiarylist, list , previousIntent.getStringExtra("userId"));
         //어댑터 연결
         ListView lv = (ListView) findViewById(R.id.listView);
         lv.setAdapter(diaryAdapter);

@@ -321,11 +321,10 @@ public class SleepTimeFragment extends Fragment {
         year = Integer.parseInt(curYearFormat.format(date));
         month = Integer.parseInt(curMonthFormat.format(date));
         day = Integer.parseInt(curDayFormat.format(date));
-        Date rStart = new Date(year+"/"+month+"/"+day+"/0:0:0");
-        startTime = rStart.getTime() / 1000;
-        params.put("userId", user_id);
-        params.put("sStart", startTime);
-        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Sleep?userId=" + user_id + "&sStart=" + startTime)
+        Date rStart = new Date(year+"/"+month+"/"+day+"/00:00:00");
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Sleep?userId=" + user_id + "&sStart=" + transFormat.format(rStart))
                 .get()
                 .showLoading()
                 .response((response, error) -> {
