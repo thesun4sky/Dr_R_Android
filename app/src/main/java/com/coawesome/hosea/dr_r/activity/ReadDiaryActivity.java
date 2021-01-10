@@ -7,12 +7,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.adapter.DiaryAdapter;
+import com.coawesome.hosea.dr_r.dao.DiaryInfoVO;
 import com.coawesome.hosea.dr_r.dao.DiaryVO;
 import com.coawesome.hosea.dr_r.dao.ResponseVO;
 import com.coawesome.hosea.dr_r.dao.SleepVO;
@@ -48,7 +50,6 @@ public class ReadDiaryActivity extends AppCompatActivity {
     long result_feed = 0;
 
     int start_year = 0, start_month = 0, start_day = 0;
-    int year, month, day;
     String date;
     TextView tv, today, sleepTotal, feedTotal , powderTotal;
     SimpleDateFormat dateFormat;
@@ -68,23 +69,26 @@ public class ReadDiaryActivity extends AppCompatActivity {
 //        tv.setText(previousIntent.getStringExtra("u_name"));
 
         GregorianCalendar calendar = new GregorianCalendar();
-        year = calendar.get(Calendar.YEAR);
-        month = calendar.get(Calendar.MONTH);
-        day = calendar.get(Calendar.DAY_OF_MONTH);
+        start_year = calendar.get(Calendar.YEAR);
+        start_month = calendar.get(Calendar.MONTH);
+        start_day = calendar.get(Calendar.DAY_OF_MONTH);
         tv = (TextView) findViewById(R.id.date);
         sleepTotal = (TextView) findViewById(R.id.tv_sleepTotal);
         feedTotal = (TextView) findViewById(R.id.tv_feedTotal);
         powderTotal = (TextView)findViewById(R.id.tv_powder);
         today = (TextView) findViewById(R.id.dateForList);
 
-        date = year + "-" + (month + 1) + "-" + day + " ";
+        int real_mon = (start_month + 1);
+        String monStr = (real_mon<10)? "0"+real_mon : ""+real_mon;
+        String dayStr = (start_day<10)? "0"+start_day : ""+start_day;
+
+        date = start_year + "-" + monStr + "-" + dayStr + " ";
 
         findViewById(R.id.dateForList).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                DatePickerDialog datePickerDialog2 = new DatePickerDialog(ReadDiaryActivity.this, dateSetListener2, year, month, day);
+                DatePickerDialog datePickerDialog2 = new DatePickerDialog(ReadDiaryActivity.this, dateSetListener2, start_year, start_month, start_day);
                 datePickerDialog2.show();
             }
         });
@@ -97,7 +101,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
 
         pieView2.setDate(pieHelperArrayListForFeed);
 
-        today.setText(year + "년 " + (month + 1) + "월 " + day + "일 " + getDayKor());
+        today.setText(start_year + "년 " + real_mon + "월 " + start_day + "일 " + getDayKor());
         set();
         readDiary();
 
@@ -114,10 +118,12 @@ public class ReadDiaryActivity extends AppCompatActivity {
 
     public void readSleep() {
         result_sleep = 0;
+        clockPieHelperArrayListForSleep.clear();
+        sleepTotal.setText("수면 데이터 읽어오는 중...");
         Map<String, Object> params = new HashMap<String, Object>();
         String userId = previousIntent.getStringExtra("userId");
-        int real_month = month + 1;
-        Date rStart = new Date(year+"/"+real_month+"/"+day+"/00:00:00");
+        int real_month = start_month + 1;
+        Date rStart = new Date(start_year+"/"+real_month+"/"+start_day+"/00:00:00");
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Sleep?userId=" + userId + "&sStart=" + transFormat.format(rStart))
                 .get()
@@ -126,7 +132,6 @@ public class ReadDiaryActivity extends AppCompatActivity {
                     Gson gson = new Gson();
                     ResponseVO resVO = gson.fromJson(response, ResponseVO.class);
                     if(resVO.getItems().length>0){
-                        clockPieHelperArrayListForSleep.clear();
                         try {
                             jsonArrayToSleepArray(resVO.getItems());
                         } catch (JSONException e) {
@@ -135,7 +140,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     } else {
-                        tv.setText("해당하는 데이터가 없습니다.");
+                        sleepTotal.setText("0 시간 0 분 0 초");
                     }
                 });
         /*aq.ajax("http://52.205.170.152:8080/getSleepTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
@@ -246,8 +251,20 @@ public class ReadDiaryActivity extends AppCompatActivity {
 
     public void readDiary() {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("userId", previousIntent.getIntExtra("userId", 0));
-        params.put("wDate", date);
+        String userId = previousIntent.getStringExtra("userId");
+        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Diary?userId=" + userId + "&wDate=" + date)
+                .get()
+                .showLoading()
+                .response((response, error) -> {
+                    Gson gson = new Gson();
+                    ResponseVO resVO = gson.fromJson(response, ResponseVO.class);
+                    if(resVO.getItems().length>0){
+                        jsonArrayToArrayList(resVO.getItems()[0]);
+                    } else {
+                        Toast.makeText(getApplicationContext(),"해당날짜의 일지가 없습니다.",Toast.LENGTH_SHORT).show();
+                        jsonArrayToArrayListNoData();
+                    }
+                });
         /*aq.ajax("http://52.205.170.152:8080/getDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
@@ -261,19 +278,22 @@ public class ReadDiaryActivity extends AppCompatActivity {
         });*/
     }
 
-    public void jsonArrayToArrayList(JSONObject jsonObject) {
-        ArrayList<DiaryVO> arrayList = new ArrayList<>();
-        arrayList.add(new DiaryVO(jsonObject));
+    public void jsonArrayToArrayList(Object jsonObject) {
+        Gson gson = new Gson();
+        String json = gson.toJson(jsonObject);
+        DiaryVO vo = gson.fromJson(json, DiaryVO.class);
+        ArrayList<DiaryInfoVO> arrayList = new ArrayList<>();
+        arrayList.add(gson.fromJson(vo.getwDiary(), DiaryInfoVO.class));
         linktoAdapter(arrayList);
     }
-    /*
+
     public void jsonArrayToArrayListNoData( ) {
-        ArrayList<DiaryVO> arrayList = new ArrayList<>();
+        ArrayList<DiaryInfoVO> arrayList = new ArrayList<>();
         linktoAdapter(arrayList);
-    }*/
+    }
 
 
-    public void linktoAdapter(ArrayList<DiaryVO> list) {
+    public void linktoAdapter(ArrayList<DiaryInfoVO> list) {
         //어댑터 생성
         DiaryAdapter diaryAdapter = new DiaryAdapter(this, R.layout.itemsfordiarylist, list , previousIntent.getStringExtra("userId"));
         //어댑터 연결
@@ -307,16 +327,21 @@ public class ReadDiaryActivity extends AppCompatActivity {
                               int dayOfMonth) {
             // TODO Auto-generated method stub
             start_year = year;
-            start_month = monthOfYear + 1;
+            start_month = monthOfYear;
+            int real_month = start_month + 1;
             start_day = dayOfMonth;
-            date = start_year + "-" + start_month + "-" + start_day + " ";
+
+            String monStr = (real_month<10)? "0"+real_month : ""+real_month;
+            String dayStr = (start_day<10)? "0"+start_day : ""+start_day;
+
+            date = start_year + "-" + monStr + "-" + dayStr + " ";
             clockPieHelperArrayListForSleep.clear();
             clockPieHelperArrayListForFeed.clear();
             pieView.setDate(clockPieHelperArrayListForSleep);
             pieView2.setDate(clockPieHelperArrayListForFeed);
             set();
             readDiary();
-            today.setText(start_year + "년 " + (start_month) + "월 " + start_day + "일 " + getChangeDayKor());
+            today.setText(start_year + "년 " + (real_month) + "월 " + start_day + "일 " + getChangeDayKor());
         }
     };
 

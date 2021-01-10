@@ -1,25 +1,32 @@
 package com.coawesome.hosea.dr_r.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.amplifyframework.core.Amplify;
 import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.dao.DiaryInfoVO;
-import com.coawesome.hosea.dr_r.dao.DiaryVO;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -29,20 +36,20 @@ import java.util.Map;
  */
 
 public class DiaryAdapter extends BaseAdapter {
-    final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+    final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
     private Context dContext;
     private int dResource;
-    private int dU_id;
+    private int dUserId;
     private TextView age;
+    ProgressBar img_progress;
     private ArrayList<DiaryInfoVO> dItems = new ArrayList<>();
     private static final String RED = "#FF0000";
     private static final String BLUE = "#0000FF";
-    AQuery mAq;
 
 
     public void getExpectedDate() {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id", dU_id);
+        params.put("userId", dUserId);
         /*mAq.ajax("http://52.205.170.152:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject html, AjaxStatus status) {
@@ -148,11 +155,11 @@ public class DiaryAdapter extends BaseAdapter {
         }
     }
 
-    public DiaryAdapter(Context context, int resource, ArrayList<DiaryVO> items , int u_id) {
+    public DiaryAdapter(Context context, int resource, ArrayList<DiaryInfoVO> items , String userId) {
         dContext = context;
         dResource = resource;
-        //dItems = items;
-        dU_id = u_id;
+        dItems = items;
+        dUserId = dUserId;
     }
 
     @Override
@@ -196,6 +203,7 @@ public class DiaryAdapter extends BaseAdapter {
         TextView shot = (TextView) view.findViewById(R.id.diary_tv_shot);
         TextView next = (TextView) view.findViewById(R.id.diary_tv_next);
         TextView depart = (TextView) view.findViewById(R.id.diary_tv_depart);
+        ImageView diary_iv_photo = (ImageView) view.findViewById(R.id.diary_iv_photo);
 
 
         if (dItems != null) {
@@ -209,7 +217,6 @@ public class DiaryAdapter extends BaseAdapter {
             height.setText(diary.getHeight() + "(cm)");
             memo.setText(diary.getMemo());
 
-//            hospital.setBackgroundColor(0xFF00FF00);
             hospital.setText(diary.getHospital());
             treat.setText(diary.getTreat());
             shot.setText(diary.getShot());
@@ -222,15 +229,37 @@ public class DiaryAdapter extends BaseAdapter {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                long next_time = next_date.getTime();
                 int year = Integer.parseInt(curYearFormat.format(next_date));
                 int month = Integer.parseInt(curMonthFormat.format(next_date));
                 int day = Integer.parseInt(curDayFormat.format(next_date));
                 next.setText(year + "-" + month + "-" + day);
             }
             depart.setText(diary.getDepart());
-            String IMG_URL = "http://52.205.170.152/storedimg/";// + diary.getC_img();
-            mAq.id(R.id.diary_iv_photo).image(IMG_URL);
+            //이미지 출력
+            if(diary.getFileName().length()>0) {
+                img_progress = (ProgressBar) view.findViewById(R.id.img_progressBar);
+                img_progress.setVisibility(View.VISIBLE);
+                diary_iv_photo.setVisibility(View.GONE);
+                Amplify.Storage.downloadFile(
+                        diary.getFileName(),
+                        new File(dContext.getFilesDir() + diary.getFileName()),
+                        result -> {
+                            File imgFile = result.getFile();
+                            String filePath = imgFile.getPath();
+                            Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+                            img_progress.setVisibility(View.GONE);
+                            diary_iv_photo.setVisibility(View.VISIBLE);
+                            diary_iv_photo.setImageBitmap(bitmap);
+                            Log.i("MyAmplifyApp", "Successfully downloaded: " + imgFile.getName());
+                        },
+                        error -> {
+                            diary_iv_photo.setVisibility(View.GONE);
+                            img_progress.setVisibility(View.GONE);
+                            Log.e("MyAmplifyApp", "Download Failure", error);
+                            Toast.makeText(dContext, "이미지 불러오기 실패", Toast.LENGTH_SHORT).show();
+                        }
+                );
+            }
         } else {
             age.setText("");
             weight.setText("");
@@ -241,6 +270,7 @@ public class DiaryAdapter extends BaseAdapter {
             shot.setText("");
             next.setText("");
             depart.setText("");
+            diary_iv_photo.setVisibility(View.GONE);
         }
 
 //        temperature.setText("" + diary.getTemperature());
