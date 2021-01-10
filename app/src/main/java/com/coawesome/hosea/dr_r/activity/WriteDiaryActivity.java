@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +58,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
     Spinner spinner_hospital;
     Spinner spinner_depart;
     Spinner spinner_shot;
+    ProgressBar img_progress;
     String date;
     Object depart, hospital_depart, shot;
     String diary_date_string;
@@ -417,6 +419,10 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
         //이미지 출력
         if(infoVO.getFileName().length()>0) {
+            img_progress = (ProgressBar) findViewById(R.id.img_progressBar);
+            ivImg.setVisibility(View.GONE);
+            addPhoto.setVisibility(View.GONE);
+            img_progress.setVisibility(View.VISIBLE);
             Amplify.Storage.downloadFile(
                     infoVO.getFileName(),
                     new File(getApplicationContext().getFilesDir() + infoVO.getFileName()),
@@ -426,11 +432,15 @@ public class WriteDiaryActivity extends AppCompatActivity {
                         File imgFile = result.getFile();
                         String filePath = imgFile.getPath();
                         Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+                        ivImg.setVisibility(View.VISIBLE);
                         ivImg.setImageBitmap(bitmap);
-                        addPhoto.setVisibility(addPhoto.GONE);
+                        img_progress.setVisibility(View.GONE);
                         Log.i("MyAmplifyApp", "Successfully downloaded: " + imgFile.getName());
                     },
                     error -> {
+                        ivImg.setVisibility(View.GONE);
+                        img_progress.setVisibility(View.GONE);
+                        addPhoto.setVisibility(View.VISIBLE);
                         Log.e("MyAmplifyApp", "Download Failure", error);
                         Toast.makeText(getApplicationContext(), "이미지 불러오기 실패", Toast.LENGTH_SHORT).show();
                     }

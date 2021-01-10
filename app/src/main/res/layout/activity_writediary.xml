@@ -145,6 +145,16 @@
                 android:background="#FFDDDD"
                 android:text="사진첨부"
                 android:textColor="#000000" />
+
+            <ProgressBar
+                android:id="@+id/img_progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:visibility="invisible" />
         </RelativeLayout>
     </LinearLayout>
 
