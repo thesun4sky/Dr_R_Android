@@ -1,84 +1,53 @@
 package com.coawesome.hosea.dr_r.dao;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.sql.Timestamp;
-
-
 public class SleepVO {
-    private int s_id;
-    private int u_id;
-    private String u_name;
-    private Timestamp s_start;
-    private Timestamp s_end;
+    private String userId;
+    private String sStart;
+    private String sEnd;
+    private String sTotal;
     private int s_total;
 
-    public SleepVO(int s_id, int u_id, String u_name, Timestamp s_start, Timestamp s_end, int s_total) {
-        this.s_id = s_id;
-        this.u_id = u_id;
-        this.u_name = u_name;
-        this.s_start = s_start;
-        this.s_end = s_end;
-        this.s_total = s_total;
+    public SleepVO(String userId, String sStart, String sEnd, String sTotal) {
+        this.userId = userId;
+        this.sStart = sStart;
+        this.sEnd = sEnd;
+        this.sTotal = sTotal;
     }
 
-    public SleepVO(JSONObject jsonObject) {
-        try {
-            this.s_id = jsonObject.getInt("s_id");
-            this.u_id = jsonObject.getInt("u_id");
-            Long s_sleep = Long.parseLong(jsonObject.getString("s_start"));
-            Long e_sleep = Long.parseLong(jsonObject.getString("s_end"));
-            this.s_start = new Timestamp(s_sleep);
-            this.s_end = new Timestamp(e_sleep);
-            this.s_total = jsonObject.getInt("s_total");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public String getUserId() {
+        return userId;
     }
 
-    public int getS_id() {
-        return s_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public void setS_id(int s_id) {
-        this.s_id = s_id;
+    public String getsStart() {
+        return sStart;
     }
 
-    public int getU_id() {
-        return u_id;
+    public void setsStart(String sStart) {
+        this.sStart = sStart;
     }
 
-    public void setU_id(int u_id) {
-        this.u_id = u_id;
+    public String getsEnd() {
+        return sEnd;
     }
 
-    public String getU_name() {
-        return u_name;
+    public void setsEnd(String sEnd) {
+        this.sEnd = sEnd;
     }
 
-    public void setU_name(String u_name) {
-        this.u_name = u_name;
+    public String getsTotal() {
+        return sTotal;
     }
 
-    public Timestamp getS_start() {
-        return s_start;
-    }
-
-    public void setS_start(Timestamp s_start) {
-        this.s_start = s_start;
-    }
-
-    public Timestamp getS_end() {
-        return s_end;
-    }
-
-    public void setS_end(Timestamp s_end) {
-        this.s_end = s_end;
+    public void setsTotal(String sTotal) {
+        this.sTotal = sTotal;
     }
 
     public int getS_total() {
-        return s_total;
+        return Integer.parseInt(sTotal);
     }
 
     public void setS_total(int s_total) {

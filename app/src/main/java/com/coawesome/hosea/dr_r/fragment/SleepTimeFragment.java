@@ -2,6 +2,7 @@ package com.coawesome.hosea.dr_r.fragment;
 
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,13 +22,20 @@ import android.widget.Toast;
 
 import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
+import com.coawesome.hosea.dr_r.activity.JoinActivity;
+import com.coawesome.hosea.dr_r.activity.LoginActivity;
 import com.coawesome.hosea.dr_r.activity.TimeActivity;
+import com.coawesome.hosea.dr_r.activity.WriteDiaryActivity;
 import com.coawesome.hosea.dr_r.adapter.SleepAdapter;
+import com.coawesome.hosea.dr_r.dao.DiaryVO;
+import com.coawesome.hosea.dr_r.dao.ResponseVO;
 import com.coawesome.hosea.dr_r.dao.SleepVO;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,13 +51,13 @@ import java.util.Map;
 
 public class SleepTimeFragment extends Fragment {
 
-    private AQuery aq = new AQuery(getActivity());
+    private AQuery aq;
     private TextView myOutput, myToday, myToggle;
     private ImageView myCircle;
     long startTime, endTime;
     private SleepAdapter sleepAdapter;
     private ArrayList<SleepVO> sleepDataList;
-    int user_id = 0;
+    String user_id = "";
     Date s_start;
     Date s_end;
 
@@ -76,11 +84,11 @@ public class SleepTimeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //inflate the layout for this fragment
+        aq = new AQuery(getActivity());
         clicked_sleep = true;
         clicked_feed = false;
         final View view = inflater.inflate(R.layout.fragment_sleeptime, container, false);
-        Bundle args = getActivity().getIntent().getExtras();
-        user_id = args.getInt("u_id");
+        user_id = getActivity().getIntent().getStringExtra("userId");;
         myToday = (TextView) view.findViewById(R.id.today_sleep);
         myOutput = (TextView) view.findViewById(R.id.time_out);
         myToggle = (TextView) view.findViewById(R.id.sleep_toggle);
@@ -105,9 +113,6 @@ public class SleepTimeFragment extends Fragment {
         month = Integer.parseInt(curMonthFormat.format(date));
         day = Integer.parseInt(curDayFormat.format(date));
         sleepDataList = new ArrayList<>();
-//        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(22123123), 3));
-//        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(12123123), 2));
-//        sleepDataList.add(new SleepVO(1,2,"ghtpdk",new Timestamp(12123123), new Timestamp(11123123), 1));
         sleepAdapter = new SleepAdapter(view.getContext(), R.layout.itemsforsleeplist, sleepDataList);
         listView.setAdapter(sleepAdapter); // uses the view to get the context instead of getActivity().
 
@@ -237,7 +242,7 @@ public class SleepTimeFragment extends Fragment {
                                 "%02d:%02d:%02d", outTime / 1000 / 3600, (outTime / 1000 % 3600) / 60
                                 , (outTime / 1000 % 3600 % 60));
                         myOutput.setText(easy_outTime);
-                        writeDiary();
+                        writeSleep();
                         break;
                     case Pause:
                         myBaseTime = SystemClock.elapsedRealtime();
@@ -292,53 +297,58 @@ public class SleepTimeFragment extends Fragment {
         return "( " + week[cnt] + " )";
     }
 
-    public void writeDiary() {
-        Map<String, Object> params = new HashMap<String, Object>();
-        //params.put("u_id", previousIntent.getIntExtra("u_id", 0));
-        params.put("u_id", user_id);
-        params.put("s_start", dateFormat.format(s_start));
-        params.put("s_end", dateFormat.format(s_end));
-        params.put("s_total", endTime - startTime);
-        /*aq.ajax("http://52.205.170.152:8080/addSleepTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject html, AjaxStatus status) {
-                try {
-                    if (html.getString("msg").equals("정상 작동")) {
+    public void writeSleep() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("userId", user_id);
+        params.put("sStart", dateFormat.format(s_start));
+        params.put("sEnd", dateFormat.format(s_end));
+        params.put("sTotal", String.valueOf(endTime - startTime));
+        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Sleep")
+                .post(params)
+                .showLoading()
+                .response((response, error) -> {
+                    if (response != null) {
                         Toast.makeText(getActivity(), "작성 되었습니다.", Toast.LENGTH_SHORT).show();
                         readSleep();
+                    } else {
+                        Toast.makeText(getActivity(), "네트워크 연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });*/
+                });
     }
 
     public void readSleep() {
         Map<String, Object> params = new HashMap<String, Object>();
-        SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
-        params.put("u_id", user_id);
-        params.put("s_start", dateFormat2.format(date));
-        /*aq.ajax("http://52.205.170.152:8080/getSleepTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
-            @Override
-            public void callback(String url, JSONArray html, AjaxStatus status) {
-                if (html != null) {
-                    try {
+        year = Integer.parseInt(curYearFormat.format(date));
+        month = Integer.parseInt(curMonthFormat.format(date));
+        day = Integer.parseInt(curDayFormat.format(date));
+        Date rStart = new Date(year+"/"+month+"/"+day+"/0:0:0");
+        startTime = rStart.getTime() / 1000;
+        params.put("userId", user_id);
+        params.put("sStart", startTime);
+        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Sleep?userId=" + user_id + "&sStart=" + startTime)
+                .get()
+                .showLoading()
+                .response((response, error) -> {
+                    Gson gson = new Gson();
+                    ResponseVO resVO = gson.fromJson(response, ResponseVO.class);
+                    if(resVO.getItems().length>0){
                         sleepDataList.clear();
-                        jsonArrayToSleepArray(html);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        try {
+                            jsonArrayToSleepArray(resVO.getItems());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(getActivity(), "네트워크 연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Toast.makeText(getActivity(), "연결상태가 좋지않아 목록을 부를 수 없습니다.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });*/
+                });
     }
 
-    public void jsonArrayToSleepArray(JSONArray jsonArr) throws JSONException {
-        for (int i = 0; i < jsonArr.length(); i++) {
-            sleepDataList.add(new SleepVO(jsonArr.getJSONObject(i)));
+    public void jsonArrayToSleepArray(Object[] jsonArr) throws JSONException {
+        Gson gson = new Gson();
+        for (int i = 0; i < jsonArr.length; i++) {
+            String json = gson.toJson(jsonArr[i]);
+            sleepDataList.add(gson.fromJson(json, SleepVO.class));
             sleepAdapter.notifyDataSetChanged();
         }
     }

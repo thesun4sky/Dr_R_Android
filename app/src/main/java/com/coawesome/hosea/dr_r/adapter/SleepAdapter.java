@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.dao.SleepVO;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,7 +55,7 @@ public class SleepAdapter extends BaseAdapter {
                     (LayoutInflater) sContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(sResource, viewGroup,false);
         }
-
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         // Set DayName
         TextView sleepStartTime = (TextView) view.findViewById(R.id.tv_item_sleep_start_time);
         TextView sleepEndTime = (TextView) view.findViewById(R.id.tv_item_sleep_end_time);
@@ -66,18 +67,18 @@ public class SleepAdapter extends BaseAdapter {
         curHourFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         final SimpleDateFormat curMinuteFormat = new SimpleDateFormat("mm", Locale.KOREA);
         final SimpleDateFormat curSecFormat = new SimpleDateFormat("ss", Locale.KOREA);
-        Date sleep_start = new Date(sleepVO.getS_start().getTime());
-        Date sleep_end = new Date(sleepVO.getS_end().getTime());
+        Date sleep_start;
+        Date sleep_end;
+        try {
+            sleep_start = transFormat.parse(sleepVO.getsStart());
+            sleep_end = transFormat.parse(sleepVO.getsEnd());
 
-        int s_hour = Integer.parseInt(curHourFormat.format(sleep_start));
-        int s_min = Integer.parseInt(curMinuteFormat.format(sleep_start));
-
-        int e_hour = Integer.parseInt(curHourFormat.format(sleep_end));
-        int e_min = Integer.parseInt(curMinuteFormat.format(sleep_end));
-
-        sleepStartTime.setText(s_hour+"시"+s_min+"분");
-        sleepEndTime.setText(e_hour+"시"+e_min+"분");
-        total.setText(""+(sleepVO.getS_total()/60) + "분");
+            sleepStartTime.setText(sleep_start.getHours()+"시"+sleep_start.getMinutes()+"분");
+            sleepEndTime.setText(sleep_end.getHours()+"시"+sleep_end.getMinutes()+"분");
+            total.setText(""+(sleepVO.getS_total()/60) + "분" + (sleepVO.getS_total()%60) + "초");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         return view;
     }
