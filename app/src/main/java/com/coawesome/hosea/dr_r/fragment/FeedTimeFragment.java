@@ -28,10 +28,12 @@ import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.activity.TimeActivity;
 import com.coawesome.hosea.dr_r.adapter.FeedAdapter;
 import com.coawesome.hosea.dr_r.dao.FeedVO;
+import com.coawesome.hosea.dr_r.dao.ResponseVO;
+import com.coawesome.hosea.dr_r.dao.SleepVO;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,13 +48,13 @@ import java.util.Map;
  */
 
 public class FeedTimeFragment extends Fragment {
-    private AQuery aq = new AQuery(getActivity());
+    private AQuery aq;
     private TextView myOutput, myToday, myToggle, myPowderToggle;
     private ImageView myCircle,myPowderCircle;
     private FeedAdapter feedAdapter;
     private ArrayList<FeedVO> feedDataList;
     Date today;
-    int user_id;
+    String user_id;
     long startTime ,endTime;
     Date s_start;
     Date s_end;
@@ -78,10 +80,10 @@ public class FeedTimeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //inflate the layout for this fragment
+        aq = new AQuery(getActivity());
         clicked_sleep = false;
         clicked_feed = true;
-        Bundle args = getActivity().getIntent().getExtras();
-        user_id = args.getInt("u_id");
+        user_id = getActivity().getIntent().getStringExtra("userId");
         feed = "좌";
         final View view = inflater.inflate(R.layout.fragment_feedtime, container, false);
         myToday = (TextView) view.findViewById(R.id.today_feed);
@@ -177,7 +179,7 @@ public class FeedTimeFragment extends Fragment {
             listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                    if (feedDataList.get(position).getFeed().equals("분유")) {
+                    if (feedDataList.get(position).getfType().equals("분유")) {
                         LayoutInflater inflater=getActivity().getLayoutInflater();
                         final View dialogView= inflater.inflate(R.layout.dialog_change_feed, null);
                         AlertDialog.Builder buider= new AlertDialog.Builder(getActivity()); //AlertDialog.Builder 객체 생성
@@ -189,27 +191,23 @@ public class FeedTimeFragment extends Fragment {
                                 EditText editText = (EditText) dialogView.findViewById(R.id.dialog_change_feed);
 
                                 if (!editText.getText().toString().equals("")) {
-                                    SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
-                                    feedDataList.get(position).getF_start().getTime();
-                                    Date update_Date = new Date( feedDataList.get(position).getF_start().getTime()-32400000);
-                                    Map<String, Object> params = new HashMap<String, Object>();
-                                    params.put("u_id" , user_id);
-                                    params.put("f_start" , dateFormat2.format(update_Date));
-                                    params.put("f_total", editText.getText().toString());
-                                   /* aq.ajax("http://52.205.170.152:8080/updateFeed", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-                                        @Override
-                                        public void callback(String url, JSONObject html, AjaxStatus status) {
-                                            try {
-                                                if (html.getString("msg").equals("정상 작동")) {
-                                                    Toast.makeText(getActivity(), "변경 되었습니다.", Toast.LENGTH_SHORT).show();
+                                    Map<String, String> params = new HashMap<String, String>();
+                                    params.put("userId", user_id);
+                                    params.put("fType", feed);
+                                    params.put("fStart", feedDataList.get(position).getfStart());
+                                    params.put("fStartTime", feedDataList.get(position).getfStartTime());
+                                    params.put("fTotal", editText.getText().toString());
+                                    aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Feed")
+                                            .post(params)
+                                            .showLoading()
+                                            .response((response, error) -> {
+                                                if (response != null) {
+                                                    Toast.makeText(getActivity(), "변경되었습니다.", Toast.LENGTH_SHORT).show();
                                                     readFeed();
+                                                } else {
+                                                    Toast.makeText(getActivity(), "네트워크 연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
                                                 }
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    });*/
-                                    Toast.makeText(getActivity(), "변경되었습니다.", Toast.LENGTH_SHORT).show();
+                                            });
                                 } else {
                                     Toast.makeText(getActivity(), "취소 되었습니다.", Toast.LENGTH_SHORT).show();
                                 }
@@ -218,7 +216,7 @@ public class FeedTimeFragment extends Fragment {
                         buider.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getActivity(), "약관을 동의 하셔야 가입이 가능합니다.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "분유량 변경이 취소되었습니다.", Toast.LENGTH_SHORT).show();
                             }
                         });
                         AlertDialog dialog=buider.create();
@@ -358,7 +356,7 @@ public class FeedTimeFragment extends Fragment {
                         outTime = 0;
                         String easy_outTime = String.format("%02d:%02d:%02d", outTime / 1000 / 3600 , (outTime / 1000 % 3600) / 60, (outTime / 1000 %3600 %60 ));
                         myOutput.setText(easy_outTime);
-                        writeDiary();
+                        writeFeed();
                         break;
                     case Pause:
                         myBaseTime = SystemClock.elapsedRealtime();
@@ -418,76 +416,76 @@ public class FeedTimeFragment extends Fragment {
 
         return "( "+week[cnt]+" )";
     }
-    public void writeDiary() {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id" , user_id);
-        params.put("f_start" , dateFormat.format(s_start));
-        params.put("f_end" , dateFormat.format(s_end));
-        params.put("f_total" , endTime-startTime);
-        params.put("feed", feed);
-        /*aq.ajax("http://52.205.170.152:8080/addFeedTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject html, AjaxStatus status) {
-                try {
-                    if (html.getString("msg").equals("정상 작동")) {
+    public void writeFeed() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("userId", user_id);
+        params.put("fType", feed);
+        params.put("fStart", dateFormat.format(s_start));
+        params.put("fStartTime", String.valueOf(s_start.getTime()));
+        params.put("fEnd", dateFormat.format(s_end));
+        params.put("fTotal", String.valueOf(endTime - startTime));
+        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Feed")
+                .post(params)
+                .showLoading()
+                .response((response, error) -> {
+                    if (response != null) {
                         Toast.makeText(getActivity(), "작성 되었습니다.", Toast.LENGTH_SHORT).show();
                         readFeed();
+                    } else {
+                        Toast.makeText(getActivity(), "네트워크 연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });*/
+                });
 
     }
     public void readFeed() {
-        Map<String, Object> params = new HashMap<String, Object>();
-        SimpleDateFormat dateFormat2 = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
-        params.put("u_id", user_id);
-        params.put("f_start", dateFormat2.format(date));
-        /*aq.ajax("http://52.205.170.152:8080/getFeedTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
-            @Override
-            public void callback(String url, JSONArray html, AjaxStatus status) {
-                if (html != null) {
-                    try {
+        year = Integer.parseInt(curYearFormat.format(date));
+        month = Integer.parseInt(curMonthFormat.format(date));
+        day = Integer.parseInt(curDayFormat.format(date));
+        Date rStart = new Date(year+"/"+month+"/"+day+"/00:00:00");
+        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Feed?userId=" + user_id + "&fStartTime=" + rStart.getTime())
+                .get()
+                .showLoading()
+                .response((response, error) -> {
+                    Gson gson = new Gson();
+                    ResponseVO resVO = gson.fromJson(response, ResponseVO.class);
+                    if(resVO.getItems().length>0){
                         feedDataList.clear();
-                        jsonArrayToSleepArray(html);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        try {
+                            jsonArrayToFeedArray(resVO.getItems());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
                     }
-                } else {
-                    Toast.makeText(getActivity(),"연결상태가 좋지않아 목록을 부를 수 없습니다.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });*/
+                });
     }
     public void writePowder(int amount) {
         today = new Date();
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id" , user_id);
-        params.put("f_start" , dateFormat.format(today));
-        params.put("f_end" , dateFormat.format(today));
-        params.put("f_total" , amount);
-        params.put("feed", feed);
-       /* aq.ajax("http://52.205.170.152:8080/addFeedTime", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject html, AjaxStatus status) {
-                try {
-                    if (html.getString("msg").equals("정상 작동")) {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("userId", user_id);
+        params.put("fType", feed);
+        params.put("fStart", dateFormat.format(today));
+        params.put("fStartTime", String.valueOf(today.getTime()));
+        params.put("fTotal", String.valueOf(amount));
+        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Feed")
+                .post(params)
+                .showLoading()
+                .response((response, error) -> {
+                    if (response != null) {
                         Toast.makeText(getActivity(), "작성 되었습니다.", Toast.LENGTH_SHORT).show();
                         powderAmount.setText("");
                         readFeed();
+                    } else {
+                        Toast.makeText(getActivity(), "네트워크 연결 상태가 좋지 않습니다.", Toast.LENGTH_SHORT).show();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });*/
+                });
 
     }
-    public void jsonArrayToSleepArray(JSONArray jsonArr) throws JSONException {
-        for (int i = 0; i < jsonArr.length(); i++) {
-            feedDataList.add(new FeedVO(jsonArr.getJSONObject(i)));
+    public void jsonArrayToFeedArray(Object[] jsonArr) throws JSONException {
+        Gson gson = new Gson();
+        for (int i = 0; i < jsonArr.length; i++) {
+            String json = gson.toJson(jsonArr[i]);
+            feedDataList.add(gson.fromJson(json, FeedVO.class));
             feedAdapter.notifyDataSetChanged();
         }
     }

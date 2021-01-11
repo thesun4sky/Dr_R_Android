@@ -16,6 +16,7 @@ import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.adapter.DiaryAdapter;
 import com.coawesome.hosea.dr_r.dao.DiaryInfoVO;
 import com.coawesome.hosea.dr_r.dao.DiaryVO;
+import com.coawesome.hosea.dr_r.dao.FeedVO;
 import com.coawesome.hosea.dr_r.dao.ResponseVO;
 import com.coawesome.hosea.dr_r.dao.SleepVO;
 import com.google.gson.Gson;
@@ -141,44 +142,31 @@ public class ReadDiaryActivity extends AppCompatActivity {
                         sleepTotal.setText("0 시간 0 분 0 초");
                     }
                 });
-        /*aq.ajax("http://52.205.170.152:8080/getSleepTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
-            @Override
-            public void callback(String url, JSONArray html, AjaxStatus status) {
-                if (html != null) {
-                    try {
-                        clockPieHelperArrayListForSleep.clear();
-                        jsonArrayToSleepArray(html);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    tv.setText("해당하는 데이터가 없습니다.");
-                }
-            }
-        });*/
     }
 
     public void readFeed() {
         result_feed = 0;
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("u_id", previousIntent.getIntExtra("u_id",0));
-        params.put("f_start", date + "00:00:00");
-        /*aq.ajax("http://52.205.170.152:8080/getFeedTimeByDate", params, JSONArray.class, new AjaxCallback<JSONArray>() {
-            @Override
-            public void callback(String url, JSONArray html, AjaxStatus status) {
-                if (html != null) {
-                    try {
-
-                        clockPieHelperArrayListForFeed.clear();
-                        jsonArrayToFeedArray(html);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+        clockPieHelperArrayListForFeed.clear();
+        feedTotal.setText("수유 데이터 읽어오는 중...");
+        String userId = previousIntent.getStringExtra("userId");
+        int real_month = start_month + 1;
+        Date rStart = new Date(start_year+"/"+real_month+"/"+start_day+"/00:00:00");
+        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Feed?userId=" + userId + "&fStartTime=" + rStart.getTime())
+                .get()
+                .showLoading()
+                .response((response, error) -> {
+                    Gson gson = new Gson();
+                    ResponseVO resVO = gson.fromJson(response, ResponseVO.class);
+                    if(resVO.getItems().length>0){
+                        try {
+                            jsonArrayToFeedArray(resVO.getItems());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        sleepTotal.setText("0 시간 0 분 0 초");
                     }
-                } else {
-                    tv.setText("해당하는 데이터가 없습니다.");
-                }
-            }
-        });*/
+                });
     }
 
     public void jsonArrayToSleepArray(Object[] jsonArr) throws JSONException, ParseException {
@@ -208,36 +196,37 @@ public class ReadDiaryActivity extends AppCompatActivity {
     }
 
     //수유시간 리스트 받아오기
-    public void jsonArrayToFeedArray(JSONArray jsonArr) throws JSONException {
+    public void jsonArrayToFeedArray(Object[] jsonArr) throws ParseException {
         long result_powder = 0;
-        final SimpleDateFormat curHourFormat = new SimpleDateFormat("HH", Locale.KOREA);
+        Gson gson = new Gson();
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final SimpleDateFormat curHourFormat = new SimpleDateFormat("HH");
         curHourFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        final SimpleDateFormat curMinuteFormat = new SimpleDateFormat("mm", Locale.KOREA);
-        final SimpleDateFormat curSecFormat = new SimpleDateFormat("ss", Locale.KOREA);
-        for (int i = 0; i < jsonArr.length(); i++) {
-            if(jsonArr.getJSONObject(i).getString("feed").equals("분유")){
-                result_powder += Long.parseLong(jsonArr.getJSONObject(i).getString("f_total"));
-                long powder_time = Long.parseLong(jsonArr.getJSONObject(i).getString("f_start"));
-                Date powder_start = new Date(powder_time);
-                int s_hour = Integer.parseInt(curHourFormat.format(powder_start));
-                int s_min = Integer.parseInt(curMinuteFormat.format(powder_start));
-                int s_sec = Integer.parseInt(curSecFormat.format(powder_start));
+        for (int i = 0; i < jsonArr.length; i++) {
+            String json = gson.toJson(jsonArr[i]);
+            FeedVO vo = gson.fromJson(json, FeedVO.class);
+            if(vo.getfType().equals("분유")){
+                result_powder += Long.parseLong(vo.getfTotal());
+                Date start = transFormat.parse(vo.getfStart());
+                int s_hour = start.getHours();
+                int s_min = start.getMinutes();
+                int s_sec = start.getSeconds();
                 clockPieHelperArrayListForFeed.add(new ClockPieHelper(s_hour, s_min, s_sec, s_hour, s_min+1, s_sec));
                 pieView2.setDate(clockPieHelperArrayListForFeed);
 
             }
             else {
-                long s_time = Long.parseLong(jsonArr.getJSONObject(i).getString("f_start"));
-                long e_time = Long.parseLong(jsonArr.getJSONObject(i).getString("f_end"));
-                result_feed += e_time - s_time;
-                Date start = new Date(s_time);
-                Date end = new Date(e_time);
-                int s_hour = Integer.parseInt(curHourFormat.format(start));
-                int s_min = Integer.parseInt(curMinuteFormat.format(start));
-                int s_sec = Integer.parseInt(curSecFormat.format(start));
-                int e_hour = Integer.parseInt(curHourFormat.format(end));
-                int e_min = Integer.parseInt(curMinuteFormat.format(end));
-                int e_sec = Integer.parseInt(curSecFormat.format(end));
+                long s_time = Objects.requireNonNull(transFormat.parse(vo.getfStart())).getTime();
+                long e_time = Objects.requireNonNull(transFormat.parse(vo.getfEnd())).getTime();
+                result_sleep += e_time - s_time;
+                Date start = transFormat.parse(vo.getfStart());
+                Date end = transFormat.parse(vo.getfEnd());
+                int s_hour = start.getHours();
+                int s_min = start.getMinutes();
+                int s_sec = start.getSeconds();
+                int e_hour = end.getHours();
+                int e_min = end.getMinutes();
+                int e_sec = end.getSeconds();
 
                 clockPieHelperArrayListForFeed.add(new ClockPieHelper(s_hour, s_min, s_sec, e_hour, e_min, e_sec));
                 pieView2.setDate(clockPieHelperArrayListForFeed);
@@ -263,17 +252,6 @@ public class ReadDiaryActivity extends AppCompatActivity {
                         jsonArrayToArrayListNoData();
                     }
                 });
-        /*aq.ajax("http://52.205.170.152:8080/getDiary", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject html, AjaxStatus status) {
-                if (html != null) {
-                    jsonArrayToArrayList(html);
-                } else {
-                   Toast.makeText(getApplicationContext(),"해당날짜의 일지가 없습니다.",Toast.LENGTH_SHORT).show();
-                    jsonArrayToArrayListNoData();
-                }
-            }
-        });*/
     }
 
     public void jsonArrayToArrayList(Object jsonObject) {

@@ -5,7 +5,6 @@ public class SleepVO {
     private String sStart;
     private String sEnd;
     private String sTotal;
-    private int s_total;
 
     public SleepVO(String userId, String sStart, String sEnd, String sTotal) {
         this.userId = userId;
@@ -50,7 +49,4 @@ public class SleepVO {
         return Integer.parseInt(sTotal);
     }
 
-    public void setS_total(int s_total) {
-        this.s_total = s_total;
-    }
 }

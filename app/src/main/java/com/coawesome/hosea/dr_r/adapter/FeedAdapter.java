@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.dao.FeedVO;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -65,7 +66,7 @@ public class FeedAdapter extends BaseAdapter {
         TextView feedAmount = (TextView) view.findViewById(R.id.tv_item_feed_amount);
         TextView feedValue = (TextView) view.findViewById(R.id.tv_item_feed_value);
         View linear = view.findViewById(R.id.set_feed_list_color);
-        if(feedVO.getFeed().equals("분유")){
+        if(feedVO.getfType().equals("분유")){
             linear.setBackgroundColor(0xFFFFDDDD);
 //            ItemLayout.setBackgroundColor(0x99FFDDDD);
             feedStart.setText("입력 시간 : ");
@@ -81,7 +82,7 @@ public class FeedAdapter extends BaseAdapter {
             feedEnd.setVisibility(View.VISIBLE);
             feedEnd.setText("수유 끝 : ");
             feedAmount.setText("총 수유 시간 : ");
-            feedValue.setText("분");
+            feedValue.setText("초");
         }
 
         // Set DayName
@@ -92,32 +93,25 @@ public class FeedAdapter extends BaseAdapter {
 
 
         // Set Text 01
-        final SimpleDateFormat curHourFormat = new SimpleDateFormat("HH", Locale.KOREA);
-        curHourFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        final SimpleDateFormat curMinuteFormat = new SimpleDateFormat("mm", Locale.KOREA);
-        final SimpleDateFormat curSecFormat = new SimpleDateFormat("ss", Locale.KOREA);
-        Date feed_start = new Date(feedVO.getF_start().getTime());
-        Date feed_end = new Date(feedVO.getF_end().getTime());
+        Date feed_start = new Date();
+        Date feed_end = new Date();
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+        try {
+            feed_start = transFormat.parse(feedVO.getfStart());
+            if(feedVO.getfEnd() != null)  feed_end = transFormat.parse(feedVO.getfEnd());
 
-        int s_hour = Integer.parseInt(curHourFormat.format(feed_start));
-        int s_min = Integer.parseInt(curMinuteFormat.format(feed_start));
-        int s_sec = Integer.parseInt(curSecFormat.format(feed_start));
-
-        int e_hour = Integer.parseInt(curHourFormat.format(feed_end));
-        int e_min = Integer.parseInt(curMinuteFormat.format(feed_end));
-        int e_sec = Integer.parseInt(curSecFormat.format(feed_end));
-
-
-        feedStartTime.setText(s_hour+":"+s_min/*+":"+s_sec*/);
-        feed.setText(feedVO.getFeed());
-        if (!feedVO.getFeed().equals("분유")) {
-            total.setText(""+(feedVO.getF_total()/60));
-            feedEndTime.setText(e_hour+":"+e_min/*+":"+e_sec*/);
-        } else {
-            feedEndTime.setText("");
-            total.setText(""+(feedVO.getF_total()));
-
+            feedStartTime.setText(feed_start.getHours()+":"+feed_start.getMinutes()/*+":"+s_sec*/);
+            feed.setText(feedVO.getfType());
+            if (feedVO.getfType().equals("분유")) {
+                feedEndTime.setText("");
+                total.setText(""+(feedVO.getF_total()));
+            } else {
+                total.setText(""+(feedVO.getF_total()/60)+"분"+(feedVO.getF_total()%60));
+                if(feedVO.getfEnd() != null)  feedEndTime.setText(feed_end.getHours()+":"+feed_end.getMinutes()/*+":"+e_sec*/);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
         return view;
     }
