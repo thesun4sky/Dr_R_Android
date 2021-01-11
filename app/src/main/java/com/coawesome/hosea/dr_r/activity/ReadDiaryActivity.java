@@ -148,6 +148,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
         result_feed = 0;
         clockPieHelperArrayListForFeed.clear();
         feedTotal.setText("수유 데이터 읽어오는 중...");
+        powderTotal.setText("");
         String userId = previousIntent.getStringExtra("userId");
         int real_month = start_month + 1;
         Date rStart = new Date(start_year+"/"+real_month+"/"+start_day+"/00:00:00");
@@ -164,7 +165,8 @@ public class ReadDiaryActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     } else {
-                        sleepTotal.setText("0 시간 0 분 0 초");
+                        feedTotal.setText("0 시간 0 분 0 초");
+                        powderTotal.setText("0 ml");
                     }
                 });
     }
@@ -218,7 +220,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
             else {
                 long s_time = Objects.requireNonNull(transFormat.parse(vo.getfStart())).getTime();
                 long e_time = Objects.requireNonNull(transFormat.parse(vo.getfEnd())).getTime();
-                result_sleep += e_time - s_time;
+                result_feed += e_time - s_time;
                 Date start = transFormat.parse(vo.getfStart());
                 Date end = transFormat.parse(vo.getfEnd());
                 int s_hour = start.getHours();
@@ -233,7 +235,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
             }
         }
         feedTotal.setText(result_feed / 1000 / 3600 + " 시간 " + (result_feed / 1000 % 3600) / 60 + " 분 " + (result_feed / 1000 % 3600 % 60) + " 초 ");
-        powderTotal.setText(result_powder+"ml");
+        powderTotal.setText(result_powder+" ml");
     }
 
     public void readDiary() {
