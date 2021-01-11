@@ -98,6 +98,7 @@ public class GraphActivity extends AppCompatActivity {
         tv_avg_weight = (TextView) findViewById(R.id.tv_avg_weight);
         tv_per_weight = (TextView) findViewById(R.id.tv_per_weight);
         tv_my_weight = (TextView) findViewById(R.id.tv_my_weight);
+        drawImageBySex("남자");
         /*Map<String, Object> params = new HashMap<String, Object>();
         params.put("u_id", previousIntent.getIntExtra("u_id", 0));
         aq.ajax("http://52.205.170.152:8080/getSex", params, JSONObject.class, new AjaxCallback<JSONObject>() {

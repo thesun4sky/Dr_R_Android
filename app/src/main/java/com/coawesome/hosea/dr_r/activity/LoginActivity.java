@@ -185,6 +185,8 @@ public class LoginActivity extends AppCompatActivity {
                                        layout1.setVisibility(View.GONE);
                                        layout2.setVisibility(View.GONE);
                                        dialog_find_pass_id.setText("");
+                                       dialog_new_pass.setText("");
+                                       dialog_find_pass_code.setText("");
                                    },
                                    error -> {
                                        Log.e("AuthQuickstart", error.getCause().getMessage());
