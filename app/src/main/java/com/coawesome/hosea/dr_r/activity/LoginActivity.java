@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.amplifyframework.core.Amplify;
@@ -33,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private AQuery aq;
     private Intent previousIntent;
     private EditText id, password;
-    private Button join, login, help;
+    private Button join, login, help, findPass;
     private String u_name;
     private int u_id;
 
@@ -51,6 +52,9 @@ public class LoginActivity extends AppCompatActivity {
 
         //help 버튼
         help = (Button)findViewById(R.id.btn_help_login);
+        //비밀번호 찾기 버튼
+        findPass = (Button)findViewById(R.id.btn_find_pass);
+
         help.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -124,6 +128,88 @@ public class LoginActivity extends AppCompatActivity {
                         }
                 );
 
+            }
+        });
+
+
+        findPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflater=getLayoutInflater();
+                final View dialogView= inflater.inflate(R.layout.dialog_find_pass, null);
+                EditText dialog_find_pass_id = (EditText) dialogView.findViewById(R.id.dialog_find_pass_id);
+                Button send_code = (Button) dialogView.findViewById(R.id.send_code);
+                LinearLayout layout1 = (LinearLayout) dialogView.findViewById(R.id.dialog_find_pass1);
+                LinearLayout layout2 = (LinearLayout) dialogView.findViewById(R.id.dialog_find_pass2);
+                EditText dialog_find_pass_code = (EditText) dialogView.findViewById(R.id.dialog_find_pass_code);
+                EditText dialog_new_pass = (EditText) dialogView.findViewById(R.id.dialog_new_pass);
+                send_code.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EditText editText = dialog_find_pass_id;
+
+                        if (!editText.getText().toString().equals("")) {
+                            Amplify.Auth.resetPassword(
+                                    editText.getText().toString(),
+                                    result -> {
+                                        Log.i("AuthQuickstart", result.toString());
+                                        Toast.makeText(getApplicationContext(), "이메일로 코드가 발송되었습니다.", Toast.LENGTH_SHORT).show();
+                                        layout1.setVisibility(View.VISIBLE);
+                                        layout2.setVisibility(View.VISIBLE);
+                                        dialog_find_pass_code.requestFocus();
+                                    },
+                                    error -> {
+                                        Log.e("AuthQuickstart", error.toString());
+                                        Toast.makeText(getApplicationContext(), "존재하지 않는 아이디 입니다.", Toast.LENGTH_SHORT).show();
+                                        dialog_find_pass_id.requestFocus();
+                                    }
+                            );
+                        } else {
+                            Toast.makeText(getApplicationContext(), "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                Button dialog_set_pass = (Button) dialogView.findViewById(R.id.dialog_set_pass);
+                dialog_set_pass.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       if (!dialog_find_pass_code.getText().toString().equals("") ||
+                               !dialog_new_pass.getText().toString().equals("")) {
+                           Amplify.Auth.confirmResetPassword(
+                                   dialog_new_pass.getText().toString(),
+                                   dialog_find_pass_code.getText().toString(),
+                                   () -> {
+                                       Log.i("AuthQuickstart", "New password confirmed");
+                                       Toast.makeText(getApplicationContext(), "새로운 비밀번호로 설정되었습니다.", Toast.LENGTH_SHORT).show();
+                                       layout1.setVisibility(View.GONE);
+                                       layout2.setVisibility(View.GONE);
+                                       dialog_find_pass_id.setText("");
+                                   },
+                                   error -> {
+                                       Log.e("AuthQuickstart", error.getCause().getMessage());
+                                       Toast.makeText(getApplicationContext(), error.getCause().getMessage().split(":")[1].split("Service")[0], Toast.LENGTH_SHORT).show();
+                                       Toast.makeText(getApplicationContext(), "CODE 또는 비밀번호를 확인해주세요.", Toast.LENGTH_SHORT).show();
+                                       password.requestFocus();
+                                   }
+                           );
+                       } else {
+                           Toast.makeText(getApplicationContext(), "CODE 와 비밀번호를 모두 입력해주세요.", Toast.LENGTH_SHORT).show();
+                       }
+                   }
+                });
+                AlertDialog.Builder builder= new AlertDialog.Builder(LoginActivity.this); //AlertDialog.Builder 객체 생성
+                builder.setTitle("비밀번호 찾기"); //Dialog 제목
+                builder.setView(dialogView); //위에서 inflater가 만든 dialogView 객체 세팅 (Customize)
+                builder.setNegativeButton("닫기", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                AlertDialog dialog=builder.create();
+                dialog.setCanceledOnTouchOutside(false);//없어지지 않도록 설정
+                dialog.show();
             }
         });
     }

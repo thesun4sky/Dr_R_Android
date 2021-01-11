@@ -97,6 +97,16 @@
             android:layout_marginTop="50dp"
             app:srcCompat="@drawable/begin_bg"
             android:id="@+id/imageView2" />
+
+
+        <Button
+            android:id="@+id/btn_find_pass"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="1dp"
+            android:text="비밀번호 찾기" />
     </RelativeLayout>
 
 </LinearLayout>
