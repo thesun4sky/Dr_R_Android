@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,6 +43,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 /**
  * Created by hosea on 2016-12-29.
@@ -75,6 +78,7 @@ public class FeedTimeFragment extends Fragment {
     int year, month, day;
     SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
     EditText powderAmount;
+    InputMethodManager imm;
     public FeedTimeFragment() {}
 
     @Override
@@ -86,6 +90,8 @@ public class FeedTimeFragment extends Fragment {
         user_id = getActivity().getIntent().getStringExtra("userId");
         feed = "좌";
         final View view = inflater.inflate(R.layout.fragment_feedtime, container, false);
+
+        imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
         myToday = (TextView) view.findViewById(R.id.today_feed);
         myOutput = (TextView) view.findViewById(R.id.time_out_feed);
         myToggle = (TextView) view.findViewById(R.id.feed_toggle);
@@ -370,6 +376,7 @@ public class FeedTimeFragment extends Fragment {
                 break;
             case R.id.powder_toggle:
             case R.id.powder_toggle_img:
+                imm.hideSoftInputFromWindow(powderAmount.getWindowToken(), 0);
                 String pAmount = powderAmount.getText().toString();
                 if(!pAmount.isEmpty() && !pAmount.equals("")) {
                     writePowder(Integer.parseInt(pAmount));
