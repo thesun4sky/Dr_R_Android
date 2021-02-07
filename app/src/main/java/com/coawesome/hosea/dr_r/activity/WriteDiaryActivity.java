@@ -654,19 +654,22 @@ public class WriteDiaryActivity extends AppCompatActivity {
         obj.put("weight", weightNum);
         obj.put("height", heightNum);
         obj.put("treat", printdisease());
-        obj.put("fileName", fileName);
 
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("userId", userStr);
-        params.put("wDate", dateStr);
-        params.put("wDiary", obj.toString());
 
         try {
             if(photo_has_changed && !originFileName.equals(fileName) && bitmapPhoto != null){
                 //S3 Bucket에 이미지 업로드
                 File file = createFileFromFileName(fileName);
                 uploadFile(file);
+                obj.put("fileName", fileName);
+            }else{
+                obj.put("fileName", "");
             }
+
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userId", userStr);
+            params.put("wDate", dateStr);
+            params.put("wDiary", obj.toString());
 
             submit.setEnabled(false);
             aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-Diary")
