@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amplifyframework.core.Amplify;
@@ -139,10 +140,15 @@ public class LoginActivity extends AppCompatActivity {
                 final View dialogView= inflater.inflate(R.layout.dialog_find_pass, null);
                 EditText dialog_find_pass_id = (EditText) dialogView.findViewById(R.id.dialog_find_pass_id);
                 Button send_code = (Button) dialogView.findViewById(R.id.send_code);
+                LinearLayout layout0 = (LinearLayout) dialogView.findViewById(R.id.dialog_find_pass0);
                 LinearLayout layout1 = (LinearLayout) dialogView.findViewById(R.id.dialog_find_pass1);
                 LinearLayout layout2 = (LinearLayout) dialogView.findViewById(R.id.dialog_find_pass2);
+                LinearLayout layout3 = (LinearLayout) dialogView.findViewById(R.id.dialog_find_pass3);
+                LinearLayout layout4 = (LinearLayout) dialogView.findViewById(R.id.dialog_find_pass4);
                 EditText dialog_find_pass_code = (EditText) dialogView.findViewById(R.id.dialog_find_pass_code);
                 EditText dialog_new_pass = (EditText) dialogView.findViewById(R.id.dialog_new_pass);
+                EditText dialog_new_pass_check = (EditText) dialogView.findViewById(R.id.dialog_new_pass_check);
+                TextView guide_msg = (TextView) dialogView.findViewById(R.id.guide_msg);
                 send_code.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -153,14 +159,19 @@ public class LoginActivity extends AppCompatActivity {
                                     editText.getText().toString(),
                                     result -> {
                                         Log.i("AuthQuickstart", result.toString());
-                                        Toast.makeText(getApplicationContext(), "이메일로 코드가 발송되었습니다.", Toast.LENGTH_SHORT).show();
+                                        String email = result.getNextStep().getCodeDeliveryDetails().getDestination();
+                                        Toast.makeText(getApplicationContext(), result.getNextStep().getCodeDeliveryDetails().getDestination() + " 이메일로 코드가 발송되었습니다.", Toast.LENGTH_SHORT).show();
+                                        layout0.setVisibility(View.GONE);
                                         layout1.setVisibility(View.VISIBLE);
                                         layout2.setVisibility(View.VISIBLE);
+                                        layout3.setVisibility(View.VISIBLE);
+                                        layout4.setVisibility(View.VISIBLE);
                                         dialog_find_pass_code.requestFocus();
+                                        guide_msg.setText(email + " 이메일로 코드가 발송되었습니다.");
                                     },
                                     error -> {
                                         Log.e("AuthQuickstart", error.toString());
-                                        Toast.makeText(getApplicationContext(), "존재하지 않는 아이디 입니다.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), "존재하지 않는 아이디 또는 1일 비밀번호 찾기 횟수 5회를 초과하였습니다.", Toast.LENGTH_SHORT).show();
                                         dialog_find_pass_id.requestFocus();
                                     }
                             );
@@ -174,19 +185,30 @@ public class LoginActivity extends AppCompatActivity {
                 dialog_set_pass.setOnClickListener(new View.OnClickListener() {
                    @Override
                    public void onClick(View v) {
-                       if (!dialog_find_pass_code.getText().toString().equals("") ||
-                               !dialog_new_pass.getText().toString().equals("")) {
+                       String pass_code = dialog_find_pass_code.getText().toString();
+                       String new_pass = dialog_new_pass.getText().toString();
+                       String new_pass_check = dialog_new_pass_check.getText().toString();
+                       if (pass_code.equals("") || new_pass.equals("")) {
+                           Toast.makeText(getApplicationContext(), "CODE 와 비밀번호를 모두 입력해주세요.", Toast.LENGTH_SHORT).show();
+                       }else if(!new_pass.equals(new_pass_check)){
+                           Toast.makeText(getApplicationContext(), "비밀번호 확인이 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+                       }else {
                            Amplify.Auth.confirmResetPassword(
-                                   dialog_new_pass.getText().toString(),
-                                   dialog_find_pass_code.getText().toString(),
+                                   new_pass,
+                                   pass_code,
                                    () -> {
                                        Log.i("AuthQuickstart", "New password confirmed");
                                        Toast.makeText(getApplicationContext(), "새로운 비밀번호로 설정되었습니다.", Toast.LENGTH_SHORT).show();
+                                       layout0.setVisibility(View.VISIBLE);
                                        layout1.setVisibility(View.GONE);
                                        layout2.setVisibility(View.GONE);
+                                       layout3.setVisibility(View.GONE);
+                                       layout4.setVisibility(View.GONE);
                                        dialog_find_pass_id.setText("");
                                        dialog_new_pass.setText("");
+                                       dialog_new_pass_check.setText("");
                                        dialog_find_pass_code.setText("");
+                                       guide_msg.setText("아이디를 입력하면 이메일로 인증코드가 발송됩니다.");
                                    },
                                    error -> {
                                        Log.e("AuthQuickstart", error.getCause().getMessage());
@@ -195,8 +217,6 @@ public class LoginActivity extends AppCompatActivity {
                                        password.requestFocus();
                                    }
                            );
-                       } else {
-                           Toast.makeText(getApplicationContext(), "CODE 와 비밀번호를 모두 입력해주세요.", Toast.LENGTH_SHORT).show();
                        }
                    }
                 });
@@ -206,7 +226,16 @@ public class LoginActivity extends AppCompatActivity {
                 builder.setNegativeButton("닫기", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        layout0.setVisibility(View.VISIBLE);
+                        layout1.setVisibility(View.GONE);
+                        layout2.setVisibility(View.GONE);
+                        layout3.setVisibility(View.GONE);
+                        layout4.setVisibility(View.GONE);
+                        dialog_find_pass_id.setText("");
+                        dialog_new_pass.setText("");
+                        dialog_new_pass_check.setText("");
+                        dialog_find_pass_code.setText("");
+                        guide_msg.setText("아이디를 입력하면 이메일로 인증코드가 발송됩니다.");
                     }
                 });
                 AlertDialog dialog=builder.create();
