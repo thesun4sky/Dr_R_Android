@@ -118,13 +118,13 @@ public class JoinActivity extends AppCompatActivity {
                             AuthSignUpOptions.builder().userAttribute(AuthUserAttributeKey.email(), email.getText().toString()).build(),
                             result -> {
                                 Log.i("AuthQuickStart", "Result: " + result.toString());
-                                Looper.prepare();
+                                if (Looper.myLooper() == null) Looper.prepare();
                                 Toast.makeText(getApplicationContext(), email.getText().toString()+"로 인증코드가 전송되었습니다.", Toast.LENGTH_SHORT).show();
                                 Looper.loop();
                             },
                             error -> {
                                 Log.e("AuthQuickStart", "Sign up failed", error);
-                                Looper.prepare();
+                                if (Looper.myLooper() == null) Looper.prepare();
                                 Toast.makeText(getApplicationContext(), getAWSErrorMessage(error), Toast.LENGTH_SHORT).show();
                                 Looper.loop();
                             }
@@ -270,13 +270,13 @@ public class JoinActivity extends AppCompatActivity {
                     Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete");
                     checkCodeFlag = result.isSignUpComplete();
                     emailStr = email.getText().toString();
-                    Looper.prepare();
+                    if (Looper.myLooper() == null) Looper.prepare();
                     Toast.makeText(getApplicationContext(), "이메일 인증이 완료되었습니다.", Toast.LENGTH_SHORT).show();
                     Looper.loop();
                 },
                 error -> {
                     Log.e("AuthQuickstart", error.toString());
-                    Looper.prepare();
+                    if (Looper.myLooper() == null) Looper.prepare();
                     Toast.makeText(getApplicationContext(), "인증코드가 알맞지 않습니다.", Toast.LENGTH_SHORT).show();
                     Looper.loop();
                 }

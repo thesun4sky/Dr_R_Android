@@ -111,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                         password.getText().toString(),
                         result -> {
                             Log.i("AuthQuickstart", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete");
-                            Looper.prepare();
+                            if (Looper.myLooper() == null) Looper.prepare();
                             Toast.makeText(getApplicationContext(), id.getText().toString() + "님 환영합니다.", Toast.LENGTH_SHORT).show();
                             Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                             mainIntent.putExtra("userId", id.getText().toString());
@@ -121,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
                         },
                         error -> {
                             Log.e("AuthQuickstart", error.toString());
-                            Looper.prepare();
+                            if (Looper.myLooper() == null) Looper.prepare();
                             Toast.makeText(getApplicationContext(), "아이디 또는 비밀번호를 확인하세요", Toast.LENGTH_SHORT).show();
                             password.requestFocus();
                             Looper.loop();
