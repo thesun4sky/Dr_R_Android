@@ -19,6 +19,7 @@ import com.google.gson.JsonParser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -54,9 +55,13 @@ public class MainActivity extends AppCompatActivity {
                     ResponseVO resVO = gson.fromJson(response, ResponseVO.class);
                     String json = gson.toJson(resVO.getItems()[0]);
                     this.userVO = gson.fromJson(json, UserVO.class);
-                    joiningDate.setText("가입일 : " + userVO.getDate().substring(0,10));
-                    correctedAge.setText("");
-                    //setDate(obj); TODO 교정연령 계산 보정개발
+                    try {
+                        setDate(userVO);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 });
 
         findViewById(R.id.btn_main_2).setOnClickListener(mClick);
@@ -132,24 +137,18 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void setDate(JsonObject jsonObject) throws JSONException, ParseException {
+    public void setDate(UserVO userVO) throws JSONException, ParseException {
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy년 M월 d일", Locale.KOREA);
-        Long join_time = Long.parseLong(jsonObject.get("u_join_date").getAsString());
-
-        calAge(jsonObject);
-        Date joinDate = new Date(join_time);
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date joinDate = transFormat.parse(userVO.getDate().substring(0,10));
+        calAge(userVO.getuExpectedDate());
         joiningDate.setText("가입일 : " + dateFormat.format(joinDate));
     }
 
-    public void calAge(JsonObject jsonObject) throws JSONException, ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String nowString = simpleDateFormat.format(new Date());
-
-        Date nowDate = simpleDateFormat.parse(nowString);
-
-
-        Long expectedTime = Long.parseLong(jsonObject.get("u_expected").getAsString());
-        Date expectedDate = new Date(expectedTime);
+    public void calAge(String expectedDateStr) throws JSONException, ParseException {
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date nowDate = new Date();
+        Date expectedDate = transFormat.parse(expectedDateStr.substring(0,10));
 
         int compare = 0;
         compare = expectedDate.compareTo(nowDate);
