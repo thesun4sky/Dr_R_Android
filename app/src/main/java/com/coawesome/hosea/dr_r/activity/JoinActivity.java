@@ -45,7 +45,7 @@ public class JoinActivity extends AppCompatActivity {
     private Date ex_date;
     private EditText a_week, a_date;
     private EditText b_weight, b_height;
-    private EditText email, confrimCode;
+    private EditText confrimCode;
     int year = 0, month = 0, day = 0;
     int year2 = 0, month2 = 0, day2 = 0;
     int result_year = 0, result_month = 0, result_day = 0;   // 출생일
@@ -93,8 +93,6 @@ public class JoinActivity extends AppCompatActivity {
         password1 = (EditText) findViewById(R.id.password1);
         password2 = (EditText) findViewById(R.id.password2);
         submit = (Button) findViewById(R.id.joinSubmit);
-
-        email = (EditText) findViewById(R.id.email);
         sendCode = (Button) findViewById(R.id.sendCode);
         confrimCode = (EditText) findViewById(R.id.confrimCode);
         checkCode = (Button) findViewById(R.id.checkCode);
@@ -105,21 +103,24 @@ public class JoinActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (!isValidEmail(email.getText().toString())) {
+                if (!isValidEmail(login_id.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "이메일을 체크하세요", Toast.LENGTH_SHORT).show();
-                    email.requestFocus();
-                } else if (!password1.getText().toString().equals(password2.getText().toString()) || password1.getText().toString().length() < 5) {
+                    login_id.requestFocus();
+                } else if (password1.getText().toString().length() < 5) {
                     Toast.makeText(getApplicationContext(), "비밀번호를 입력하세요. (5자 이상)", Toast.LENGTH_SHORT).show();
+                    password1.requestFocus();
+                }  else if (!password1.getText().toString().equals(password2.getText().toString())) {
+                    Toast.makeText(getApplicationContext(), "비밀번호와 비밀번호 확인이 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
                     password1.requestFocus();
                 } else {
                     Amplify.Auth.signUp(
                             login_id.getText().toString(),
                             password1.getText().toString(),
-                            AuthSignUpOptions.builder().userAttribute(AuthUserAttributeKey.email(), email.getText().toString()).build(),
+                            AuthSignUpOptions.builder().userAttribute(AuthUserAttributeKey.email(), login_id.getText().toString()).build(),
                             result -> {
                                 Log.i("AuthQuickStart", "Result: " + result.toString());
                                 if (Looper.myLooper() == null) Looper.prepare();
-                                Toast.makeText(getApplicationContext(), email.getText().toString()+"로 인증코드가 전송되었습니다.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), login_id.getText().toString()+"로 인증코드가 전송되었습니다.", Toast.LENGTH_SHORT).show();
                                 Looper.loop();
                             },
                             error -> {
@@ -137,13 +138,16 @@ public class JoinActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (!isValidEmail(email.getText().toString())) {
+                if (!isValidEmail(login_id.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "이메일을 체크하세요", Toast.LENGTH_SHORT).show();
-                    email.requestFocus();
-                } else if (!password1.getText().toString().equals(password2.getText().toString()) || password1.getText().toString().length() < 5) {
+                    login_id.requestFocus();
+                } else if (password1.getText().toString().length() < 5) {
                     Toast.makeText(getApplicationContext(), "비밀번호를 입력하세요. (5자 이상)", Toast.LENGTH_SHORT).show();
                     password1.requestFocus();
-                } else if (checkCodeFlag && emailStr.equals(email.getText().toString())) {
+                }  else if (!password1.getText().toString().equals(password2.getText().toString())) {
+                    Toast.makeText(getApplicationContext(), "비밀번호와 비밀번호 확인이 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+                    password1.requestFocus();
+                } else if (checkCodeFlag && emailStr.equals(login_id.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "이메일 인증이 완료되었습니다.", Toast.LENGTH_SHORT).show();
                 }else{
                     checkConfrimCode(login_id.getText().toString(),confrimCode.getText().toString());
@@ -185,11 +189,14 @@ public class JoinActivity extends AppCompatActivity {
 
                 //유효성 테스트
                 if ((login_id.getText().toString().equals("")) || login_id.getText().toString().length() < 5) {
-                    Toast.makeText(getApplicationContext(), "id를 다시 입력하세요. (5자 이상)", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "이메일을 확인해주세요.", Toast.LENGTH_SHORT).show();
                     login_id.setText("");
                     login_id.requestFocus();
-                } else if (!password1.getText().toString().equals(password2.getText().toString()) || password1.getText().toString().length() < 5) {
+                } else if (password1.getText().toString().length() < 5) {
                     Toast.makeText(getApplicationContext(), "비밀번호를 입력하세요. (5자 이상)", Toast.LENGTH_SHORT).show();
+                    password1.requestFocus();
+                }  else if (!password1.getText().toString().equals(password2.getText().toString())) {
+                    Toast.makeText(getApplicationContext(), "비밀번호와 비밀번호 확인이 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
                     password1.requestFocus();
                 } else if ((name.getText().toString().equals(""))) {
                     Toast.makeText(getApplicationContext(), "아기 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
@@ -215,7 +222,7 @@ public class JoinActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "출생 키를 입력하세요.", Toast.LENGTH_SHORT).show();
                     b_height.setText("");
                     b_height.requestFocus();
-                } else if (!checkCodeFlag || !emailStr.equals(email.getText().toString())) {
+                } else if (!checkCodeFlag || !emailStr.equals(login_id.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "이메일 인증코드를 확인하세요.", Toast.LENGTH_SHORT).show();
                     emailStr = ""; checkCodeFlag = false;
                     confrimCode.setText("");
@@ -269,7 +276,7 @@ public class JoinActivity extends AppCompatActivity {
                 result -> {
                     Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete");
                     checkCodeFlag = result.isSignUpComplete();
-                    emailStr = email.getText().toString();
+                    emailStr = login_id.getText().toString();
                     if (Looper.myLooper() == null) Looper.prepare();
                     Toast.makeText(getApplicationContext(), "이메일 인증이 완료되었습니다.", Toast.LENGTH_SHORT).show();
                     Looper.loop();
@@ -301,7 +308,7 @@ public class JoinActivity extends AppCompatActivity {
         if(error.getCause().getMessage().contains("Password not long enough")){
             return "패스워드 길이가 짧습니다.(8자 이상)";
         }else if(error.getCause().getMessage().contains("User already exists")){
-            return "이미 존재하는 아이디 입니다.";
+            return "이미 가입된 이메일 입니다.";
         }
 
         return error.getMessage();

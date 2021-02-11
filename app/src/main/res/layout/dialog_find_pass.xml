@@ -11,7 +11,7 @@
         android:layout_width="409dp"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
-        android:text="아이디를 입력하면 이메일로 인증코드가 발송됩니다." />
+        android:text="이메일로 인증코드가 발송됩니다." />
 
     <LinearLayout
         android:id="@+id/dialog_find_pass0"
@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
-            android:text="아이디 : "/>
+            android:text="이메일 : "/>
         <EditText
             android:id="@+id/dialog_find_pass_id"
             android:layout_width="0dp"

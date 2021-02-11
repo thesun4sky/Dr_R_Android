@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:padding="10dp"
-            android:text="아이디" />
+            android:text="이메일" />
 
         <EditText
             android:id="@+id/login_login_id"

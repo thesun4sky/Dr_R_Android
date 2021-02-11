@@ -33,7 +33,6 @@
                     android:orientation="vertical"
                     android:padding="30dp">
 
-
                     <ImageView
                         android:id="@+id/imageView"
                         android:layout_width="match_parent"
@@ -47,12 +46,12 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="아이디" />
+                        android:text="이메일" />
 
                     <EditText
                         android:id="@+id/login_id"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -70,35 +69,28 @@
                         android:layout_height="wrap_content"
                         android:text="비밀번호 확인" />
 
+
                     <EditText
                         android:id="@+id/password2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="이메일" />
-
-                    <LinearLayout
+                    <Space
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="22dp" />
 
-                        <EditText
-                            android:id="@+id/email"
-                            android:layout_width="0px"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
+                    <Button
+                        android:id="@+id/sendCode"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#6CD9DC"
+                        android:text="SendCode"
+                        android:textColor="#FFF" />
 
-                        <Button
-                            android:id="@+id/sendCode"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="#6CD9DC"
-                            android:text="SendCode"
-                            android:textColor="#FFF" />
-                    </LinearLayout>
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="22dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -106,23 +98,24 @@
                         android:text="이메일 인증 코드" />
 
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <EditText
-                        android:id="@+id/confrimCode"
-                        android:layout_width="0px"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:id="@+id/confrimCode"
+                            android:layout_width="0px"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
-                    <Button
-                        android:id="@+id/checkCode"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="#6CD9DC"
-                        android:text="checkCode"
-                        android:textColor="#FFF" />
-                </LinearLayout>
+                        <Button
+                            android:id="@+id/checkCode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="#6CD9DC"
+                            android:text="checkCode"
+                            android:textColor="#FFF" />
+                    </LinearLayout>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

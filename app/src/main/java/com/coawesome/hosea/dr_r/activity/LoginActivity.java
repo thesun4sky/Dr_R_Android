@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if(id.getText().toString().length() < 5 || password.getText().toString().length() < 5){
-                    Toast.makeText(getApplicationContext(), "아이디 또는 비밀번호를 확인하세요", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "이메일 또는 비밀번호를 확인하세요", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -123,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                         error -> {
                             Log.e("AuthQuickstart", error.toString());
                             if (Looper.myLooper() == null) Looper.prepare();
-                            Toast.makeText(getApplicationContext(), "아이디 또는 비밀번호를 확인하세요", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "이메일 또는 비밀번호를 확인하세요", Toast.LENGTH_SHORT).show();
                             password.requestFocus();
                             Looper.loop();
                         }
@@ -159,24 +159,24 @@ public class LoginActivity extends AppCompatActivity {
                                     editText.getText().toString(),
                                     result -> {
                                         Log.i("AuthQuickstart", result.toString());
-                                        String email = result.getNextStep().getCodeDeliveryDetails().getDestination();
-                                        Toast.makeText(getApplicationContext(), result.getNextStep().getCodeDeliveryDetails().getDestination() + " 이메일로 코드가 발송되었습니다.", Toast.LENGTH_SHORT).show();
+                                        //String email = result.getNextStep().getCodeDeliveryDetails().getDestination();
+                                        Toast.makeText(getApplicationContext(), editText.getText().toString() + " 이메일로 코드가 발송되었습니다.", Toast.LENGTH_SHORT).show();
                                         layout0.setVisibility(View.GONE);
                                         layout1.setVisibility(View.VISIBLE);
                                         layout2.setVisibility(View.VISIBLE);
                                         layout3.setVisibility(View.VISIBLE);
                                         layout4.setVisibility(View.VISIBLE);
                                         dialog_find_pass_code.requestFocus();
-                                        guide_msg.setText(email + " 이메일로 코드가 발송되었습니다.");
+                                        guide_msg.setText(editText.getText().toString() + " 이메일로 코드가 발송되었습니다.");
                                     },
                                     error -> {
                                         Log.e("AuthQuickstart", error.toString());
-                                        Toast.makeText(getApplicationContext(), "존재하지 않는 아이디 또는 1일 비밀번호 찾기 횟수 5회를 초과하였습니다.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), "존재하지 않는 이메일 또는 1일 비밀번호 찾기 횟수 5회를 초과하였습니다.", Toast.LENGTH_SHORT).show();
                                         dialog_find_pass_id.requestFocus();
                                     }
                             );
                         } else {
-                            Toast.makeText(getApplicationContext(), "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "이메일을 입력해주세요.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -208,7 +208,7 @@ public class LoginActivity extends AppCompatActivity {
                                        dialog_new_pass.setText("");
                                        dialog_new_pass_check.setText("");
                                        dialog_find_pass_code.setText("");
-                                       guide_msg.setText("아이디를 입력하면 이메일로 인증코드가 발송됩니다.");
+                                       guide_msg.setText("이메일로 인증코드가 발송됩니다.");
                                    },
                                    error -> {
                                        Log.e("AuthQuickstart", error.getCause().getMessage());
@@ -235,7 +235,7 @@ public class LoginActivity extends AppCompatActivity {
                         dialog_new_pass.setText("");
                         dialog_new_pass_check.setText("");
                         dialog_find_pass_code.setText("");
-                        guide_msg.setText("아이디를 입력하면 이메일로 인증코드가 발송됩니다.");
+                        guide_msg.setText("이메일로 인증코드가 발송됩니다.");
                     }
                 });
                 AlertDialog dialog=builder.create();
