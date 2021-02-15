@@ -28,6 +28,7 @@ import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.dao.DiaryInfoVO;
 import com.coawesome.hosea.dr_r.dao.DiaryVO;
 import com.coawesome.hosea.dr_r.dao.ResponseVO;
+import com.coawesome.hosea.dr_r.dao.UserVO;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -82,6 +83,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
     private String originFileName = "";
     private DiaryVO diaryVO;
     private Uri mImageCaptureUri;
+    private UserVO userVO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,7 +228,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
 
         readDiary();
-        //getExpectedDate();  교정일 계산 개발 필요
+        getExpectedDate();
 
         submit = (Button) findViewById(R.id.submit);
         submit.setText("등록");
@@ -247,24 +249,24 @@ public class WriteDiaryActivity extends AppCompatActivity {
     }
 
     public void getExpectedDate() {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("userId", previousIntent.getStringExtra("userId"));
-        /*aq.ajax("http://52.205.170.152:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject html, AjaxStatus status) {
-                if (html != null) {
+        String userId = previousIntent.getStringExtra("userId");
+        //User정보 받아오기
+        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-User?userId="+userId)
+                .get()
+                .showLoading()
+                .response((response, error) -> {
+                    Gson gson = new Gson();
+                    ResponseVO resVO = gson.fromJson(response, ResponseVO.class);
+                    String json = gson.toJson(resVO.getItems()[0]);
+                    this.userVO = gson.fromJson(json, UserVO.class);
                     try {
-                        calAge(html);
+                        setDate(userVO);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                } else {
-
-                }
-            }
-        });*/
+                });
     }
 
 
@@ -291,15 +293,14 @@ public class WriteDiaryActivity extends AppCompatActivity {
                 });
     }
 
-    public void calAge(JSONObject jsonObject) throws JSONException, ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String nowString = simpleDateFormat.format(new Date());
+    public void setDate(UserVO userVO) throws JSONException, ParseException {
+        calAge(userVO.getuExpectedDate());
+    }
 
-        Date nowDate = simpleDateFormat.parse(nowString);
-
-
-        Long expectedTime = Long.parseLong(jsonObject.getString("u_expected"));
-        Date expectedDate = new Date(expectedTime);
+    public void calAge(String expectedDateStr) throws JSONException, ParseException {
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date nowDate = new Date();
+        Date expectedDate = transFormat.parse(expectedDateStr.substring(0,10));
 
         int compare = 0;
         compare = expectedDate.compareTo(nowDate);
