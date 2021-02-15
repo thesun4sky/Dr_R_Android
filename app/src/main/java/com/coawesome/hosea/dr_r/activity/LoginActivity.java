@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button join, login, help, findPass;
     private String u_name;
     private int u_id;
+    private AlertDialog newPassDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,6 +210,7 @@ public class LoginActivity extends AppCompatActivity {
                                        dialog_new_pass_check.setText("");
                                        dialog_find_pass_code.setText("");
                                        guide_msg.setText("이메일로 인증코드가 발송됩니다.");
+                                       newPassDialog.dismiss();
                                    },
                                    error -> {
                                        Log.e("AuthQuickstart", error.getCause().getMessage());
@@ -238,9 +240,9 @@ public class LoginActivity extends AppCompatActivity {
                         guide_msg.setText("이메일로 인증코드가 발송됩니다.");
                     }
                 });
-                AlertDialog dialog=builder.create();
-                dialog.setCanceledOnTouchOutside(false);//없어지지 않도록 설정
-                dialog.show();
+                newPassDialog=builder.create();
+                newPassDialog.setCanceledOnTouchOutside(false);//없어지지 않도록 설정
+                newPassDialog.show();
             }
         });
     }
