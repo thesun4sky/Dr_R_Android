@@ -189,7 +189,9 @@ public class LoginActivity extends AppCompatActivity {
                        String pass_code = dialog_find_pass_code.getText().toString();
                        String new_pass = dialog_new_pass.getText().toString();
                        String new_pass_check = dialog_new_pass_check.getText().toString();
-                       if (pass_code.equals("") || new_pass.equals("")) {
+                       if(new_pass.length() < 6){
+                           Toast.makeText(getApplicationContext(), "비밀번호는 6자 이상으로 입력해주세요.", Toast.LENGTH_SHORT).show();
+                       }else if (pass_code.equals("") || new_pass.equals("")) {
                            Toast.makeText(getApplicationContext(), "CODE 와 비밀번호를 모두 입력해주세요.", Toast.LENGTH_SHORT).show();
                        }else if(!new_pass.equals(new_pass_check)){
                            Toast.makeText(getApplicationContext(), "비밀번호 확인이 일치하지 않습니다.", Toast.LENGTH_SHORT).show();

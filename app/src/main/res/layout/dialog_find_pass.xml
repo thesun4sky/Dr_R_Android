@@ -72,7 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
-            android:text="새로운 패스워드 : "/>
+            android:text="새로운 패스워드 (6자 이상) : "/>
         <EditText
             android:id="@+id/dialog_new_pass"
             android:layout_width="0dp"
