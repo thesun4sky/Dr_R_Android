@@ -17,6 +17,9 @@ import com.amplifyframework.core.Amplify;
 import com.aquery.AQuery;
 import com.coawesome.hosea.dr_r.R;
 import com.coawesome.hosea.dr_r.dao.DiaryInfoVO;
+import com.coawesome.hosea.dr_r.dao.ResponseVO;
+import com.coawesome.hosea.dr_r.dao.UserVO;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,47 +39,49 @@ import java.util.Map;
  */
 
 public class DiaryAdapter extends BaseAdapter {
+    private AQuery aq;
     final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
     private Context dContext;
     private int dResource;
-    private int dUserId;
+    private String dUserId;
+    private String dShowDate;
     private TextView age;
     ProgressBar img_progress;
     private ArrayList<DiaryInfoVO> dItems = new ArrayList<>();
     private static final String RED = "#FF0000";
     private static final String BLUE = "#0000FF";
-
+    private UserVO userVO;
+    private DiaryInfoVO diary;
 
     public void getExpectedDate() {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("userId", dUserId);
-        /*mAq.ajax("http://52.205.170.152:8080/getUserDate", params, JSONObject.class, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject html, AjaxStatus status) {
-                if (html != null) {
+
+        //User정보 받아오기
+        aq.ajax("https://em0gmx2oj5.execute-api.us-east-1.amazonaws.com/dev/dynamodbCRUD-dev-User?userId="+dUserId)
+                .get()
+                .showLoading()
+                .response((response, error) -> {
+                    Gson gson = new Gson();
+                    ResponseVO resVO = gson.fromJson(response, ResponseVO.class);
+                    String json = gson.toJson(resVO.getItems()[0]);
+                    this.userVO = gson.fromJson(json, UserVO.class);
                     try {
-                        calAge(html);
+                        setDate(userVO);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                } else {
-
-                }
-            }
-        });*/
+                });
     }
 
-    public void calAge(JSONObject jsonObject) throws JSONException, ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String nowString = simpleDateFormat.format(new Date());
+    public void setDate(UserVO userVO) throws JSONException, ParseException {
+        calAge(userVO.getuExpectedDate());
+    }
 
-        Date nowDate = simpleDateFormat.parse(nowString);
-
-
-        Long expectedTime = Long.parseLong(jsonObject.getString("u_expected"));
-        Date expectedDate = new Date(expectedTime);
+    public void calAge(String expectedDateStr) throws JSONException, ParseException {
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date nowDate = transFormat.parse(dShowDate.substring(0,10));
+        Date expectedDate = transFormat.parse(expectedDateStr.substring(0,10));
 
         int compare = 0;
         compare = expectedDate.compareTo(nowDate);
@@ -132,7 +137,7 @@ public class DiaryAdapter extends BaseAdapter {
 
         //년 계산
         year = toDate.get(Calendar.YEAR) - (fromDate.get(Calendar.YEAR) + increment);
-        return month + "\t개월\t\t" + day + "\t일";
+        return  year + "\t년\t\t" + month + "\t월\t\t" + day + "\t일";
 
     }
 
@@ -155,11 +160,12 @@ public class DiaryAdapter extends BaseAdapter {
         }
     }
 
-    public DiaryAdapter(Context context, int resource, ArrayList<DiaryInfoVO> items , String userId) {
+    public DiaryAdapter(Context context, int resource, ArrayList<DiaryInfoVO> items , String userId, String showDate) {
         dContext = context;
         dResource = resource;
         dItems = items;
-        dUserId = dUserId;
+        dUserId = userId;
+        dShowDate = showDate;
     }
 
     @Override
@@ -184,7 +190,7 @@ public class DiaryAdapter extends BaseAdapter {
                     (LayoutInflater) dContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(dResource, viewGroup, false);
         }
-      //  mAq = new AQuery(view);
+        aq = new AQuery(view);
 //        TextView breakfast = (TextView) view.findViewById(R.id.diary_tv_breakfast);
 //        TextView lunch = (TextView) view.findViewById(R.id.diary_tv_lunch);
 //        TextView dinner = (TextView) view.findViewById(R.id.diary_tv_dinner);
@@ -207,7 +213,7 @@ public class DiaryAdapter extends BaseAdapter {
 
 
         if (dItems != null) {
-            DiaryInfoVO diary = dItems.get(i);
+            diary = dItems.get(i);
 
             final SimpleDateFormat curYearFormat = new SimpleDateFormat("yyyy", Locale.KOREA);
             final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);

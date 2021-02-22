@@ -273,7 +273,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
 
     public void linktoAdapter(ArrayList<DiaryInfoVO> list) {
         //어댑터 생성
-        DiaryAdapter diaryAdapter = new DiaryAdapter(this, R.layout.itemsfordiarylist, list , previousIntent.getStringExtra("userId"));
+        DiaryAdapter diaryAdapter = new DiaryAdapter(this, R.layout.itemsfordiarylist, list , previousIntent.getStringExtra("userId"), date);
         //어댑터 연결
         ListView lv = (ListView) findViewById(R.id.listView);
         lv.setAdapter(diaryAdapter);
