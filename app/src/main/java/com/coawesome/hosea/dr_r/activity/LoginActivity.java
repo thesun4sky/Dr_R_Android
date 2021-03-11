@@ -27,6 +27,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by LeeMoonSeong on 2016-11-10.
@@ -103,13 +105,21 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(id.getText().toString().length() < 5 || password.getText().toString().length() < 5){
+                String loginId = id.getText().toString();
+                loginId = loginId.replaceAll(" ", "");     //일반적인 공백제거
+                loginId = loginId.replaceAll("\\p{Z}", "");//특이한 공백 제거
+
+                if(loginId.length() < 5 || password.getText().toString().length() < 5){
                     Toast.makeText(getApplicationContext(), "이메일 또는 비밀번호를 확인하세요", Toast.LENGTH_SHORT).show();
                     return;
+                }else if (!isValidEmail(loginId)) {
+                    Toast.makeText(getApplicationContext(), "이메일을 체크하세요", Toast.LENGTH_SHORT).show();
+                    id.requestFocus();
                 }
 
+
                 Amplify.Auth.signIn(
-                        id.getText().toString(),
+                        loginId,
                         password.getText().toString(),
                         result -> {
                             Log.i("AuthQuickstart", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete");
@@ -249,5 +259,16 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /** * Comment : 정상적인 이메일 인지 검증. */
+    public static boolean isValidEmail(String email) {
+        boolean err = false;
+        String regex = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(email);
+        if(m.matches()) {
+            err = true;
+        }
+        return err;
+    }
 
 }
