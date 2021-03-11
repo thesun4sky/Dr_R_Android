@@ -105,9 +105,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String loginId = id.getText().toString();
-                loginId = loginId.replaceAll(" ", "");     //일반적인 공백제거
-                loginId = loginId.replaceAll("\\p{Z}", "");//특이한 공백 제거
+                String loginId = trimStr(id.getText().toString());
 
                 if(loginId.length() < 5 || password.getText().toString().length() < 5){
                     Toast.makeText(getApplicationContext(), "이메일 또는 비밀번호를 확인하세요", Toast.LENGTH_SHORT).show();
@@ -124,9 +122,9 @@ public class LoginActivity extends AppCompatActivity {
                         result -> {
                             Log.i("AuthQuickstart", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete");
                             if (Looper.myLooper() == null) Looper.prepare();
-                            Toast.makeText(getApplicationContext(), id.getText().toString() + "님 환영합니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), trimStr(id.getText().toString()) + "님 환영합니다.", Toast.LENGTH_SHORT).show();
                             Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                            mainIntent.putExtra("userId", id.getText().toString());
+                            mainIntent.putExtra("userId", trimStr(id.getText().toString()));
                             startActivity(mainIntent);
                             LoginActivity.this.finish();
                             Looper.loop();
@@ -269,6 +267,12 @@ public class LoginActivity extends AppCompatActivity {
             err = true;
         }
         return err;
+    }
+
+    public static String trimStr(String input) {
+        input = input.replaceAll(" ", "");     //일반적인 공백제거
+        input = input.replaceAll("\\p{Z}", "");//특이한 공백 제거
+        return input;
     }
 
 }
